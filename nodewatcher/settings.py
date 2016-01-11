@@ -31,8 +31,8 @@ DATABASES = {
         # Follow https://docs.djangoproject.com/en/dev/ref/contrib/gis/install/ to install GeoDjango.
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'nodewatcher', # Use: createdb nodewatcher
-        'USER': os.environ.get('DB_1_ENV_PGSQL_ROLE_1_USERNAME', 'nodewatcher'), # Set to empty string to connect as current user.
-        'PASSWORD': os.environ.get('DB_1_ENV_PGSQL_ROLE_1_PASSWORD', ''),
+        'USER': os.environ.get('DB_1_ENV_POSTGRES_USER', 'nodewatcher'), # Set to empty string to connect as current user.
+        'PASSWORD': os.environ.get('DB_1_ENV_POSTGRES_PASSWORD', ''),
         'HOST': os.environ.get('DB_1_PORT_5432_TCP_ADDR', 'localhost'), # Set to empty string for socket.
         'PORT': os.environ.get('DB_1_PORT_5432_TCP_PORT', ''), # Set to empty string for default.
     },
@@ -484,7 +484,7 @@ MONITOR_RUNS = {
     },
 
     'telemetry': {
-        'workers': 30,
+        'workers': 15,
         'interval': 300,
         'max_tasks_per_child': 50,
         'processors': (
@@ -537,13 +537,21 @@ MONITOR_HTTP_PUSH_RUN = 'telemetry-push'
 MONITOR_HTTP_PUSH_HOST = '127.0.0.1'
 
 # Backend for the monitoring data archive.
-DATASTREAM_BACKEND = 'datastream.backends.mongodb.Backend'
+DATASTREAM_BACKEND = 'datastream.backends.influxdb.Backend'
 # Each backend can have backend-specific settings that can be specified here.
 DATASTREAM_BACKEND_SETTINGS = {
-    'database_name': 'nodewatcher',
-    'host': os.environ.get('TOKUMX_1_PORT_27017_TCP_ADDR', '127.0.0.1'),
-    'port': int(os.environ.get('TOKUMX_1_PORT_27017_TCP_PORT', '27017')),
-    'tz_aware': USE_TZ,
+    'connection_influxdb': {
+        'host': os.environ.get('INFLUXDB_1_PORT_8086_TCP_ADDR', '127.0.0.1'),
+        'port': int(os.environ.get('INFLUXDB_1_PORT_8086_TCP_PORT', '8086')),
+        'database': 'nodewatcher'
+    },
+    'connection_metadata': {
+        'host': DATABASES['default']['HOST'],
+        'port': DATABASES['default']['PORT'],
+        'database': DATABASES['default']['NAME'],
+        'user': DATABASES['default']['USER'],
+        'password': DATABASES['default']['PASSWORD'],
+    },
 }
 
 OLSRD_MONITOR_HOST = '127.0.0.1'

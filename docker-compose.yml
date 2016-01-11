@@ -1,22 +1,14 @@
 db:
-    image: wlanslovenija/postgis
+    image: mdillon/postgis:9.4
     environment:
-        PGSQL_ROLE_1_USERNAME: nodewatcher
-        PGSQL_ROLE_1_PASSWORD: nodewatcher
-        PGSQL_ROLE_1_FLAGS: LOGIN SUPERUSER
-        PGSQL_DB_1_NAME: nodewatcher
-        PGSQL_DB_1_OWNER: nodewatcher
-        PGSQL_DB_1_ENCODING: UNICODE
+        POSTGRES_USER: nodewatcher
+        POSTGRES_PASSWORD: nodewatcher
     volumes:
-        # Use a volume to enable database persistency across restarts
-        - /tmp/nodewatcher-db:/var/lib/postgresql/9.3/main
-tokumx:
-    image: wlanslovenija/tokumx
-    # A privileged container is required to disable hugepages for TokuMX
-    privileged: true
+        - ./.tmp/nodewatcher-db:/var/lib/postgresql/data
+influxdb:
+    image: tozd/influxdb
     volumes:
-        # Use a volume to enable database persistency across restarts
-        - /tmp/nodewatcher-tokumx:/var/lib/tokumx
+        - ./.tmp/nodewatcher-influxdb:/data
 redis:
     image: tozd/redis
 builderar71xx:
@@ -68,7 +60,7 @@ generator:
         - .:/code
     links:
         - db
-        - tokumx
+        - influxdb
         - redis
         - builderar71xx
         - builderlantiq
@@ -83,7 +75,7 @@ monitorq:
         - .:/code
     links:
         - db
-        - tokumx
+        - influxdb
         - redis
 web:
     build: .
@@ -97,7 +89,7 @@ web:
         - "8000:8000"
     links:
         - db
-        - tokumx
+        - influxdb
         - redis
         - builderar71xx
         - builderlantiq
