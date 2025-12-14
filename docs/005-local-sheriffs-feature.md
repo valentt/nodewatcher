@@ -67,16 +67,47 @@ Each area can have multiple administrators:
 - Invitation system via email
 - Approval workflow for new sheriffs
 
-**Removing Inactive Admins:**
-- Activity tracking (last login, last action)
-- Warning notifications for inactivity (30, 60, 90 days)
-- Automatic demotion after X days of inactivity
-- Transfer of responsibilities to co-admin or queue for new sheriff
+**Graceful Inactivity Handling:**
+
+The system respects that volunteers have lives - illness, vacation, personal issues happen.
+
+```
+ACTIVE          →   AWAY           →   INACTIVE        →   REGULAR USER
+(daily/weekly)      (30 days)          (60-90 days)        (needs to re-earn role)
+     ↑                  ↑                   ↑
+     └──────────────────┴───────────────────┘
+              Return to activity = restore status
+```
+
+**Status Levels:**
+
+| Status | Timeframe | What Happens |
+|--------|-----------|--------------|
+| **Active** | Regular activity | Full permissions, shown as primary contact |
+| **Away** | 14-30 days inactive | Co-admin becomes primary, sheriff keeps role but marked "away" |
+| **Inactive** | 30-60 days | Warning emails, co-admin fully takes over |
+| **Dormant** | 60-90 days | Demoted to regular user, must re-apply |
+
+**Key Principles:**
+- **No punishment for short absence** - life happens
+- **Co-admin automatically steps up** - network keeps running
+- **Smooth return** - come back active = restore your role (within grace period)
+- **Fair re-entry** - after long absence, prove activity again as co-admin first
+- **The cycle continues** - people can move up and down based on availability
+
+**Example Scenario:**
+1. Marko is Sheriff, Ana is Co-Admin
+2. Marko gets sick, inactive for 3 weeks
+3. Ana automatically becomes acting Sheriff
+4. Marko recovers, logs in → automatically restored as Sheriff
+5. If Marko was gone 3 months → becomes regular user
+6. Marko wants back in → applies as Co-Admin, proves activity, can become Sheriff again
 
 **Succession:**
-- If Primary Sheriff becomes inactive, Co-Admin can request promotion
-- Global admin approval required
-- Clear handover process
+- If Primary Sheriff becomes inactive, Co-Admin automatically becomes acting Sheriff
+- After grace period expires, Co-Admin officially becomes Sheriff
+- No global admin approval needed for automatic succession
+- Global admin can always override manually
 
 ### 4. Area Definition
 
