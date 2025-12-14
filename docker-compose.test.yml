@@ -1,0 +1,33 @@
+version: '2'
+services:
+    db:
+        image: tozd/postgresql:9.5
+        environment:
+            PGSQL_ROLE_1_USERNAME: nodewatcher
+            PGSQL_ROLE_1_PASSWORD: nodewatcher
+            PGSQL_ROLE_1_FLAGS: LOGIN SUPERUSER
+            PGSQL_DB_1_NAME: nodewatcher
+            PGSQL_DB_1_OWNER: nodewatcher
+            PGSQL_DB_1_ENCODING: UNICODE
+            PGSQL_DB_1_POSTGIS: "true"
+        volumes:
+            - ./data/db:/var/lib/postgresql/9.5/main
+    influxdb:
+        image: tozd/influxdb:1.8
+        volumes:
+            - ./data/influxdb:/data
+    redis:
+        image: tozd/redis:6
+    web:
+        build: .
+        command: bash -c "sleep 5 && python manage.py runserver 0.0.0.0:8000"
+        environment:
+            PYTHONUNBUFFERED: 1
+        volumes:
+            - .:/code
+        ports:
+            - "8000:8000"
+        depends_on:
+            - db
+            - influxdb
+            - redis
