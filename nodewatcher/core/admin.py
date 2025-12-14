@@ -11,11 +11,9 @@ class NodeAdmin(guardian_admin.GuardedModelAdmin):
     """
     Enhanced Node admin with better display and filtering.
     """
-    list_display = ('uuid_short', 'name_display', 'project_display', 'status_display', 'created', 'last_modified')
-    list_filter = ('created',)
+    list_display = ('uuid_short', 'name_display', 'project_display', 'status_display', 'last_seen_display')
     search_fields = ('uuid',)
     readonly_fields = ('uuid',)
-    date_hierarchy = 'created'
 
     fieldsets = (
         (None, {
@@ -46,7 +44,7 @@ class NodeAdmin(guardian_admin.GuardedModelAdmin):
             config = obj.config.core.project()
             if config and config.project:
                 return format_html(
-                    '<a href="../administration/projects/project/{}/change/">{}</a>',
+                    '<a href="../projects/project/{}/change/">{}</a>',
                     config.project.pk, config.project.name
                 )
         except:
@@ -83,16 +81,16 @@ class NodeAdmin(guardian_admin.GuardedModelAdmin):
         )
     status_display.short_description = _('Status')
 
-    def last_modified(self, obj):
-        """Show last modification time if available."""
+    def last_seen_display(self, obj):
+        """Show last seen time if available."""
         try:
             monitor = obj.monitoring.core.general()
-            if monitor and hasattr(monitor, 'last_seen'):
+            if monitor and hasattr(monitor, 'last_seen') and monitor.last_seen:
                 return monitor.last_seen
         except:
             pass
         return '-'
-    last_modified.short_description = _('Last Seen')
+    last_seen_display.short_description = _('Last Seen')
 
 
 admin.site.register(models.Node, NodeAdmin)
