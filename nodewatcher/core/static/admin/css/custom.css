@@ -1,0 +1,474 @@
+/* Nodewatcher Admin Custom Styles */
+
+/* Full width layout */
+#container {
+    max-width: 100% !important;
+    padding: 0 24px;
+}
+
+#content {
+    max-width: 100% !important;
+}
+
+#content-main {
+    max-width: 100% !important;
+}
+
+/* Better header */
+#header {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    padding: 12px 24px;
+}
+
+#branding h1 {
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+}
+
+#branding h1 a:link, #branding h1 a:visited {
+    color: #f1f5f9;
+}
+
+#user-tools {
+    font-size: 13px;
+}
+
+#user-tools a {
+    color: #94a3b8;
+    border-bottom: none;
+    transition: color 0.2s;
+}
+
+#user-tools a:hover {
+    color: #f1f5f9;
+}
+
+/* Sidebar improvements */
+#nav-sidebar {
+    background: #f8fafc;
+    border-right: 1px solid #e2e8f0;
+}
+
+.module caption {
+    background: #6366f1;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+/* Better tables */
+#result_list {
+    width: 100%;
+}
+
+#changelist-form .results {
+    overflow-x: auto;
+}
+
+#changelist table {
+    width: 100%;
+}
+
+#changelist th {
+    background: #f1f5f9;
+    padding: 12px 16px;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #475569;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+#changelist td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+#changelist tbody tr:hover {
+    background: #f8fafc;
+}
+
+#changelist tbody tr:nth-child(odd) {
+    background: #fff;
+}
+
+#changelist tbody tr:nth-child(even) {
+    background: #fafafa;
+}
+
+/* Action bar */
+.actions {
+    background: #f8fafc;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.actions select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 14px;
+}
+
+/* Better buttons */
+input[type="submit"], button, .button, a.button {
+    background: #6366f1 !important;
+    border: none !important;
+    padding: 10px 20px !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    font-size: 14px !important;
+    transition: all 0.2s !important;
+    text-transform: none !important;
+}
+
+input[type="submit"]:hover, button:hover, .button:hover, a.button:hover {
+    background: #4f46e5 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.default {
+    background: #10b981 !important;
+}
+
+.default:hover {
+    background: #059669 !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+}
+
+input[type="submit"].default {
+    background: #10b981 !important;
+}
+
+input[type="submit"].default:hover {
+    background: #059669 !important;
+}
+
+.deletelink, a.deletelink {
+    background: #ef4444 !important;
+    color: white !important;
+}
+
+.deletelink:hover, a.deletelink:hover {
+    background: #dc2626 !important;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+}
+
+/* Form improvements */
+.form-row {
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.form-row label {
+    font-weight: 600;
+    color: #374151;
+    font-size: 13px;
+}
+
+input[type="text"], input[type="password"], input[type="email"], input[type="url"], input[type="number"], textarea, select {
+    padding: 10px 14px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: all 0.2s;
+    width: 100%;
+    max-width: 600px;
+}
+
+input[type="text"]:focus, input[type="password"]:focus, input[type="email"]:focus, textarea:focus, select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    outline: none;
+}
+
+/* Fieldsets */
+fieldset {
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+fieldset h2 {
+    background: #f8fafc;
+    padding: 14px 20px;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 1px solid #e2e8f0;
+    border-radius: 12px 12px 0 0;
+}
+
+fieldset .form-row {
+    padding: 14px 20px;
+}
+
+/* Module boxes */
+.module {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.module h2, .module caption {
+    background: #6366f1;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+}
+
+.module table {
+    width: 100%;
+}
+
+.module th {
+    text-align: left;
+    padding: 10px 16px;
+    background: #f8fafc;
+    font-weight: 600;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: #64748b;
+}
+
+.module td {
+    padding: 10px 16px;
+}
+
+.module td a {
+    color: #6366f1;
+    font-weight: 500;
+}
+
+/* Dashboard app list */
+#content-main .app-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.app-list .module {
+    margin: 0;
+}
+
+/* Breadcrumbs */
+.breadcrumbs {
+    background: #f8fafc;
+    padding: 12px 24px;
+    font-size: 13px;
+    color: #64748b;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.breadcrumbs a {
+    color: #6366f1;
+}
+
+/* Object tools */
+.object-tools {
+    margin: 0 0 20px;
+}
+
+.object-tools a {
+    background: #64748b;
+    padding: 8px 16px;
+    border-radius: 6px;
+    color: white;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.object-tools a:hover {
+    background: #475569;
+}
+
+.object-tools a.addlink {
+    background: #10b981;
+}
+
+.object-tools a.addlink:hover {
+    background: #059669;
+}
+
+/* Pagination */
+.paginator {
+    background: #f8fafc;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.paginator a {
+    padding: 6px 12px;
+    background: #6366f1;
+    color: white;
+    border-radius: 4px;
+    margin: 0 2px;
+}
+
+.paginator a:hover {
+    background: #4f46e5;
+}
+
+/* Filter sidebar */
+#changelist-filter {
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+}
+
+#changelist-filter h2 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+#changelist-filter h3 {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #64748b;
+    margin: 16px 0 8px;
+}
+
+#changelist-filter ul {
+    margin: 0;
+    padding: 0;
+}
+
+#changelist-filter li {
+    list-style: none;
+    padding: 6px 0;
+}
+
+#changelist-filter a {
+    color: #374151;
+    font-size: 13px;
+}
+
+#changelist-filter li.selected a {
+    color: #6366f1;
+    font-weight: 600;
+}
+
+/* Recent actions */
+#recent-actions-module {
+    border-radius: 12px;
+}
+
+#recent-actions-module h2 {
+    background: #8b5cf6;
+}
+
+/* Messages */
+.messagelist {
+    margin: 16px 24px;
+}
+
+.messagelist li {
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.messagelist li.success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+
+.messagelist li.warning {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+}
+
+.messagelist li.error {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
+
+/* Inline forms */
+.inline-group {
+    margin-top: 20px;
+}
+
+.inline-group h2 {
+    background: #64748b;
+    color: white;
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 12px 12px 0 0;
+    margin: 0;
+}
+
+.inline-related {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+}
+
+.inline-related h3 {
+    background: #f1f5f9;
+    padding: 10px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* Help text */
+.help, .helptext {
+    font-size: 12px;
+    color: #64748b;
+    margin-top: 6px;
+}
+
+/* Error list */
+.errorlist {
+    color: #dc2626;
+    font-size: 13px;
+    margin: 6px 0;
+    padding: 0;
+}
+
+.errorlist li {
+    list-style: none;
+    padding: 4px 0;
+}
+
+/* Calendar and clock widgets */
+.calendarbox, .clockbox {
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    #container {
+        padding: 0 16px;
+    }
+
+    #changelist td, #changelist th {
+        padding: 10px 12px;
+    }
+}
