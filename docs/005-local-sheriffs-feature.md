@@ -1,9 +1,12 @@
 # Feature Ticket #005: Local Sheriffs (Area Administrators)
 
 **Status:** Planned
-**Priority:** High
+**Priority:** CRITICAL
 **Type:** Feature Request
 **Created:** 2024-12-14
+
+> ⚠️ **CRITICAL FEATURE**: Inactivity detection is essential for community networks.
+> Without it, inactive sheriffs block areas and prevent new volunteers from helping.
 
 ---
 
@@ -199,17 +202,20 @@ class SheriffApplication(models.Model):
 
 ## Implementation Phases
 
-### Phase 1: Basic Role System
+### Phase 1: Basic Role System + Inactivity Detection ⭐ HIGH PRIORITY
 - [ ] Create AreaRole model
 - [ ] Add role assignment UI in admin
 - [ ] Permission checks for node management
 - [ ] Basic sheriff dashboard
+- [ ] **Activity tracking from day one** (last_login, last_action timestamps)
+- [ ] **Inactivity indicator in admin** (visual badge: Active/Warning/Inactive)
 
-### Phase 2: Activity Tracking
-- [ ] Create AdminActivity model
-- [ ] Log admin actions
-- [ ] Inactivity warnings (email notifications)
-- [ ] Activity report in admin
+### Phase 2: Automated Inactivity Management ⭐ HIGH PRIORITY
+- [ ] Automatic inactivity detection (configurable: 30/60/90 days)
+- [ ] Email notifications for inactivity warnings
+- [ ] Admin dashboard showing inactive sheriffs
+- [ ] One-click "remove inactive sheriff" action
+- [ ] Auto-demotion option (optional, admin-configurable)
 
 ### Phase 3: Self-Service
 - [ ] Sheriff application system
@@ -217,11 +223,10 @@ class SheriffApplication(models.Model):
 - [ ] Role transfer workflow
 - [ ] Public "areas needing sheriffs" list
 
-### Phase 4: Automation
-- [ ] Automatic inactivity detection
+### Phase 4: Succession & Advanced
+- [ ] Automatic succession to co-admin
 - [ ] Scheduled notifications
-- [ ] Auto-demotion after extended inactivity
-- [ ] Succession automation
+- [ ] Activity reports and analytics
 
 ---
 
