@@ -51,10 +51,13 @@ USE_TZ = True
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en'
 
 LANGUAGES = (
     ('en', _('English')),
+    ('hr', _('Croatian')),
+    ('de', _('German')),
+    ('sl', _('Slovenian')),
 )
 
 LOCALE_PATHS = (
@@ -177,6 +180,7 @@ MIDDLEWARE_CLASSES = (
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.locale.LocaleMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -325,6 +329,7 @@ INSTALLED_APPS += [
     'nodewatcher.modules.frontend.api',
     'nodewatcher.modules.frontend.display',
     'nodewatcher.modules.frontend.editor',
+    'nodewatcher.modules.frontend.landing',
     'nodewatcher.modules.frontend.list',
     'nodewatcher.modules.frontend.mynodes',
     'nodewatcher.modules.frontend.setup',
@@ -629,7 +634,7 @@ NETWORK = {
     'LOGO_FILE': None,
 }
 
-FRONTEND_MAIN_COMPONENT = 'ListComponent'
+FRONTEND_MAIN_COMPONENT = 'LandingComponent'
 
 MENUS = {
     'main_menu': [

@@ -1,0 +1,639 @@
+{% contextblock %}{# Has to be first #}{% endcontextblock %}{% load sekizai_tags i18n %}<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE|default:'hr' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}{{ NETWORK.NAME|default:"Otvorena mreza" }} - {% trans "Free WiFi for everyone" %}{% endblock %}</title>
+
+    <!-- MapLibre GL -->
+    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    {% render_block "css" %}
+    {% render_block "js" %}
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.4);
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        #map { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+
+        .glass {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+        }
+
+        .header {
+            position: fixed; top: 20px; left: 20px; right: 20px; z-index: 100;
+            padding: 16px 24px; display: flex; justify-content: space-between; align-items: center;
+        }
+
+        .logo { display: flex; align-items: center; gap: 12px; }
+        .logo-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px;
+        }
+        .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+        .logo-badge {
+            font-size: 11px; font-weight: 600; background: var(--success);
+            color: var(--bg-primary); padding: 4px 8px; border-radius: 20px; margin-left: 8px;
+        }
+
+        .nav { display: flex; gap: 8px; align-items: center; }
+        .nav-btn {
+            padding: 10px 20px; border: none; background: transparent;
+            color: var(--text-secondary); font-size: 14px; font-weight: 500;
+            cursor: pointer; border-radius: 10px; transition: all 0.2s; text-decoration: none;
+        }
+        .nav-btn:hover { background: rgba(255, 255, 255, 0.05); color: var(--text-primary); }
+        .nav-btn.active { background: var(--accent); color: white; }
+
+        .lang-dropdown {
+            position: relative; margin-left: 16px; padding-left: 16px;
+            border-left: 1px solid var(--border-glass);
+        }
+        .lang-toggle {
+            display: flex; align-items: center; gap: 6px; padding: 8px 14px;
+            background: transparent; border: 1px solid var(--border-glass);
+            border-radius: 8px; color: var(--text-secondary); font-size: 13px;
+            font-weight: 600; cursor: pointer; transition: all 0.2s;
+        }
+        .lang-toggle:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+        .lang-toggle .arrow { font-size: 8px; transition: transform 0.2s; }
+        .lang-dropdown.open .lang-toggle .arrow { transform: rotate(180deg); }
+        .lang-menu {
+            position: absolute; top: 100%; right: 0; margin-top: 8px;
+            background: var(--bg-secondary); border: 1px solid var(--border-glass);
+            border-radius: 10px; padding: 4px; opacity: 0;
+            visibility: hidden; transform: translateY(-10px); transition: all 0.2s;
+            backdrop-filter: blur(20px); z-index: 200;
+        }
+        .lang-dropdown.open .lang-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        .lang-option {
+            display: block; padding: 8px 14px; text-align: center;
+            color: var(--text-secondary); text-decoration: none; border-radius: 6px;
+            font-size: 13px; font-weight: 600; transition: all 0.2s; cursor: pointer;
+            background: none; border: none; width: 100%;
+        }
+        .lang-option:hover { background: rgba(255,255,255,0.05); color: var(--text-primary); }
+        .lang-option.active { background: rgba(99,102,241,0.15); color: var(--accent); }
+
+        .stats-panel {
+            position: fixed; top: 100px; left: 20px; z-index: 100;
+            padding: 24px; width: 280px;
+        }
+        .stats-title {
+            font-size: 12px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--text-muted); margin-bottom: 20px;
+        }
+        .stat-item { margin-bottom: 24px; }
+        .stat-value {
+            font-size: 36px; font-weight: 700; letter-spacing: -1px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .stat-value .pulse {
+            width: 12px; height: 12px; background: var(--success);
+            border-radius: 50%; animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 var(--success-glow); }
+            50% { box-shadow: 0 0 0 10px transparent; }
+        }
+        .stat-label { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
+        .stat-change { font-size: 13px; color: var(--success); margin-top: 4px; }
+        .stat-change.negative { color: var(--danger); }
+
+        .activity-panel {
+            position: fixed; bottom: 20px; left: 20px; z-index: 100;
+            padding: 20px; width: 320px; max-height: 220px;
+        }
+        .activity-title {
+            font-size: 12px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--text-muted); margin-bottom: 16px;
+        }
+        .activity-item {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px 0; border-bottom: 1px solid var(--border-glass);
+        }
+        .activity-item:last-child { border-bottom: none; }
+        .activity-icon {
+            width: 32px; height: 32px; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center; font-size: 14px;
+        }
+        .activity-icon.online { background: rgba(16, 185, 129, 0.15); }
+        .activity-icon.update { background: rgba(99, 102, 241, 0.15); }
+        .activity-icon.offline { background: rgba(239, 68, 68, 0.15); }
+        .activity-text { flex: 1; font-size: 13px; color: var(--text-secondary); }
+        .activity-text strong { color: var(--text-primary); font-weight: 500; }
+        .activity-time { font-size: 12px; color: var(--text-muted); }
+
+        .node-panel {
+            position: fixed; top: 100px; right: 20px; bottom: 20px; z-index: 100;
+            width: 360px; padding: 24px; transform: translateX(400px);
+            transition: transform 0.3s ease; overflow-y: auto;
+        }
+        .node-panel.active { transform: translateX(0); }
+        .node-header { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
+        .node-icon {
+            width: 56px; height: 56px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 28px;
+        }
+        .node-info h2 { font-size: 18px; font-weight: 600; margin-bottom: 4px; }
+        .node-status { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--success); }
+        .node-status.offline { color: var(--danger); }
+        .node-status-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; }
+        .node-status.offline .node-status-dot { background: var(--danger); }
+        .node-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .node-stat {
+            background: rgba(255, 255, 255, 0.02); padding: 16px;
+            border-radius: 12px; border: 1px solid var(--border-glass);
+        }
+        .node-stat-value { font-size: 24px; font-weight: 600; }
+        .node-stat-label { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        .section-title {
+            font-size: 12px; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 1px; color: var(--text-muted); margin-bottom: 12px;
+        }
+        .close-btn {
+            position: absolute; top: 16px; right: 16px; width: 32px; height: 32px;
+            border: none; background: rgba(255, 255, 255, 0.05); color: var(--text-secondary);
+            border-radius: 8px; cursor: pointer; font-size: 18px;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .close-btn:hover { background: rgba(255, 255, 255, 0.1); color: var(--text-primary); }
+
+        .actions { display: flex; gap: 12px; margin-top: 24px; }
+        .btn {
+            flex: 1; padding: 14px 20px; border: none; border-radius: 12px;
+            font-size: 14px; font-weight: 600; cursor: pointer;
+            transition: all 0.2s; text-decoration: none; text-align: center;
+        }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: #5558e3; transform: translateY(-1px); }
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05); color: var(--text-primary);
+            border: 1px solid var(--border-glass);
+        }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.08); }
+
+        .join-cta {
+            position: fixed; bottom: 20px; right: 20px; z-index: 100;
+            padding: 20px 28px; display: flex; align-items: center; gap: 16px;
+        }
+        .join-cta-text { font-size: 15px; }
+        .join-cta-text strong { display: block; font-size: 16px; margin-bottom: 2px; }
+
+        .node-marker {
+            width: 24px; height: 24px; background: var(--success);
+            border: 3px solid var(--bg-primary); border-radius: 50%;
+            cursor: pointer; transition: all 0.2s; box-shadow: 0 0 20px var(--success-glow);
+        }
+        .node-marker:hover { transform: scale(1.3); box-shadow: 0 0 30px var(--success-glow); }
+        .node-marker.warning { background: var(--warning); box-shadow: 0 0 20px rgba(245, 158, 11, 0.4); }
+        .node-marker.offline { background: var(--danger); box-shadow: 0 0 20px rgba(239, 68, 68, 0.4); }
+
+        .loading {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            z-index: 1000; text-align: center;
+        }
+        .loading-spinner {
+            width: 48px; height: 48px; border: 4px solid var(--border-glass);
+            border-top-color: var(--accent); border-radius: 50%;
+            animation: spin 1s linear infinite; margin: 0 auto 16px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 768px) {
+            .stats-panel { top: auto; bottom: 80px; left: 10px; right: 10px; width: auto; padding: 16px; }
+            .stat-item { display: inline-block; margin-right: 24px; margin-bottom: 0; }
+            .stat-value { font-size: 24px; }
+            .activity-panel, .join-cta { display: none; }
+            .node-panel {
+                left: 10px; right: 10px; width: auto; top: auto; bottom: 0;
+                border-radius: 16px 16px 0 0; transform: translateY(100%);
+            }
+            .node-panel.active { transform: translateY(0); }
+            .lang-switch { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <div>{% trans "Loading network..." %}</div>
+    </div>
+
+    <div id="map"></div>
+
+    <header class="header glass">
+        <div class="logo">
+            <div class="logo-icon">&#x1F310;</div>
+            <span class="logo-text">{{ NETWORK.NAME|default:"Otvorena mreza" }}</span>
+            <span class="logo-badge">{% trans "LIVE" %}</span>
+        </div>
+        <nav class="nav">
+            <a class="nav-btn active" href="{% url 'main_page' %}">{% trans "Map" %}</a>
+            <a class="nav-btn" href="{% url 'MapComponent:map' %}">{% trans "Detailed Map" %}</a>
+            <a class="nav-btn" href="{% url 'ListComponent:list' %}">{% trans "Nodes" %}</a>
+            <a class="nav-btn" href="/api/v2/">API</a>
+            <div class="lang-dropdown" id="langDropdown">
+                <button type="button" class="lang-toggle" onclick="toggleLangMenu(event)">
+                    <span>{% if LANGUAGE_CODE == 'hr' %}HR{% elif LANGUAGE_CODE == 'de' %}DE{% elif LANGUAGE_CODE == 'sl' %}SI{% else %}EN{% endif %}</span>
+                    <span class="arrow">▼</span>
+                </button>
+                <div class="lang-menu">
+                    <form action="{% url 'set_language' %}" method="post" id="langForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                        <button type="submit" name="language" value="hr" class="lang-option{% if LANGUAGE_CODE == 'hr' %} active{% endif %}">HR</button>
+                        <button type="submit" name="language" value="en" class="lang-option{% if LANGUAGE_CODE == 'en' %} active{% endif %}">EN</button>
+                        <button type="submit" name="language" value="de" class="lang-option{% if LANGUAGE_CODE == 'de' %} active{% endif %}">DE</button>
+                        <button type="submit" name="language" value="sl" class="lang-option{% if LANGUAGE_CODE == 'sl' %} active{% endif %}">SI</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="stats-panel glass">
+        <div class="stats-title">{% trans "Network Statistics" %}</div>
+        <div class="stat-item">
+            <div class="stat-value">
+                <span id="nodes-online">-</span>
+                <span class="pulse"></span>
+            </div>
+            <div class="stat-label">{% trans "Active nodes" %}</div>
+            <div class="stat-change" id="nodes-change"></div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="nodes-total">-</div>
+            <div class="stat-label">{% trans "Total nodes" %}</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-value" id="links-count">-</div>
+            <div class="stat-label">{% trans "Mesh links" %}</div>
+        </div>
+    </div>
+
+    <div class="activity-panel glass">
+        <div class="activity-title">{% trans "Recent Activity" %}</div>
+        <div id="activity-list">
+            <div class="activity-item">
+                <div class="activity-icon update">&#x1F504;</div>
+                <div class="activity-text">{% trans "Loading..." %}</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="node-panel glass" id="nodePanel">
+        <button class="close-btn" onclick="closeNodePanel()">&times;</button>
+        <div class="node-header">
+            <div class="node-icon">&#x1F4E1;</div>
+            <div class="node-info">
+                <h2 id="nodeName">-</h2>
+                <div class="node-status" id="nodeStatus">
+                    <span class="node-status-dot"></span>
+                    <span id="nodeStatusText">-</span>
+                </div>
+            </div>
+        </div>
+        <div class="node-stats">
+            <div class="node-stat">
+                <div class="node-stat-value" id="nodeType">-</div>
+                <div class="node-stat-label">{% trans "Node type" %}</div>
+            </div>
+            <div class="node-stat">
+                <div class="node-stat-value" id="nodeProject">-</div>
+                <div class="node-stat-label">{% trans "Project" %}</div>
+            </div>
+            <div class="node-stat">
+                <div class="node-stat-value" id="nodeUptime">-</div>
+                <div class="node-stat-label">{% trans "Uptime" %}</div>
+            </div>
+            <div class="node-stat">
+                <div class="node-stat-value" id="nodeClients">-</div>
+                <div class="node-stat-label">{% trans "Clients" %}</div>
+            </div>
+        </div>
+        <div class="actions">
+            <a class="btn btn-secondary" id="nodeDetailsLink" href="#">{% trans "Details" %}</a>
+            <a class="btn btn-primary" id="nodeEditLink" href="#">{% trans "Edit" %}</a>
+        </div>
+    </div>
+
+    <div class="join-cta glass">
+        <div class="join-cta-text">
+            <strong>{% trans "Want to join?" %}</strong>
+            <span>{% trans "Become part of the community" %}</span>
+        </div>
+        <a class="btn btn-primary" href="{% url 'AccountsComponent:registration_register' %}">{% trans "Register" %}</a>
+    </div>
+
+    <script>
+    // Translations object for JavaScript
+    var i18n = {
+        online: "{% trans 'Online' %}",
+        offline: "{% trans 'Offline' %}",
+        unknown: "{% trans 'Unknown' %}",
+        noEvents: "{% trans 'No recent events' %}",
+        networkActive: "{% trans 'Network active' %}",
+        allGood: "{% trans 'All systems operational' %}",
+        nodeOffline: "{% trans 'offline' %}",
+        activity: "{% trans 'activity' %}",
+        node: "{% trans 'Node' %}",
+        sec: "{% trans 'sec' %}",
+        min: "{% trans 'min' %}",
+        h: "{% trans 'h' %}",
+        d: "{% trans 'd' %}"
+    };
+
+    var map, markers = {}, nodes = {}, selectedNodeId = null;
+
+    // Default fallback: Croatia center
+    var defaultCenter = [16.0, 45.5];
+    var defaultZoom = 7;
+
+    function initMap() {
+        map = new maplibregl.Map({
+            container: 'map',
+            style: {
+                version: 8,
+                sources: {
+                    'carto-dark': {
+                        type: 'raster',
+                        tiles: ['https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png'],
+                        tileSize: 256,
+                        attribution: '&copy; OSM &copy; CARTO'
+                    }
+                },
+                layers: [{
+                    id: 'carto-dark-layer', type: 'raster', source: 'carto-dark',
+                    minzoom: 0, maxzoom: 22
+                }]
+            },
+            center: defaultCenter,
+            zoom: defaultZoom
+        });
+        map.addControl(new maplibregl.NavigationControl(), 'bottom-right');
+        map.addControl(new maplibregl.GeolocateControl({
+            positionOptions: { enableHighAccuracy: true },
+            trackUserLocation: false,
+            showUserLocation: true
+        }), 'bottom-right');
+
+        // Try to get user's location
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(pos) {
+                map.flyTo({ center: [pos.coords.longitude, pos.coords.latitude], zoom: 12 });
+            }, function(err) {
+                console.log('Geolocation:', err.message);
+            }, { timeout: 5000 });
+        }
+
+        map.on('load', loadNetworkData);
+    }
+
+    function loadNetworkData() {
+        fetch('/api/v1/stream/?format=json&tags__module=topology&limit=1')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.objects && data.objects.length > 0) {
+                    var streamId = data.objects[0].id;
+                    var ts = Math.floor(new Date(data.objects[0].latest_datapoint).getTime() / 1000);
+                    return fetch('/api/v1/stream/' + streamId + '/?format=json&reverse=true&limit=1&start=' + ts);
+                }
+                throw new Error('No topology');
+            })
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.datapoints && data.datapoints.length > 0) {
+                    processTopologyData(data.datapoints[0].v);
+                }
+            })
+            .catch(function(e) { console.warn('Topology:', e); loadNodesFromAPIv2(); })
+            .finally(function() { document.getElementById('loading').style.display = 'none'; });
+
+        loadStatistics();
+        loadRecentActivity();
+    }
+
+    function processTopologyData(graph) {
+        var onlineCount = 0, bounds = new maplibregl.LngLatBounds(), hasValidBounds = false;
+
+        if (graph.v) {
+            graph.v.forEach(function(v) {
+                var nd = { id: v.i, name: v.n || i18n.unknown, type: v.t || 'unknown', status: 'up',
+                    coords: v.l ? [v.l[0], v.l[1]] : null };
+                nodes[v.i] = nd;
+                if (nd.coords && nd.coords[0] && nd.coords[1]) {
+                    addNodeMarker(nd); bounds.extend(nd.coords); hasValidBounds = true;
+                }
+                onlineCount++;
+            });
+        }
+
+        if (graph.e && map.loaded()) drawLinks(graph.e);
+
+        document.getElementById('nodes-online').textContent = onlineCount;
+        document.getElementById('nodes-total').textContent = Object.keys(nodes).length;
+        document.getElementById('links-count').textContent = graph.e ? graph.e.length : 0;
+
+        if (hasValidBounds) map.fitBounds(bounds, { padding: 100, maxZoom: 14 });
+    }
+
+    function drawLinks(edges) {
+        var features = [];
+        edges.forEach(function(e) {
+            var s = nodes[e.f], t = nodes[e.t];
+            if (s && t && s.coords && t.coords) {
+                features.push({ type: 'Feature', geometry: { type: 'LineString', coordinates: [s.coords, t.coords] }});
+            }
+        });
+        if (features.length > 0) {
+            map.addSource('mesh-links', { type: 'geojson', data: { type: 'FeatureCollection', features: features }});
+            map.addLayer({ id: 'mesh-link-lines', type: 'line', source: 'mesh-links',
+                paint: { 'line-color': '#6366f1', 'line-width': 2, 'line-opacity': 0.4 }});
+        }
+    }
+
+    function loadNodesFromAPIv2() {
+        fetch('/api/v2/node/?format=json&limit=100&fields=config:core.general&fields=config:core.location&fields=config:core.type&fields=monitoring:core.general')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var bounds = new maplibregl.LngLatBounds(), hasValidBounds = false, onlineCount = 0;
+                (data.results || []).forEach(function(node) {
+                    var cfg = node.config || {}, mon = node.monitoring || {};
+                    var gen = cfg['core.general'] || {}, loc = cfg['core.location'] || {}, mg = mon['core.general'] || {};
+                    var coords = loc.geolocation ? loc.geolocation.coordinates : null;
+                    var nd = { id: node['@id'], name: gen.name || i18n.unknown,
+                        type: cfg['core.type'] ? cfg['core.type'].type : 'unknown',
+                        status: mg.status || 'unknown', coords: coords };
+                    nodes[node['@id']] = nd;
+                    if (nd.status === 'up') onlineCount++;
+                    if (coords && coords[0] && coords[1]) {
+                        addNodeMarker(nd); bounds.extend(coords); hasValidBounds = true;
+                    }
+                });
+                document.getElementById('nodes-online').textContent = onlineCount;
+                document.getElementById('nodes-total').textContent = data.count || Object.keys(nodes).length;
+                if (hasValidBounds) map.fitBounds(bounds, { padding: 100, maxZoom: 14 });
+            })
+            .catch(function(e) { console.error('Nodes:', e); });
+    }
+
+    function addNodeMarker(nd) {
+        if (!nd.coords) return;
+        var el = document.createElement('div');
+        el.className = 'node-marker';
+        if (nd.status === 'down' || nd.status === 'offline') el.className += ' offline';
+        else if (nd.status === 'warning') el.className += ' warning';
+        var marker = new maplibregl.Marker({ element: el }).setLngLat(nd.coords).addTo(map);
+        el.addEventListener('click', function() { showNodePanel(nd.id); });
+        markers[nd.id] = marker;
+    }
+
+    function loadStatistics() {
+        fetch('/api/v2/statistics/status/?format=json')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                if (data.results && data.results.length > 0) {
+                    var s = data.results[0];
+                    if (s.up !== undefined) document.getElementById('nodes-online').textContent = s.up;
+                    if (s.down !== undefined) {
+                        var el = document.getElementById('nodes-change');
+                        if (s.down > 0) { el.textContent = s.down + ' ' + i18n.nodeOffline; el.className = 'stat-change negative'; }
+                        else { el.textContent = i18n.allGood; }
+                    }
+                }
+            }).catch(function(e) { console.log('Stats:', e.message); });
+    }
+
+    function loadRecentActivity() {
+        fetch('/api/v2/event/?format=json&limit=5')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var list = document.getElementById('activity-list');
+                list.innerHTML = '';
+                if (data.results && data.results.length > 0) {
+                    data.results.forEach(function(ev) {
+                        var icon = '&#x1F4E1;', cls = 'update';
+                        if (ev.code) {
+                            if (ev.code.indexOf('up') !== -1) { icon = '&#x1F7E2;'; cls = 'online'; }
+                            else if (ev.code.indexOf('down') !== -1) { icon = '&#x1F534;'; cls = 'offline'; }
+                        }
+                        var item = document.createElement('div');
+                        item.className = 'activity-item';
+                        item.innerHTML = '<div class="activity-icon ' + cls + '">' + icon + '</div>' +
+                            '<div class="activity-text"><strong>' + (ev.node_name || i18n.node) + '</strong> ' + (ev.description || i18n.activity) + '</div>' +
+                            '<div class="activity-time">' + formatTimeAgo(ev.timestamp) + '</div>';
+                        list.appendChild(item);
+                    });
+                } else { list.innerHTML = '<div class="activity-item"><div class="activity-text">' + i18n.noEvents + '</div></div>'; }
+            }).catch(function(e) {
+                console.log('Events:', e.message);
+                document.getElementById('activity-list').innerHTML = '<div class="activity-item"><div class="activity-text">' + i18n.networkActive + '</div></div>';
+            });
+    }
+
+    function showNodePanel(nodeId) {
+        selectedNodeId = nodeId;
+        var node = nodes[nodeId];
+        if (!node) return;
+
+        document.getElementById('nodeName').textContent = node.name;
+        document.getElementById('nodeType').textContent = node.type || '-';
+
+        var statusEl = document.getElementById('nodeStatus'), statusText = document.getElementById('nodeStatusText');
+        if (node.status === 'up') { statusEl.className = 'node-status'; statusText.textContent = i18n.online; }
+        else { statusEl.className = 'node-status offline'; statusText.textContent = i18n.offline; }
+
+        fetch('/api/v2/node/' + nodeId + '/?format=json&fields=config:core.project&fields=monitoring:system.status&fields=monitoring:network.clients')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+                var cfg = data.config || {}, mon = data.monitoring || {};
+                var proj = cfg['core.project'];
+                document.getElementById('nodeProject').textContent = proj ? (proj.name || proj.project || '-') : '-';
+                var sys = mon['system.status'];
+                document.getElementById('nodeUptime').textContent = sys && sys.uptime ? formatUptime(sys.uptime) : '-';
+                var cl = mon['network.clients'];
+                document.getElementById('nodeClients').textContent = cl && cl.clients !== undefined ? cl.clients : '-';
+                document.getElementById('nodeDetailsLink').href = '/node/' + nodeId + '/';
+                document.getElementById('nodeEditLink').href = '/node/' + nodeId + '/edit/general/';
+            }).catch(function(e) { console.log('Node:', e.message); });
+
+        document.getElementById('nodePanel').classList.add('active');
+    }
+
+    function closeNodePanel() {
+        document.getElementById('nodePanel').classList.remove('active');
+        selectedNodeId = null;
+    }
+
+    function formatTimeAgo(ts) {
+        if (!ts) return '';
+        var diff = Math.floor((new Date() - new Date(ts)) / 1000);
+        if (diff < 60) return diff + ' ' + i18n.sec;
+        if (diff < 3600) return Math.floor(diff / 60) + ' ' + i18n.min;
+        if (diff < 86400) return Math.floor(diff / 3600) + ' ' + i18n.h;
+        return Math.floor(diff / 86400) + ' ' + i18n.d;
+    }
+
+    function formatUptime(sec) {
+        if (!sec) return '-';
+        var d = Math.floor(sec / 86400), h = Math.floor((sec % 86400) / 3600);
+        if (d > 0) return d + i18n.d + ' ' + h + i18n.h;
+        if (h > 0) return h + i18n.h;
+        return Math.floor(sec / 60) + i18n.min;
+    }
+
+    function toggleLangMenu(e) {
+        e.stopPropagation();
+        document.getElementById('langDropdown').classList.toggle('open');
+    }
+
+    document.addEventListener('click', function(e) {
+        var dropdown = document.getElementById('langDropdown');
+        if (dropdown && !dropdown.contains(e.target)) {
+            dropdown.classList.remove('open');
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', initMap);
+    </script>
+
+    {% render_block "js_end" %}
+</body>
+</html>

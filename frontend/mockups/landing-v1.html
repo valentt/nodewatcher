@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otvorena mreža - Besplatni WiFi za sve</title>
+
+    <!-- MapLibre GL -->
+    <link href="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/maplibre-gl@3.6.2/dist/maplibre-gl.js"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --accent: #6366f1;
+            --accent-glow: rgba(99, 102, 241, 0.4);
+            --success: #10b981;
+            --success-glow: rgba(16, 185, 129, 0.4);
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Map Container */
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* Glass Panel Base */
+        .glass {
+            background: var(--bg-glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            z-index: 100;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-badge {
+            font-size: 11px;
+            font-weight: 600;
+            background: var(--success);
+            color: var(--bg-primary);
+            padding: 4px 8px;
+            border-radius: 20px;
+            margin-left: 8px;
+        }
+
+        .nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+
+        .nav-btn.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Stats Panel */
+        .stats-panel {
+            position: fixed;
+            top: 100px;
+            left: 20px;
+            z-index: 100;
+            padding: 24px;
+            width: 280px;
+        }
+
+        .stats-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            margin-bottom: 24px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            letter-spacing: -1px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .stat-value .pulse {
+            width: 12px;
+            height: 12px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 var(--success-glow); }
+            50% { box-shadow: 0 0 0 10px transparent; }
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .stat-change {
+            font-size: 13px;
+            color: var(--success);
+            margin-top: 4px;
+        }
+
+        /* Activity Panel */
+        .activity-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            z-index: 100;
+            padding: 20px;
+            width: 320px;
+            max-height: 200px;
+        }
+
+        .activity-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .activity-icon.online {
+            background: rgba(16, 185, 129, 0.15);
+        }
+
+        .activity-icon.update {
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        .activity-text {
+            flex: 1;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .activity-text strong {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Node Detail Panel */
+        .node-panel {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            bottom: 20px;
+            z-index: 100;
+            width: 360px;
+            padding: 24px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .node-panel.active {
+            transform: translateX(0);
+        }
+
+        .node-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .node-icon {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, var(--accent), #8b5cf6);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .node-info h2 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .node-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--success);
+        }
+
+        .node-status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+        }
+
+        .node-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .node-stat {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-glass);
+        }
+
+        .node-stat-value {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .node-stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .section-title {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+
+        .neighbor-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            margin-bottom: 8px;
+        }
+
+        .neighbor-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .neighbor-speed {
+            font-size: 13px;
+            color: var(--success);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-primary);
+        }
+
+        /* Action Buttons */
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5558e3;
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--border-glass);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        /* Join CTA */
+        .join-cta {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .join-cta-text {
+            font-size: 15px;
+        }
+
+        .join-cta-text strong {
+            display: block;
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        .join-cta .btn-primary {
+            flex: none;
+            padding: 12px 24px;
+        }
+
+        /* Markers */
+        .node-marker {
+            width: 24px;
+            height: 24px;
+            background: var(--success);
+            border: 3px solid var(--bg-primary);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 0 20px var(--success-glow);
+        }
+
+        .node-marker:hover {
+            transform: scale(1.3);
+            box-shadow: 0 0 30px var(--success-glow);
+        }
+
+        .node-marker.warning {
+            background: var(--warning);
+            box-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+        }
+
+        /* Leaderboard Panel */
+        .leaderboard-panel {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            bottom: 20px;
+            z-index: 100;
+            width: 400px;
+            padding: 24px;
+            transform: translateX(450px);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+
+        .leaderboard-panel.active {
+            transform: translateX(0);
+        }
+
+        .leaderboard-header {
+            margin-bottom: 20px;
+        }
+
+        .leaderboard-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .leaderboard-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .lb-tab {
+            padding: 8px 16px;
+            border: none;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .lb-tab:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .lb-tab.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .leaderboard-list {
+            margin-bottom: 24px;
+        }
+
+        .lb-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            margin-bottom: 8px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .lb-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--border-glass);
+        }
+
+        .lb-item.gold {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 215, 0, 0.02));
+            border-color: rgba(255, 215, 0, 0.2);
+        }
+
+        .lb-item.silver {
+            background: linear-gradient(135deg, rgba(192, 192, 192, 0.1), rgba(192, 192, 192, 0.02));
+            border-color: rgba(192, 192, 192, 0.2);
+        }
+
+        .lb-item.bronze {
+            background: linear-gradient(135deg, rgba(205, 127, 50, 0.1), rgba(205, 127, 50, 0.02));
+            border-color: rgba(205, 127, 50, 0.2);
+        }
+
+        .lb-rank {
+            font-size: 20px;
+            width: 36px;
+            text-align: center;
+        }
+
+        .lb-info {
+            flex: 1;
+        }
+
+        .lb-name {
+            display: block;
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 2px;
+        }
+
+        .lb-subtitle {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .lb-stats {
+            text-align: right;
+        }
+
+        .lb-score {
+            display: block;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .lb-unit {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Achievements */
+        .achievements-section {
+            margin-bottom: 24px;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .achievement {
+            padding: 14px 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border-glass);
+            transition: all 0.2s;
+        }
+
+        .achievement:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .achievement.unlocked {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.05));
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .achievement.locked {
+            opacity: 0.4;
+        }
+
+        .achievement-icon {
+            font-size: 28px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .achievement-name {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .achievement-desc {
+            font-size: 10px;
+            color: var(--text-muted);
+        }
+
+        /* Weekly Challenge */
+        .challenge-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.02));
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .challenge-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .challenge-icon {
+            font-size: 32px;
+        }
+
+        .challenge-name {
+            display: block;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .challenge-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .challenge-progress {
+            margin-bottom: 12px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--success), #34d399);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .progress-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .challenge-reward {
+            font-size: 12px;
+            color: var(--success);
+            padding: 10px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        /* Toggle Button */
+        .lb-toggle {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 99;
+            padding: 12px 20px;
+            border: none;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+
+        .lb-toggle:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .lb-toggle.hidden {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-panel {
+                top: auto;
+                bottom: 80px;
+                left: 10px;
+                right: 10px;
+                width: auto;
+                padding: 16px;
+            }
+
+            .stat-item {
+                display: inline-block;
+                margin-right: 24px;
+                margin-bottom: 0;
+            }
+
+            .stat-value {
+                font-size: 24px;
+            }
+
+            .activity-panel {
+                display: none;
+            }
+
+            .node-panel {
+                left: 10px;
+                right: 10px;
+                width: auto;
+                top: auto;
+                bottom: 0;
+                border-radius: 16px 16px 0 0;
+                transform: translateY(100%);
+            }
+
+            .node-panel.active {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Map -->
+    <div id="map"></div>
+
+    <!-- Header -->
+    <header class="header glass">
+        <div class="logo">
+            <div class="logo-icon">🌐</div>
+            <span class="logo-text">Otvorena mreža</span>
+            <span class="logo-badge">UŽIVO</span>
+        </div>
+        <nav class="nav">
+            <button class="nav-btn active">Karta</button>
+            <button class="nav-btn">Statistika</button>
+            <button class="nav-btn">Čvorovi</button>
+            <button class="nav-btn">API</button>
+        </nav>
+    </header>
+
+    <!-- Stats Panel -->
+    <div class="stats-panel glass">
+        <div class="stats-title">Utjecaj na zajednicu</div>
+
+        <div class="stat-item">
+            <div class="stat-value">
+                <span id="people-count">3.847</span>
+                <span class="pulse"></span>
+            </div>
+            <div class="stat-label">Povezanih korisnika ovaj tjedan</div>
+            <div class="stat-change">↑ 423 novih korisnika</div>
+        </div>
+
+        <div class="stat-item">
+            <div class="stat-value" id="node-count">247</div>
+            <div class="stat-label">Aktivnih točaka</div>
+            <div class="stat-change">↑ 12 novih lokacija</div>
+        </div>
+
+        <div class="stat-item">
+            <div class="stat-value">€14.200</div>
+            <div class="stat-label">Ušteda vs komercijalni ISP</div>
+            <div class="stat-change">Ovaj mjesec</div>
+        </div>
+
+        <div class="stat-item">
+            <div class="stat-value">42 km²</div>
+            <div class="stat-label">Pokrivenost</div>
+        </div>
+    </div>
+
+    <!-- Activity Panel -->
+    <div class="activity-panel glass">
+        <div class="activity-title">Nedavna aktivnost</div>
+
+        <div class="activity-item">
+            <div class="activity-icon online">🟢</div>
+            <div class="activity-text"><strong>kavana-centar</strong> je online</div>
+            <div class="activity-time">2 min</div>
+        </div>
+
+        <div class="activity-item">
+            <div class="activity-icon update">🔄</div>
+            <div class="activity-text"><strong>knjižnica-grad</strong> firmware ažuriran</div>
+            <div class="activity-time">15 min</div>
+        </div>
+
+        <div class="activity-item">
+            <div class="activity-icon online">🎉</div>
+            <div class="activity-text"><strong>dom-kulture</strong> se pridružio mreži</div>
+            <div class="activity-time">1 sat</div>
+        </div>
+    </div>
+
+    <!-- Node Detail Panel -->
+    <div class="node-panel glass" id="nodePanel">
+        <button class="close-btn" onclick="closeNodePanel()">×</button>
+
+        <div class="node-header">
+            <div class="node-icon">📡</div>
+            <div class="node-info">
+                <h2 id="nodeName">Coffee Shop Router</h2>
+                <div class="node-status">
+                    <span class="node-status-dot"></span>
+                    Healthy • Online
+                </div>
+            </div>
+        </div>
+
+        <div class="node-stats">
+            <div class="node-stat">
+                <div class="node-stat-value">156</div>
+                <div class="node-stat-label">People Today</div>
+            </div>
+            <div class="node-stat">
+                <div class="node-stat-value">12</div>
+                <div class="node-stat-label">Online Now</div>
+            </div>
+            <div class="node-stat">
+                <div class="node-stat-value">47 days</div>
+                <div class="node-stat-label">Running Since</div>
+            </div>
+            <div class="node-stat">
+                <div class="node-stat-value">€58</div>
+                <div class="node-stat-label">Saved This Month</div>
+            </div>
+        </div>
+
+        <div class="section-title">Mesh Neighbors</div>
+        <div class="neighbor-item">
+            <span class="neighbor-name">📡 library-main</span>
+            <span class="neighbor-speed">54 Mbps</span>
+        </div>
+        <div class="neighbor-item">
+            <span class="neighbor-name">📡 park-central</span>
+            <span class="neighbor-speed">48 Mbps</span>
+        </div>
+        <div class="neighbor-item">
+            <span class="neighbor-name">📡 city-hall</span>
+            <span class="neighbor-speed">36 Mbps</span>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-secondary">View Details</button>
+            <button class="btn btn-primary">Download Firmware</button>
+        </div>
+    </div>
+
+    <!-- Leaderboard Panel -->
+    <div class="leaderboard-panel glass" id="leaderboardPanel">
+        <div class="leaderboard-header">
+            <div class="leaderboard-title">🏆 Heroji zajednice</div>
+            <div class="leaderboard-tabs">
+                <button class="lb-tab active" onclick="switchTab('hosts')">Top domaćini</button>
+                <button class="lb-tab" onclick="switchTab('nodes')">Top čvorovi</button>
+                <button class="lb-tab" onclick="switchTab('weekly')">Ovaj tjedan</button>
+            </div>
+        </div>
+
+        <div class="leaderboard-list" id="leaderboardList">
+            <div class="lb-item gold">
+                <span class="lb-rank">🥇</span>
+                <div class="lb-info">
+                    <span class="lb-name">Kavana Marko</span>
+                    <span class="lb-subtitle">☕ Dijeli WiFi od 2019.</span>
+                </div>
+                <div class="lb-stats">
+                    <span class="lb-score">12.847</span>
+                    <span class="lb-unit">korisnika</span>
+                </div>
+            </div>
+            <div class="lb-item silver">
+                <span class="lb-rank">🥈</span>
+                <div class="lb-info">
+                    <span class="lb-name">Gradska knjižnica</span>
+                    <span class="lb-subtitle">📚 Znanje + povezanost</span>
+                </div>
+                <div class="lb-stats">
+                    <span class="lb-score">9.234</span>
+                    <span class="lb-unit">korisnika</span>
+                </div>
+            </div>
+            <div class="lb-item bronze">
+                <span class="lb-rank">🥉</span>
+                <div class="lb-info">
+                    <span class="lb-name">Tech Hub</span>
+                    <span class="lb-subtitle">💻 Raj za startupe</span>
+                </div>
+                <div class="lb-stats">
+                    <span class="lb-score">7.891</span>
+                    <span class="lb-unit">korisnika</span>
+                </div>
+            </div>
+            <div class="lb-item">
+                <span class="lb-rank">4</span>
+                <div class="lb-info">
+                    <span class="lb-name">Dom kulture</span>
+                    <span class="lb-subtitle">🏠 Srce kvarta</span>
+                </div>
+                <div class="lb-stats">
+                    <span class="lb-score">5.672</span>
+                    <span class="lb-unit">korisnika</span>
+                </div>
+            </div>
+            <div class="lb-item">
+                <span class="lb-rank">5</span>
+                <div class="lb-info">
+                    <span class="lb-name">Paviljon u parku</span>
+                    <span class="lb-subtitle">🌳 WiFi u prirodi</span>
+                </div>
+                <div class="lb-stats">
+                    <span class="lb-score">4.521</span>
+                    <span class="lb-unit">korisnika</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="achievements-section">
+            <div class="section-title">🎖️ Osvojene značke</div>
+            <div class="achievements-grid">
+                <div class="achievement unlocked">
+                    <span class="achievement-icon">🌅</span>
+                    <span class="achievement-name">Pionir</span>
+                    <span class="achievement-desc">Prvih 10 čvorova</span>
+                </div>
+                <div class="achievement unlocked">
+                    <span class="achievement-icon">🔥</span>
+                    <span class="achievement-name">Vatreni</span>
+                    <span class="achievement-desc">100% uptime 30 dana</span>
+                </div>
+                <div class="achievement unlocked">
+                    <span class="achievement-icon">🤝</span>
+                    <span class="achievement-name">Dobar susjed</span>
+                    <span class="achievement-desc">5+ mesh veza</span>
+                </div>
+                <div class="achievement locked">
+                    <span class="achievement-icon">🦄</span>
+                    <span class="achievement-name">Jednorog</span>
+                    <span class="achievement-desc">10.000 korisnika</span>
+                </div>
+                <div class="achievement locked">
+                    <span class="achievement-icon">🌍</span>
+                    <span class="achievement-name">Promjena svijeta</span>
+                    <span class="achievement-desc">1 TB podijeljeno</span>
+                </div>
+                <div class="achievement locked">
+                    <span class="achievement-icon">⚡</span>
+                    <span class="achievement-name">Brzojav</span>
+                    <span class="achievement-desc">100+ Mbps link</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="challenge-section">
+            <div class="section-title">🎯 Tjedni izazov</div>
+            <div class="challenge-card">
+                <div class="challenge-header">
+                    <span class="challenge-icon">📈</span>
+                    <div class="challenge-info">
+                        <span class="challenge-name">Rast zajednice!</span>
+                        <span class="challenge-desc">Poveži 500 novih korisnika ovaj tjedan</span>
+                    </div>
+                </div>
+                <div class="challenge-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 73%"></div>
+                    </div>
+                    <span class="progress-text">367 / 500 korisnika</span>
+                </div>
+                <div class="challenge-reward">🎁 Nagrada: Posebna značka + Istaknuto na naslovnici!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Leaderboard Toggle Button -->
+    <button class="lb-toggle glass" onclick="toggleLeaderboard()">
+        🏆 Ljestvica
+    </button>
+
+    <!-- Join CTA -->
+    <div class="join-cta glass">
+        <div class="join-cta-text">
+            <strong>Pridruži se mreži</strong>
+            <span>Dodaj svoj router i pomozi širiti besplatni WiFi</span>
+        </div>
+        <button class="btn btn-primary">Započni →</button>
+    </div>
+
+    <script>
+        // Initialize map
+        const map = new maplibregl.Map({
+            container: 'map',
+            style: {
+                version: 8,
+                sources: {
+                    'carto-dark': {
+                        type: 'raster',
+                        tiles: [
+                            'https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
+                            'https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png',
+                            'https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png'
+                        ],
+                        tileSize: 256,
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                    }
+                },
+                layers: [{
+                    id: 'carto-dark-layer',
+                    type: 'raster',
+                    source: 'carto-dark',
+                    minzoom: 0,
+                    maxzoom: 19
+                }]
+            },
+            center: [14.5058, 46.0569], // Ljubljana, Slovenia (wlan slovenija home)
+            zoom: 13,
+            pitch: 0,
+            bearing: 0
+        });
+
+        // Sample nodes (simulated data)
+        const nodes = [
+            { name: 'Coffee Shop Router', lat: 46.0569, lng: 14.5058, status: 'healthy', clients: 12 },
+            { name: 'Library Main', lat: 46.0510, lng: 14.5020, status: 'healthy', clients: 24 },
+            { name: 'City Hall', lat: 46.0515, lng: 14.5065, status: 'healthy', clients: 8 },
+            { name: 'Park Central', lat: 46.0540, lng: 14.5100, status: 'healthy', clients: 6 },
+            { name: 'Community Center', lat: 46.0595, lng: 14.5030, status: 'warning', clients: 15 },
+            { name: 'Train Station', lat: 46.0580, lng: 14.5120, status: 'healthy', clients: 32 },
+            { name: 'University North', lat: 46.0620, lng: 14.5080, status: 'healthy', clients: 45 },
+            { name: 'Tech Hub', lat: 46.0550, lng: 14.4980, status: 'healthy', clients: 28 },
+            { name: 'Market Square', lat: 46.0505, lng: 14.5055, status: 'healthy', clients: 19 },
+            { name: 'Hospital Wing A', lat: 46.0535, lng: 14.5150, status: 'healthy', clients: 22 },
+        ];
+
+        // Add markers
+        map.on('load', () => {
+            nodes.forEach((node, i) => {
+                const el = document.createElement('div');
+                el.className = 'node-marker' + (node.status === 'warning' ? ' warning' : '');
+
+                el.addEventListener('click', () => {
+                    openNodePanel(node);
+                });
+
+                new maplibregl.Marker({ element: el })
+                    .setLngLat([node.lng, node.lat])
+                    .addTo(map);
+            });
+
+            // Draw connections between nearby nodes
+            const connections = [
+                [0, 1], [1, 2], [2, 3], [0, 3], [3, 4], [4, 5], [5, 6], [6, 7], [7, 0], [1, 8], [8, 9]
+            ];
+
+            const lineFeatures = connections.map(([a, b]) => ({
+                type: 'Feature',
+                geometry: {
+                    type: 'LineString',
+                    coordinates: [
+                        [nodes[a].lng, nodes[a].lat],
+                        [nodes[b].lng, nodes[b].lat]
+                    ]
+                }
+            }));
+
+            map.addSource('connections', {
+                type: 'geojson',
+                data: {
+                    type: 'FeatureCollection',
+                    features: lineFeatures
+                }
+            });
+
+            map.addLayer({
+                id: 'connection-lines',
+                type: 'line',
+                source: 'connections',
+                paint: {
+                    'line-color': '#6366f1',
+                    'line-width': 2,
+                    'line-opacity': 0.4
+                }
+            });
+        });
+
+        // Panel functions
+        function openNodePanel(node) {
+            document.getElementById('nodeName').textContent = node.name;
+            document.getElementById('nodePanel').classList.add('active');
+        }
+
+        function closeNodePanel() {
+            document.getElementById('nodePanel').classList.remove('active');
+        }
+
+        // Animate node count
+        function animateCount(el, target) {
+            let current = 0;
+            const step = Math.ceil(target / 50);
+            const interval = setInterval(() => {
+                current += step;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(interval);
+                }
+                el.textContent = current;
+            }, 30);
+        }
+
+        // Animate on load
+        setTimeout(() => {
+            animateCount(document.getElementById('node-count'), 247);
+        }, 500);
+
+        // Leaderboard functions
+        function toggleLeaderboard() {
+            const panel = document.getElementById('leaderboardPanel');
+            const toggle = document.querySelector('.lb-toggle');
+            const nodePanel = document.getElementById('nodePanel');
+
+            // Close node panel if open
+            nodePanel.classList.remove('active');
+
+            panel.classList.toggle('active');
+            toggle.classList.toggle('hidden');
+        }
+
+        function switchTab(tab) {
+            // Update active tab
+            document.querySelectorAll('.lb-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Could update leaderboard content here
+            console.log('Switched to:', tab);
+        }
+
+        // Close leaderboard when clicking map
+        document.getElementById('map').addEventListener('click', (e) => {
+            if (!e.target.closest('.node-marker')) {
+                document.getElementById('leaderboardPanel').classList.remove('active');
+                document.querySelector('.lb-toggle').classList.remove('hidden');
+            }
+        });
+
+        // Achievement unlock animation (demo)
+        function unlockAchievement(name) {
+            // Could show a toast notification
+            console.log('Achievement unlocked:', name);
+        }
+    </script>
+</body>
+</html>

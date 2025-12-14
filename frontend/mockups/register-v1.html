@@ -375,21 +375,17 @@
             position: absolute;
             top: 100%;
             right: 0;
-            left: 0;
             margin-top: 8px;
             background: var(--bg-secondary);
             border: 1px solid var(--border-glass);
             border-radius: 12px;
             padding: 8px;
+            min-width: 160px;
             opacity: 0;
             visibility: hidden;
             transform: translateY(-10px);
             transition: all 0.2s;
             backdrop-filter: blur(20px);
-        }
-
-        .lang-menu form {
-            display: contents;
         }
 
         .lang-dropdown.open .lang-menu {
@@ -399,19 +395,14 @@
         }
 
         .lang-option {
-            display: block;
-            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             padding: 10px 12px;
             color: var(--text-secondary);
             text-decoration: none;
             border-radius: 8px;
             font-size: 14px;
-            font-family: inherit;
-            font-weight: 500;
-            text-align: center;
-            background: transparent;
-            border: none;
-            cursor: pointer;
             transition: all 0.2s;
         }
 
@@ -423,6 +414,10 @@
         .lang-option.active {
             background: rgba(99, 102, 241, 0.15);
             color: var(--accent);
+        }
+
+        .lang-option .flag {
+            font-size: 18px;
         }
 
         .non-field-errors {
@@ -538,19 +533,24 @@
     </a>
 
     <div class="lang-dropdown" id="langDropdown">
-        <button type="button" class="lang-toggle" onclick="toggleLangMenu(event)">
-            <span>{% if LANGUAGE_CODE == 'hr' %}HR{% elif LANGUAGE_CODE == 'de' %}DE{% elif LANGUAGE_CODE == 'sl' %}SI{% else %}EN{% endif %}</span>
+        <button class="lang-toggle" onclick="toggleLangMenu()">
+            <span class="flag">{% if LANGUAGE_CODE == 'hr' %}🇭🇷{% elif LANGUAGE_CODE == 'de' %}🇩🇪{% else %}🇬🇧{% endif %}</span>
+            <span>{% if LANGUAGE_CODE == 'hr' %}Hrvatski{% elif LANGUAGE_CODE == 'de' %}Deutsch{% else %}English{% endif %}</span>
             <span class="arrow">▼</span>
         </button>
         <div class="lang-menu">
-            <form action="{% url 'set_language' %}" method="post" id="langForm">
-                {% csrf_token %}
-                <input type="hidden" name="next" value="{{ request.get_full_path }}">
-                <button type="submit" name="language" value="hr" class="lang-option{% if LANGUAGE_CODE == 'hr' %} active{% endif %}">HR</button>
-                <button type="submit" name="language" value="en" class="lang-option{% if LANGUAGE_CODE == 'en' %} active{% endif %}">EN</button>
-                <button type="submit" name="language" value="de" class="lang-option{% if LANGUAGE_CODE == 'de' %} active{% endif %}">DE</button>
-                <button type="submit" name="language" value="sl" class="lang-option{% if LANGUAGE_CODE == 'sl' %} active{% endif %}">SI</button>
-            </form>
+            <a class="lang-option{% if LANGUAGE_CODE == 'hr' %} active{% endif %}" href="?lang=hr">
+                <span class="flag">🇭🇷</span>
+                <span>Hrvatski</span>
+            </a>
+            <a class="lang-option{% if LANGUAGE_CODE == 'en' %} active{% endif %}" href="?lang=en">
+                <span class="flag">🇬🇧</span>
+                <span>English</span>
+            </a>
+            <a class="lang-option{% if LANGUAGE_CODE == 'de' %} active{% endif %}" href="?lang=de">
+                <span class="flag">🇩🇪</span>
+                <span>Deutsch</span>
+            </a>
         </div>
     </div>
 
@@ -815,8 +815,7 @@
         }
     }
 
-    function toggleLangMenu(event) {
-        event.stopPropagation();
+    function toggleLangMenu() {
         document.getElementById('langDropdown').classList.toggle('open');
     }
 

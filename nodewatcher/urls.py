@@ -10,6 +10,9 @@ from nodewatcher.core.frontend import urls as frontend_urls
 admin.autodiscover()
 
 urlpatterns = [
+    # Language switching.
+    urls.url(r'^i18n/', urls.include('django.conf.urls.i18n')),
+
     # Registry.
     urls.url(r'^registry/', urls.include('nodewatcher.core.registry.urls', namespace='registry', app_name='registry')),
 
