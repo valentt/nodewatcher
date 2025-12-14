@@ -4,254 +4,162 @@
 {% block extrastyle %}
 {{ block.super }}
 <style>
-    /* Dashboard styles */
-    .dashboard-container {
+    /* Clean professional dashboard */
+    .nw-dashboard {
         margin-bottom: 32px;
     }
 
-    .dashboard-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 24px;
+    .nw-header {
+        margin-bottom: 32px;
     }
 
-    .dashboard-header h2 {
-        color: #1e293b;
-        font-size: 24px;
-        font-weight: 700;
+    .nw-header h2 {
+        color: #111;
+        font-size: 28px;
+        font-weight: 600;
+        margin: 0 0 4px 0;
+        letter-spacing: -0.5px;
+    }
+
+    .nw-header p {
+        color: #666;
+        font-size: 14px;
         margin: 0;
     }
 
-    .dashboard-header .subtitle {
-        color: #64748b;
-        font-size: 14px;
-        margin-top: 4px;
-    }
-
-    .dashboard-grid {
+    /* Stats row */
+    .nw-stats {
         display: grid;
         grid-template-columns: repeat(4, 1fr);
-        gap: 20px;
-        margin-bottom: 32px;
+        gap: 16px;
+        margin-bottom: 24px;
     }
 
-    @media (max-width: 1200px) {
-        .dashboard-grid {
-            grid-template-columns: repeat(2, 1fr);
-        }
+    @media (max-width: 900px) {
+        .nw-stats { grid-template-columns: repeat(2, 1fr); }
     }
 
-    @media (max-width: 600px) {
-        .dashboard-grid {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    .stat-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 16px;
-        padding: 24px;
-        color: white;
-        position: relative;
-        overflow: hidden;
-        transition: transform 0.2s, box-shadow 0.2s;
+    .nw-stat {
+        background: #fff;
+        border: 1px solid #e5e5e7;
+        border-radius: 8px;
+        padding: 20px 24px;
         text-decoration: none;
         display: block;
+        transition: border-color 0.15s, box-shadow 0.15s;
     }
 
-    .stat-card::before {
-        content: '';
-        position: absolute;
-        top: -50%;
-        right: -50%;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
+    .nw-stat:hover {
+        border-color: #3b82f6;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
     }
 
-    .stat-card:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
-    }
-
-    .stat-card.nodes { background: linear-gradient(135deg, #10b981 0%, #059669 100%); }
-    .stat-card.projects { background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); }
-    .stat-card.users { background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); }
-    .stat-card.pools { background: linear-gradient(135deg, #ec4899 0%, #db2777 100%); }
-
-    .stat-card .icon {
-        font-size: 32px;
-        margin-bottom: 12px;
-        opacity: 0.9;
-    }
-
-    .stat-card .number {
-        font-size: 42px;
-        font-weight: 700;
-        line-height: 1;
-        margin-bottom: 8px;
-        position: relative;
-    }
-
-    .stat-card .label {
-        font-size: 14px;
-        font-weight: 500;
-        opacity: 0.9;
+    .nw-stat-label {
+        font-size: 12px;
+        font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
+        color: #888;
+        margin-bottom: 8px;
     }
 
-    .quick-actions {
-        background: white;
-        border-radius: 16px;
-        padding: 24px;
-        margin-bottom: 32px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-    }
-
-    .quick-actions h3 {
-        margin: 0 0 20px 0;
-        color: #1e293b;
-        font-size: 16px;
+    .nw-stat-value {
+        font-size: 32px;
         font-weight: 600;
+        color: #111;
+        line-height: 1;
     }
 
-    .action-buttons {
+    /* Actions */
+    .nw-actions {
         display: flex;
         gap: 12px;
         flex-wrap: wrap;
+        margin-bottom: 32px;
+        padding-bottom: 32px;
+        border-bottom: 1px solid #e5e5e7;
     }
 
-    .action-btn {
+    .nw-btn {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
-        padding: 12px 20px;
-        background: #6366f1;
-        color: white !important;
+        gap: 6px;
+        padding: 10px 16px;
+        background: #111;
+        color: #fff !important;
         text-decoration: none !important;
-        border-radius: 10px;
-        font-size: 14px;
+        border-radius: 6px;
+        font-size: 13px;
         font-weight: 500;
-        transition: all 0.2s;
-        border: none;
-        cursor: pointer;
+        transition: background 0.15s;
     }
 
-    .action-btn:hover {
-        background: #4f46e5;
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(99, 102, 241, 0.35);
+    .nw-btn:hover {
+        background: #333;
     }
 
-    .action-btn.secondary {
-        background: #64748b;
+    .nw-btn.primary {
+        background: #3b82f6;
     }
 
-    .action-btn.secondary:hover {
-        background: #475569;
-        box-shadow: 0 6px 20px rgba(100, 116, 139, 0.35);
+    .nw-btn.primary:hover {
+        background: #2563eb;
     }
 
-    .action-btn.success {
-        background: #10b981;
-    }
-
-    .action-btn.success:hover {
-        background: #059669;
-        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
-    }
-
-    .action-btn.warning {
-        background: #f59e0b;
-    }
-
-    .action-btn.warning:hover {
-        background: #d97706;
-        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.35);
-    }
-
-    /* Override default admin module styles on index */
+    /* Full width content */
     #content-main {
-        display: grid;
-        grid-template-columns: 1fr 300px;
-        gap: 24px;
+        display: block !important;
     }
 
-    @media (max-width: 1024px) {
-        #content-main {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    #content-main > .dashboard-container {
-        grid-column: 1 / -1;
-    }
-
+    /* App modules grid */
     .app-list {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 20px;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 16px;
     }
 
+    .app-list .module {
+        margin: 0;
+    }
+
+    /* Hide recent actions on index - it's mostly empty */
     #recent-actions-module {
-        position: sticky;
-        top: 20px;
+        display: none;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="dashboard-container">
-    <div class="dashboard-header">
-        <div>
-            <h2>{% trans "Welcome to Nodewatcher" %}</h2>
-            <p class="subtitle">{% trans "Network management dashboard" %}</p>
-        </div>
+<div class="nw-dashboard">
+    <div class="nw-header">
+        <h2>Network Management</h2>
+        <p>Nodewatcher administration dashboard</p>
     </div>
 
-    <div class="dashboard-grid">
-        <a href="{% url 'admin:core_node_changelist' %}" class="stat-card nodes">
-            <div class="icon">📡</div>
-            <div class="number">{% get_node_count %}</div>
-            <div class="label">{% trans "Nodes" %}</div>
+    <div class="nw-stats">
+        <a href="{% url 'admin:core_node_changelist' %}" class="nw-stat">
+            <div class="nw-stat-label">Nodes</div>
+            <div class="nw-stat-value">{% get_node_count %}</div>
         </a>
-        <a href="{% url 'admin:projects_project_changelist' %}" class="stat-card projects">
-            <div class="icon">📁</div>
-            <div class="number">{% get_project_count %}</div>
-            <div class="label">{% trans "Projects" %}</div>
+        <a href="{% url 'admin:projects_project_changelist' %}" class="nw-stat">
+            <div class="nw-stat-label">Projects</div>
+            <div class="nw-stat-value">{% get_project_count %}</div>
         </a>
-        <a href="{% url 'admin:auth_user_changelist' %}" class="stat-card users">
-            <div class="icon">👥</div>
-            <div class="number">{% get_user_count %}</div>
-            <div class="label">{% trans "Users" %}</div>
+        <a href="{% url 'admin:auth_user_changelist' %}" class="nw-stat">
+            <div class="nw-stat-label">Users</div>
+            <div class="nw-stat-value">{% get_user_count %}</div>
         </a>
-        <a href="{% url 'admin:core_ippool_changelist' %}" class="stat-card pools">
-            <div class="icon">🌐</div>
-            <div class="number">{% get_ip_pool_count %}</div>
-            <div class="label">{% trans "IP Pools" %}</div>
+        <a href="{% url 'admin:core_ippool_changelist' %}" class="nw-stat">
+            <div class="nw-stat-label">IP Pools</div>
+            <div class="nw-stat-value">{% get_ip_pool_count %}</div>
         </a>
     </div>
 
-    <div class="quick-actions">
-        <h3>{% trans "Quick Actions" %}</h3>
-        <div class="action-buttons">
-            <a href="{% url 'admin:projects_project_add' %}" class="action-btn">
-                + {% trans "New Project" %}
-            </a>
-            <a href="{% url 'admin:core_ippool_add' %}" class="action-btn secondary">
-                + {% trans "New IP Pool" %}
-            </a>
-            <a href="{% url 'admin:auth_user_add' %}" class="action-btn warning">
-                + {% trans "New User" %}
-            </a>
-            <a href="/" class="action-btn success" target="_blank">
-                {% trans "View Network Map" %}
-            </a>
-        </div>
+    <div class="nw-actions">
+        <a href="{% url 'admin:projects_project_add' %}" class="nw-btn primary">+ New Project</a>
+        <a href="{% url 'admin:core_ippool_add' %}" class="nw-btn">+ IP Pool</a>
+        <a href="{% url 'admin:auth_user_add' %}" class="nw-btn">+ User</a>
+        <a href="/" class="nw-btn" target="_blank">View Network Map →</a>
     </div>
 </div>
 
