@@ -5,6 +5,29 @@
 
 import os
 
+# Monkey-patch ForeignKey and OneToOneField to have a default on_delete for migrations
+# This is needed because old migrations were written for Django 1.x
+# where on_delete was optional
+from django.db.models import ForeignKey, OneToOneField, CASCADE
+
+_original_fk_init = ForeignKey.__init__
+
+def _patched_fk_init(self, to, on_delete=None, **kwargs):
+    if on_delete is None:
+        on_delete = CASCADE
+    _original_fk_init(self, to, on_delete=on_delete, **kwargs)
+
+ForeignKey.__init__ = _patched_fk_init
+
+_original_o2o_init = OneToOneField.__init__
+
+def _patched_o2o_init(self, to, on_delete=None, **kwargs):
+    if on_delete is None:
+        on_delete = CASCADE
+    _original_o2o_init(self, to, on_delete=on_delete, **kwargs)
+
+OneToOneField.__init__ = _patched_o2o_init
+
 settings_dir = os.path.abspath(os.path.dirname(__file__))
 
 # Dummy function, so that "makemessages" can find strings which should be translated.
@@ -12,6 +35,9 @@ _ = lambda s: s
 
 DEBUG = True
 URL_RESOLVERS_DEBUG = True # Active only when DEBUG is True.
+
+# Default primary key field type for models that don't specify one
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # A tuple that lists people who get code error notifications. When
 # DEBUG=False and a view raises an exception, Django will e-mail these
@@ -203,7 +229,7 @@ LOGOUT_URL = '/account/logout/'
 
 
 def user_url(user):
-    from django.core import urlresolvers
+    from django import urls as urlresolvers
     return urlresolvers.reverse('AccountsComponent:user_page', kwargs={'username': user.username})
 
 ABSOLUTE_URL_OVERRIDES = {
@@ -276,7 +302,7 @@ DEPENDENCY_APPS = [
     'timezone_field',
     'leaflet',
     'django_countries',
-    'registration',
+    'django_registration',
     'rest_framework',
     'rest_framework_gis',
     'django_filters',
@@ -722,7 +748,7 @@ REST_FRAMEWORK = {
     )
 }
 
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
 # Currently only v2 API needs this. Tastypie API provides headers by itself.
 CORS_URLS_REGEX = r'^/api/v2/'
 # API is read-only for now.

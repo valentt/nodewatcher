@@ -39,7 +39,7 @@ class KoruzaLinkMonitor(registration.bases.NodeMonitoringRegistryItem):
     KORUZA link information.
     """
 
-    neighbour = models.ForeignKey(core_models.Node, related_name='+', null=True)
+    neighbour = models.ForeignKey(core_models.Node, on_delete=models.SET_NULL, related_name='+', null=True)
 
     class RegistryMeta:
         registry_id = 'koruza.link'

@@ -1,7 +1,4 @@
-from __future__ import absolute_import, unicode_literals
-
-import urllib
-import urlparse
+from urllib.parse import urlparse
 
 from django import template
 
@@ -17,7 +14,7 @@ register = template.Library()
 
 @register.simple_tag
 def url_add_params(url, **kwargs):
-    r = urlparse.urlparse(url)
+    r = urlparse(url)
     query = QueryDict(r.query, mutable=True)
     try:
         for key, val in kwargs.items():

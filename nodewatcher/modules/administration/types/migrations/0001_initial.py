@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             name='TypeConfig',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('type', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.config', b'core.type#type', max_length=50, null=True, choices=[(b'server', 'Server'), (b'backbone', 'Backbone'), (b'wireless', 'Wireless'), (b'test', 'Test'), (b'mobile', 'Mobile'), (b'dead', 'Dead'), (None, 'Unknown')])),
+                ('type', nodewatcher.core.registry.fields.RegistryChoiceField('node.config', 'core.type#type', max_length=50, null=True, choices=[('server', 'Server'), ('backbone', 'Backbone'), ('wireless', 'Wireless'), ('test', 'Test'), ('mobile', 'Mobile'), ('dead', 'Dead'), (None, 'Unknown')])),
                 ('polymorphic_ctype', models.ForeignKey(related_name='polymorphic_types.typeconfig_set+', editable=False, to='contenttypes.ContentType', null=True)),
                 ('root', models.ForeignKey(related_name='config_types_typeconfig', editable=False, to='core.Node')),
             ],

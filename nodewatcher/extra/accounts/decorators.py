@@ -1,11 +1,10 @@
 import functools
+from urllib import parse
 
 from django import shortcuts
 from django.conf import settings
 from django.contrib import auth, messages
 from django.core import exceptions
-from django.utils import decorators
-from django.utils.six.moves.urllib import parse
 from django.utils.translation import gettext_lazy as _
 
 
@@ -24,7 +23,7 @@ def user_test_required(test_func, message_func=None, message_level_func=lambda u
         decorator_id = id(user_test_required)
 
     def decorator(view_func):
-        @functools.wraps(view_func, assigned=decorators.available_attrs(view_func))
+        @functools.wraps(view_func)
         def _wrapped_view(request, *args, **kwargs):
             if test_func(request.user):
                 return view_func(request, *args, **kwargs)
@@ -65,7 +64,7 @@ def authenticated_required(function=None, message_func=lambda u: _("You have to 
     """
 
     actual_decorator = user_test_required(
-        lambda u: u.is_authenticated(),
+        lambda u: u.is_authenticated,
         message_func=message_func,
         message_level_func=message_level_func,
         redirect_url_func=redirect_url_func,
@@ -89,7 +88,7 @@ def anonymous_required(function=None, message_func=lambda u: _("You should not b
     """
 
     actual_decorator = user_test_required(
-        lambda u: u.is_anonymous(),
+        lambda u: u.is_anonymous,
         message_func=message_func,
         message_level_func=message_level_func,
         redirect_url_func=redirect_url_func,
@@ -102,7 +101,7 @@ def anonymous_required(function=None, message_func=lambda u: _("You should not b
     return actual_decorator
 
 
-def permission_required(perm, function=None, message_func=lambda u: _("You do not have necessary permission to access the previous page.") if u.is_authenticated() else _("You have to be logged in while accessing the previous page. Please login to continue."), message_level_func=lambda u: messages.ERROR, redirect_url_func=lambda u: settings.LOGIN_REDIRECT_URL if u.is_authenticated() else settings.LOGIN_URL, redirect_field_name=auth.REDIRECT_FIELD_NAME, raise_exception=False, obj_func=lambda: None, accept_global_perms=False):
+def permission_required(perm, function=None, message_func=lambda u: _("You do not have necessary permission to access the previous page.") if u.is_authenticated else _("You have to be logged in while accessing the previous page. Please login to continue."), message_level_func=lambda u: messages.ERROR, redirect_url_func=lambda u: settings.LOGIN_REDIRECT_URL if u.is_authenticated else settings.LOGIN_URL, redirect_field_name=auth.REDIRECT_FIELD_NAME, raise_exception=False, obj_func=lambda: None, accept_global_perms=False):
     """
     Decorator for views that checks whether the user has authenticated and has a particular permission enabled, redirecting as
     necessary: if not authenticated to the log-in page, otherwise to the profile page.
@@ -124,7 +123,7 @@ def permission_required(perm, function=None, message_func=lambda u: _("You do no
             perms = perm
 
         # First check if the user is authenticated and has the permissions.
-        if user.is_authenticated():
+        if user.is_authenticated:
             # First check global permissions.
             if accept_global_perms and user.has_perms(perms):
                 return True

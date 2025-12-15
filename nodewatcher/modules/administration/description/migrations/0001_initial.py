@@ -16,8 +16,8 @@ class Migration(migrations.Migration):
             name='DescriptionConfig',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('notes', models.TextField(default=b'', blank=True)),
-                ('url', models.URLField(default=b'', verbose_name='URL', blank=True)),
+                ('notes', models.TextField(default='', blank=True)),
+                ('url', models.URLField(default='', verbose_name='URL', blank=True)),
                 ('polymorphic_ctype', models.ForeignKey(related_name='polymorphic_description.descriptionconfig_set+', editable=False, to='contenttypes.ContentType', null=True)),
                 ('root', models.ForeignKey(related_name='config_description_descriptionconfig', editable=False, to='core.Node')),
             ],

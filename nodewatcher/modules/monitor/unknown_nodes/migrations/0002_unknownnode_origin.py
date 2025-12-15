@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='unknownnode',
             name='origin',
-            field=models.CharField(default=b'unknown', max_length=20, choices=[(b'push', 'Push'), (b'unknown', 'Unknown')]),
+            field=models.CharField(default='unknown', max_length=20, choices=[('push', 'Push'), ('unknown', 'Unknown')]),
         ),
     ]

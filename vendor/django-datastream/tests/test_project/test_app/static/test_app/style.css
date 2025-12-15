@@ -1,0 +1,42 @@
+body {
+    font: 13px Verdana,Geneva,sans-serif;
+    color: #333333;
+    text-align: left;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+}
+
+p, ol, ul, blockquote, pre, code {
+    line-height: 1.5em;
+    margin-bottom: 1.5em;
+}
+
+h1 {
+    font-size: 2em;
+    line-height: 0.75em;
+}
+
+h2 {
+    font-size: 1.5em;
+    line-height: 1.0em;
+}
+
+#content {
+    width: 100%;
+}
+
+a {
+    color: steelblue;
+}
+
+a:not(:hover) {
+    text-decoration: none;
+}
+
+pre, code, textarea {
+    font-family: "Lucida Console",Monaco,monospace;
+}
+
+.chart {
+    margin: 20px 0;
+}

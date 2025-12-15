@@ -23,28 +23,18 @@ RUN apt-get update && \
 # Install Python package dependencies (do not use pip install -r here!)
 ADD ./requirements.txt /code/requirements.txt
 ADD ./requirements-readthedocs.txt /code/requirements-readthedocs.txt
+ADD ./vendor /code/vendor
 RUN pip install --upgrade pip wheel && \
     pip install "setuptools<58" && \
     sed -i 's/^-r.*$//g' /code/requirements.txt && \
     cat /code/requirements-readthedocs.txt /code/requirements.txt | grep -v '^#' | grep -v '^$' | while read pkg; do \
         CPLUS_INCLUDE_PATH=/usr/include/gdal C_INCLUDE_PATH=/usr/include/gdal pip install "$pkg" || true; \
     done && \
-    cd /tmp && \
-    apt-get update && apt-get install -y --no-install-recommends curl && \
-    curl -L https://files.pythonhosted.org/packages/source/d/datastream/datastream-0.5.19.tar.gz -o datastream-0.5.19.tar.gz && \
-    tar xzf datastream-0.5.19.tar.gz && \
-    cd datastream-0.5.19 && \
-    sed -i "s/pytz>=2012h/pytz>=2012/" setup.py && \
-    find . -name "*.py" -exec sed -i "s/except \\([A-Za-z]*\\), \\([a-z]*\\):/except \\1 as \\2:/g" {} \; && \
-    pip install --no-build-isolation . && \
-    cd /tmp && rm -rf datastream* && \
-    git clone https://github.com/wlanslovenija/django-datastream.git && \
-    cd django-datastream && \
-    git checkout a54a2e735950c5c31ec71613750bdf1ce194389f && \
-    sed -i "s/pytz>=2012h/pytz>=2012/" setup.py && \
-    find . -name "*.py" -exec sed -i "s/except \\([A-Za-z]*\\), \\([a-z]*\\):/except \\1 as \\2:/g" {} \; && \
-    pip install --no-build-isolation --no-deps . && \
-    cd / && rm -rf /tmp/django-datastream
+    pip install /code/vendor/datastream && \
+    pip install --no-deps /code/vendor/django-datastream && \
+    # Fix grako for Python 3.10+ (collections.Mapping -> collections.abc.Mapping)
+    sed -i 's/from collections import defaultdict, Mapping/from collections import defaultdict\nfrom collections.abc import Mapping/' /usr/local/lib/python*/dist-packages/grako/grammars.py && \
+    sed -i 's/from collections import Mapping/from collections.abc import Mapping/' /usr/local/lib/python*/dist-packages/grako/contexts.py 2>/dev/null || true
 
 # Remove unneeded build-time dependencies
 RUN apt-get purge python3-dev build-essential -y && \

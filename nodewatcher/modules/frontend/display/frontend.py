@@ -1,4 +1,4 @@
-from django.conf import urls
+from django.urls import re_path
 from django.utils.translation import gettext_lazy as _
 
 from guardian import shortcuts
@@ -12,7 +12,7 @@ class DisplayComponent(components.FrontendComponent):
     @classmethod
     def get_urls(cls):
         return super(DisplayComponent, cls).get_urls() + [
-            urls.url(r'^node/(?P<pk>[^/]+)/$', views.DisplayNode.as_view(), name='node'),
+            re_path(r'^node/(?P<pk>[^/]+)/$', views.DisplayNode.as_view(), name='node'),
         ]
 
 components.pool.register(DisplayComponent)

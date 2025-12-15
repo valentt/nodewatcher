@@ -1,5 +1,6 @@
 from django import http, shortcuts
-from django.core import urlresolvers, exceptions
+from django import urls as urlresolvers
+from django.core import exceptions
 from django.views import generic
 
 from rest_framework import filters, viewsets, permissions

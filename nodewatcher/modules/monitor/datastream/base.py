@@ -13,9 +13,14 @@ class StreamsMeta(type):
         if classname == "StreamsBase":
             return type.__new__(cls, classname, bases, attrs)
 
-        # Create the actual class
+        # Create the actual class - preserve required attributes for Python 3.6+
         module = attrs.pop("__module__")
-        new_class = type.__new__(cls, classname, bases, {"__module__": module})
+        new_attrs = {"__module__": module}
+        if "__classcell__" in attrs:
+            new_attrs["__classcell__"] = attrs.pop("__classcell__")
+        if "__qualname__" in attrs:
+            new_attrs["__qualname__"] = attrs.pop("__qualname__")
+        new_class = type.__new__(cls, classname, bases, new_attrs)
         new_class._shared_fields = collections.OrderedDict()
 
         from . import fields
@@ -50,12 +55,10 @@ class StreamsMeta(type):
         return new_class
 
 
-class StreamsBase(object):
+class StreamsBase(object, metaclass=StreamsMeta):
     """
     A base class for all streams descriptors.
     """
-
-    __metaclass__ = StreamsMeta
 
     def __init__(self, model):
         """

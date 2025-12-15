@@ -512,7 +512,7 @@ def network(node, cfg):
                     port = port.split('.')[0]
                     used_ports.add(int(port[3:]))
 
-                for port_base in xrange(10):
+                for port_base in range(10):
                     if port_base not in used_ports:
                         break
                 else:

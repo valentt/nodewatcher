@@ -4,7 +4,7 @@ import operator
 import uuid
 
 from django.contrib.auth import models as auth_models
-from django.core import urlresolvers
+from django import urls as urlresolvers
 from django.utils import timezone
 
 from guardian import shortcuts
@@ -297,7 +297,7 @@ class CoreAPITest(test.RegistryAPITestCase):
             ('monitoring', 'core.general', 'last_seen'),
         ]
 
-        for num_fields in xrange(1, len(test_cases) + 1):
+        for num_fields in range(1, len(test_cases) + 1):
             for fields in zip(itertools.permutations(test_cases, num_fields), itertools.product(*itertools.repeat([True, False], num_fields))):
                 ordering = ','.join(['%s%s:%s__%s' % (('-' if field[1] else '',) + field[0]) for field in zip(*fields)])
                 nodes_by_order_key = self.nodes.values()

@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='descriptionconfig',
             name='notes',
-            field=models.TextField(default=b'', help_text='The notes field is private and is shown only to node maintainers.', blank=True),
+            field=models.TextField(default='', help_text='The notes field is private and is shown only to node maintainers.', blank=True),
         ),
     ]

@@ -1,6 +1,3 @@
-import six
-import types
-
 from django.db.models import deletion
 
 
@@ -32,8 +29,8 @@ class PolymorphicCollector(deletion.Collector):
             concrete_model_objs[concrete_model].setdefault(model, [])
             concrete_model_objs[concrete_model][model].append(obj)
 
-        for concrete_model, model_objs in six.iteritems(concrete_model_objs):
-            for model, objs in six.iteritems(model_objs):
+        for concrete_model, model_objs in concrete_model_objs.items():
+            for model, objs in model_objs.items():
                 instances = self.data.setdefault(model, set())
                 for obj in objs:
                     if obj not in instances:
@@ -68,8 +65,8 @@ class PolymorphicCollector(deletion.Collector):
             concrete_model_objs[concrete_model].setdefault(model, [])
             concrete_model_objs[concrete_model][model].append(obj)
 
-        for concrete_model, model_objs in six.iteritems(concrete_model_objs):
-            for model, objs in six.iteritems(model_objs):
+        for concrete_model, model_objs in concrete_model_objs.items():
+            for model, objs in model_objs.items():
                 self.field_updates.setdefault(
                     model, {}
                 ).setdefault(
@@ -111,13 +108,13 @@ class PolymorphicCollector(deletion.Collector):
             concrete_model_objs[concrete_model].setdefault(model, [])
             concrete_model_objs[concrete_model][model].append(obj)
 
-        for concrete_model, model_objs in six.iteritems(concrete_model_objs):
+        for concrete_model, model_objs in concrete_model_objs.items():
             if not keep_parents:
                 parent_objs = []
-                for model, new_objs in six.iteritems(model_objs):
+                for model, new_objs in model_objs.items():
                     # Recursively collect concrete model's parent models, but not their
                     # related objects. These will be found by meta.get_all_related_objects()
-                    for ptr in six.itervalues(concrete_model._meta.parents):
+                    for ptr in concrete_model._meta.parents.values():
                         if ptr:
                             # FIXME: This seems to be buggy and execute a query for each
                             # parent object fetch. We have the parent data in the obj,
@@ -126,15 +123,15 @@ class PolymorphicCollector(deletion.Collector):
                             parent_objs += [getattr(obj, ptr.name) for obj in new_objs]
                 if parent_objs:
                     self.collect(parent_objs, source=model,
-                                 source_attr=ptr.rel.related_name,
+                                 source_attr=ptr.remote_field.related_name,
                                  collect_related=False,
                                  reverse_dependency=True)
 
             if collect_related:
-                for model, new_objs in six.iteritems(model_objs):
+                for model, new_objs in model_objs.items():
                     for related in deletion.get_candidate_relations_to_delete(model._meta):
                         field = related.field
-                        if field.rel.on_delete == deletion.DO_NOTHING:
+                        if field.remote_field.on_delete == deletion.DO_NOTHING:
                             continue
                         batches = self.get_del_batches(new_objs, field)
                         for batch in batches:
@@ -142,25 +139,23 @@ class PolymorphicCollector(deletion.Collector):
                             if self.can_fast_delete(sub_objs, from_field=field):
                                 self.fast_deletes.append(sub_objs)
                             elif sub_objs:
-                                field.rel.on_delete(self, field, sub_objs, self.using)
-                    for field in model._meta.virtual_fields:
+                                field.remote_field.on_delete(self, field, sub_objs, self.using)
+                    # Note: virtual_fields was removed in Django 2.0+, use private_fields instead
+                    for field in getattr(model._meta, 'private_fields', getattr(model._meta, 'virtual_fields', [])):
                         if hasattr(field, 'bulk_related_objects'):
                             # Its something like generic foreign key.
                             sub_objs = field.bulk_related_objects(new_objs, self.using)
                             self.collect(sub_objs,
                                          source=model,
-                                         source_attr=field.rel.related_name,
+                                         source_attr=field.remote_field.related_name,
                                          nullable=True)
 
 
 # Monkey-patch the collector class.
+# In Python 3, we can just assign the function directly to the class attribute
 for method_name in ('add', 'add_field_update', 'collect'):
     setattr(
         deletion.Collector,
         method_name,
-        types.MethodType(
-            getattr(PolymorphicCollector, method_name).im_func,
-            None,
-            deletion.Collector
-        )
+        getattr(PolymorphicCollector, method_name)
     )

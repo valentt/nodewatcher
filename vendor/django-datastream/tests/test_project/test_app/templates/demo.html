@@ -1,0 +1,27 @@
+{% load staticfiles %}<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <title>Datastream Test</title>
+        <link rel="stylesheet" type="text/css" href="{% static "test_app/style.css" %}" media="screen"/>
+        <script type="text/javascript" src="{% static "datastream/jquery/jquery.js" %}"></script>
+        <script type="text/javascript" src="{% static "datastream/underscore/underscore.js" %}"></script>
+        <script type="text/javascript" src="{% static "datastream/moment/moment.js" %}"></script>
+        <script type="text/javascript" src="{% static "datastream/async/async.js" %}"></script>
+        <script type="text/javascript" src="{% static "datastream/assert/assert.js" %}"></script>
+        <script type="text/javascript" src="{% static "datastream/highstock/highstock.js" %}"></script>
+        <script type="text/javascript" src="{% static "datastream/highstock/highcharts-more.js" %}"></script>
+        <script type="text/javascript" src="{% static "datastream/highstock/highcharts-legend-yaxis.js" %}"></script>
+        <script type="text/javascript" src="{% static "datastream/highstock/exporting.js" %}"></script>
+        <script type="text/javascript" src="{% static "datastream/js/datastream.js" %}"></script>
+        <script type="text/javascript" src="{% static "test_app/code.js" %}"></script>
+    </head>
+    <body>
+        <div id="content">
+            <h1>Datastream Test</h1>
+            <div id="charts">
+                <p class="loading">Loading...</p>
+            </div>
+        </div>
+    </body>
+</html>

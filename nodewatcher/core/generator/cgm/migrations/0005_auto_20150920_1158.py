@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='mobileinterfaceconfig',
             name='device',
-            field=nodewatcher.core.registry.fields.RegistryChoiceField(b'node.config', b'core.interfaces#mobile_device', default=b'ppp0', max_length=50, choices=[(b'ppp0', 'PPP over USB0'), (b'qmi0', 'QMI over USB0')]),
+            field=nodewatcher.core.registry.fields.RegistryChoiceField('node.config', 'core.interfaces#mobile_device', default='ppp0', max_length=50, choices=[('ppp0', 'PPP over USB0'), ('qmi0', 'QMI over USB0')]),
         ),
     ]

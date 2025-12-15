@@ -70,7 +70,7 @@ class UserAuthenticationKey(AuthenticationKey):
     Defines user-specific authentication keys that may be configured on nodes.
     """
 
-    user = models.ForeignKey(auth_models.User, related_name='authentication_keys')
+    user = models.ForeignKey(auth_models.User, on_delete=models.CASCADE, related_name='authentication_keys')
 
 
 class PublicKeyAuthenticationConfig(cgm_models.AuthenticationConfig):
@@ -78,7 +78,7 @@ class PublicKeyAuthenticationConfig(cgm_models.AuthenticationConfig):
     Public key authentication mechanism configuration.
     """
 
-    public_key = models.ForeignKey(UserAuthenticationKey)
+    public_key = models.ForeignKey(UserAuthenticationKey, on_delete=models.CASCADE)
 
     class RegistryMeta(cgm_models.AuthenticationConfig.RegistryMeta):
         registry_name = _("Public Key")

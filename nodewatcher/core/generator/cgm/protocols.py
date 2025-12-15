@@ -95,12 +95,10 @@ class WirelessProtocolMetaclass(type):
         return new_class
 
 
-class WirelessProtocol(object):
+class WirelessProtocol(object, metaclass=WirelessProtocolMetaclass):
     """
     Wireless protocol descriptor.
     """
-
-    __metaclass__ = WirelessProtocolMetaclass
 
     channels = ()
     widths = ()
@@ -297,7 +295,7 @@ class IEEE80211BGN(IEEE80211BG):
     )
     bitrates = tuple([
         Bitrate('ht-mcs-%d' % index, _("HT MCS %d") % index, index, rate_set='802.11n')
-        for index in xrange(0, 32)
+        for index in range(0, 32)
     ])
 
 
@@ -395,7 +393,7 @@ class IEEE80211AN(IEEE80211A):
     )
     bitrates = tuple([
         Bitrate('ht-mcs-%d' % index, _("HT MCS %d") % index, index, rate_set='802.11n')
-        for index in xrange(0, 32)
+        for index in range(0, 32)
     ])
 
 
@@ -437,5 +435,5 @@ class IEEE80211AC(IEEE80211A):
     )
     bitrates = tuple([
         Bitrate('ht-mcs-%d' % index, _("HT MCS %d") % index, index, rate_set='802.11n')
-        for index in xrange(0, 32)
+        for index in range(0, 32)
     ])

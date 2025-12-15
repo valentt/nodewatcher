@@ -203,7 +203,7 @@ class MaintenanceDownsample(monitor_processors.NetworkProcessor):
         workers = self.get_worker_pool()
         num_workers = workers._processes
         self.logger.info("Downsampling streams with %d workers..." % num_workers)
-        for worker in xrange(num_workers):
+        for worker in range(num_workers):
             results.append(workers.apply_async(_maintenance_downsample_worker, [worker, num_workers]))
 
         for result in results:

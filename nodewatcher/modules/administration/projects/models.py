@@ -12,7 +12,7 @@ class SSID(models.Model):
     Network identitiy of a specific project.
     """
 
-    project = models.ForeignKey('Project', related_name='ssids')
+    project = models.ForeignKey('Project', on_delete=models.CASCADE, related_name='ssids')
     purpose = models.CharField(max_length=50)
     default = models.BooleanField(default=False)
     bssid = registry_fields.MACAddressField(null=True, blank=True, verbose_name=_("BSSID"))
@@ -65,6 +65,7 @@ class Project(models.Model):
     # Default pool.
     default_ip_pool = models.ForeignKey(
         'core.IpPool',
+        on_delete=models.SET_NULL,
         related_name='+',
         verbose_name=_("Default IP pool"),
         null=True,

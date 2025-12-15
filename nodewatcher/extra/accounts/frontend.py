@@ -1,5 +1,5 @@
-from django.core import urlresolvers
-from django.conf import urls
+from django import urls as urlresolvers
+from django.urls import re_path, include
 from django.contrib import auth
 from django.utils import http
 
@@ -13,8 +13,8 @@ class AccountsComponent(components.FrontendComponent):
     @classmethod
     def get_urls(cls):
         return super(AccountsComponent, cls).get_urls() + [
-            urls.url(r'account/', urls.include('nodewatcher.extra.accounts.urls')),
-            urls.url(r'^user/(?P<username>[\w.@+-]+)/$', views.user, name='user_page'),
+            re_path(r'account/', include('nodewatcher.extra.accounts.urls')),
+            re_path(r'^user/(?P<username>[\w.@+-]+)/$', views.user, name='user_page'),
         ]
 
 components.pool.register(AccountsComponent)
@@ -38,12 +38,12 @@ def logout_url(menu_entry, context):
 components.menus.get_menu('accounts_menu').add(components.MenuEntry(
     label=components.ugettext_lazy("Profile"), weight=-100,
     url=lambda menu_entry, context: urlresolvers.reverse('AccountsComponent:user_page', kwargs={'username': context['request'].user.get_username()}),
-    visible=lambda menu_entry, request, context: request.user.is_authenticated(),
+    visible=lambda menu_entry, request, context: request.user.is_authenticated,
 ))
 components.menus.get_menu('accounts_menu').add(components.MenuEntry(
     label=components.ugettext_lazy("Logout"), weight=100,
     url=logout_url,
-    visible=lambda menu_entry, request, context: request.user.is_authenticated(),
+    visible=lambda menu_entry, request, context: request.user.is_authenticated,
 ))
 
 
@@ -64,10 +64,10 @@ def login_url(menu_entry, context):
 components.menus.get_menu('accounts_menu').add(components.MenuEntry(
     label=components.ugettext_lazy("Login"),
     url=login_url,
-    visible=lambda menu_entry, request, context: request.user.is_anonymous(),
+    visible=lambda menu_entry, request, context: request.user.is_anonymous,
 ))
 components.menus.get_menu('accounts_menu').add(components.MenuEntry(
     label=components.ugettext_lazy("Register"),
     url=urlresolvers.reverse_lazy('AccountsComponent:registration_register'),
-    visible=lambda menu_entry, request, context: request.user.is_anonymous(),
+    visible=lambda menu_entry, request, context: request.user.is_anonymous,
 ))

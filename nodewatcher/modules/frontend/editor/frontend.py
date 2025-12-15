@@ -1,5 +1,5 @@
-from django.conf import urls
-from django.core import urlresolvers
+from django.urls import re_path
+from django import urls as urlresolvers
 
 from nodewatcher.core.frontend import components
 
@@ -10,10 +10,10 @@ class EditorComponent(components.FrontendComponent):
     @classmethod
     def get_urls(cls):
         return super(EditorComponent, cls).get_urls() + [
-            urls.url(r'^my/nodes/new/$', views.NewNode.as_view(), name='new'),
-            urls.url(r'^node/(?P<pk>[^/]+)/edit/$', views.EditNode.as_view(), name='edit'),
-            urls.url(r'^node/(?P<pk>[^/]+)/reset/$', views.ResetNode.as_view(), name='reset'),
-            urls.url(r'^node/(?P<pk>[^/]+)/remove/$', views.RemoveNode.as_view(), name='remove'),
+            re_path(r'^my/nodes/new/$', views.NewNode.as_view(), name='new'),
+            re_path(r'^node/(?P<pk>[^/]+)/edit/$', views.EditNode.as_view(), name='edit'),
+            re_path(r'^node/(?P<pk>[^/]+)/reset/$', views.ResetNode.as_view(), name='reset'),
+            re_path(r'^node/(?P<pk>[^/]+)/remove/$', views.RemoveNode.as_view(), name='remove'),
         ]
 
 components.pool.register(EditorComponent)

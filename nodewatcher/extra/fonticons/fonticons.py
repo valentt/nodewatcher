@@ -105,7 +105,7 @@ class FontIcons(object):
             raise KeyError("Identifier already used")
 
         if not character:
-            for c in xrange(CHARACTER_ALLOCATION_START, CHARACTER_ALLOCATION_END):
+            for c in range(CHARACTER_ALLOCATION_START, CHARACTER_ALLOCATION_END):
                 if c not in self._characters:
                     character = c
                     break

@@ -1,7 +1,7 @@
 from django import db
 from django.core import exceptions as core_exceptions
 from django.contrib.auth import models as auth_models
-from django.core import urlresolvers
+from django import urls as urlresolvers
 from django.db.migrations import exceptions as migrations_exceptions
 from django.views import generic
 

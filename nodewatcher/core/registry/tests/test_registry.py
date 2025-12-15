@@ -36,7 +36,7 @@ class RegistryTestCase(django_test.TransactionTestCase):
         from .registry_tests import models
 
         # Create some things and some registry items for each thing
-        for i in xrange(100):
+        for i in range(100):
             thing = models.Thing(foo='hello', bar=i)
             thing.save()
 
@@ -224,7 +224,7 @@ class RegistryTestCase(django_test.TransactionTestCase):
         ordered_choices = ['level-x', 'level-a', 'level-m']
         ordered_pks = []
 
-        for i in xrange(30):
+        for i in range(30):
             thing = models.Thing(foo='hello', bar=i)
             thing.save()
 

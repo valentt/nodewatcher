@@ -1,4 +1,4 @@
-from django.core import urlresolvers
+from django import urls as urlresolvers
 
 from rest_framework import fields, relations
 

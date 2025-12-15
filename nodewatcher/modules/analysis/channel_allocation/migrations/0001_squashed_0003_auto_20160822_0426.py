@@ -8,7 +8,7 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [(b'channel_allocation', '0001_initial'), (b'channel_allocation', '0002_remove_nodechannel_channel_width'), (b'channel_allocation', '0003_auto_20160822_0426')]
+    replaces = [('channel_allocation', '0001_initial'), ('channel_allocation', '0002_remove_nodechannel_channel_width'), ('channel_allocation', '0003_auto_20160822_0426')]
 
     initial = True
 

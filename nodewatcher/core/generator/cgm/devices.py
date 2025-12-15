@@ -512,12 +512,10 @@ class DeviceMetaclass(type):
         return new_class
 
 
-class DeviceBase(object):
+class DeviceBase(object, metaclass=DeviceMetaclass):
     """
     An abstract device hardware descriptor.
     """
-
-    __metaclass__ = DeviceMetaclass
 
     port_map = {}
     drivers = {}

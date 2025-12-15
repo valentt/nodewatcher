@@ -1,5 +1,4 @@
 from django.contrib.auth import models as auth_models
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 from nodewatcher.core import models as core_models
@@ -14,7 +13,7 @@ class SerializedEvent(models.Model):
     severity = models.IntegerField()
     source_name = models.CharField(max_length=200)
     source_type = models.CharField(max_length=200)
-    record = JSONField(null=True)
+    record = models.JSONField(null=True)
 
     class Meta:
         abstract = True

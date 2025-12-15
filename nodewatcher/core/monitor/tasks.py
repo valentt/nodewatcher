@@ -1,6 +1,6 @@
 from django.db import transaction
 
-from celery.task import task as celery_task
+from celery import shared_task as celery_task
 
 from . import processors as monitor_processors, worker as monitor_worker
 from .config import config as monitor_config

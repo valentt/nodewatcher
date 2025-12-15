@@ -171,7 +171,7 @@ class ExpressionParser(Parser):
 
         def block0():
             self._REGISTRY_ID_ATOM_()
-        self._positive_closure(block0, prefix=sep0)
+        self._positive_closure(block0, sep=sep0)
 
     @graken()
     def _REGISTRY_ID_ATOM_(self):
@@ -191,7 +191,7 @@ class ExpressionParser(Parser):
 
         def block0():
             self._FIELD_()
-        self._positive_closure(block0, prefix=sep0)
+        self._positive_closure(block0, sep=sep0)
 
     @graken()
     def _FIELD_(self):
@@ -213,7 +213,7 @@ class ExpressionParser(Parser):
 
         def block0():
             self._constraint_()
-        self._positive_closure(block0, prefix=sep0)
+        self._positive_closure(block0, sep=sep0)
 
     @graken()
     def _constraint_(self):
@@ -296,7 +296,7 @@ class ExpressionParser(Parser):
 
         def block0():
             self._CONSTANT_()
-        self._positive_closure(block0, prefix=sep0)
+        self._positive_closure(block0, sep=sep0)
 
     @graken()
     def _distance_(self):

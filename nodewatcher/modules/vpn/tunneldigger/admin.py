@@ -12,18 +12,14 @@ class TunneldiggerServerChildAdmin(polymorphic_admin.PolymorphicChildModelAdmin)
 
 class TunneldiggerServerAdmin(polymorphic_admin.PolymorphicParentModelAdmin):
     base_model = models.TunneldiggerServer
-    child_models = [
-        (models.TunneldiggerServer, TunneldiggerServerChildAdmin),
-    ]
+    child_models = [models.TunneldiggerServer]
     list_display = ('name', 'address', 'ports', 'enabled')
 
 # In case projects module is installed, we support per-project server configuration.
 if apps.is_installed('nodewatcher.modules.administration.projects'):
     class PerProjectTunneldiggerServerAdmin(TunneldiggerServerChildAdmin):
-        pass
+        base_model = models.PerProjectTunneldiggerServer
 
-    TunneldiggerServerAdmin.child_models.append(
-        (models.PerProjectTunneldiggerServer, PerProjectTunneldiggerServerAdmin)
-    )
+    TunneldiggerServerAdmin.child_models.append(models.PerProjectTunneldiggerServer)
 
 admin.site.register(models.TunneldiggerServer, TunneldiggerServerAdmin)

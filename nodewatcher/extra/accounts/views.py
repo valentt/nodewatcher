@@ -3,11 +3,10 @@ from django.conf import settings
 from django.contrib import auth, messages
 from django.contrib.auth import models as auth_models, views as auth_views
 from django.contrib.sites import shortcuts as sites_shortcuts
-from django.core import urlresolvers
+from django import urls as urlresolvers
 from django.utils.translation import gettext_lazy as _
 
-from registration import models as registration_models
-from registration.backends.model_activation import views as registration_views
+from django_registration.backends.activation import views as registration_views
 
 from . import decorators, forms, utils
 
@@ -62,7 +61,7 @@ def account(request):
     If the user changes their e-mail address her account is inactivated and they gets an activation e-mail.
     """
 
-    assert request.user.is_authenticated()
+    assert request.user.is_authenticated
 
     if request.method == 'POST':
         stored_user = get_user_copy(request.user)
@@ -73,26 +72,11 @@ def account(request):
             objs = form.save()
             messages.success(request, _("Your account has been successfully updated."), fail_silently=True)
 
-            old_email = stored_user.email
-            new_email = request.user.email
-
-            if old_email == new_email:
-                # The last element is user profile object.
-                return shortcuts.redirect(objs[-1])
-            else:
-                site = sites_shortcuts.get_current_site(request)
-
-                request.user.is_active = False
-                request.user.save()
-
-                # Creates a new activation key.
-                registration_models.RegistrationProfile.objects.filter(user=request.user).delete()
-                registration_profile = registration_models.RegistrationProfile.objects.create_profile(request.user)
-                registration_profile.send_activation_email(site, email_change=True)
-
-                url = urlresolvers.reverse('AccountsComponent:email_change_complete')
-
-                return logout_redirect(request, next_page=url)
+            # The last element is user profile object.
+            # Note: Email change re-activation was removed as RegistrationProfile
+            # is no longer available in modern django-registration.
+            # TODO: Implement proper email verification if required.
+            return shortcuts.redirect(objs[-1])
         else:
             # Restore user request object as it is changed by form.is_valid.
             request.user = stored_user
@@ -105,20 +89,27 @@ def account(request):
     return shortcuts.render(request, 'users/account.html', {'form': form})
 
 
-def logout_redirect(request, *args, **kwargs):
+def logout_redirect(request, next_page=None, redirect_field_name=auth.REDIRECT_FIELD_NAME):
     """
     Logs out the user and redirects them to the log-in page or elsewhere, as specified.
 
-    A wrapper around `django.contrib.auth.views.logout` view which prefers redirect to
-    the `LOGIN_URL` instead of rendering the template.
+    Logs out the user directly and redirects to the appropriate page.
     """
 
-    kwargs.setdefault('redirect_field_name', auth.REDIRECT_FIELD_NAME)
-    # We prefer redirect but explicit None for next_page makes it behave as the official logout view.
-    redirect_field_name = kwargs.get('redirect_field_name')
-    kwargs.setdefault('next_page', request.POST.get(redirect_field_name) or request.GET.get(redirect_field_name) or settings.LOGIN_URL)
+    auth.logout(request)
 
-    return auth_views.logout(request, *args, **kwargs)
+    if next_page is None:
+        next_page = request.POST.get(redirect_field_name) or request.GET.get(redirect_field_name) or settings.LOGIN_URL
+
+    return shortcuts.redirect(next_page)
+
+
+class LoginView(auth_views.LoginView):
+    """
+    Login view that uses our custom authentication form.
+    """
+
+    authentication_form = forms.AuthenticationForm
 
 
 @decorators.anonymous_required
@@ -126,10 +117,10 @@ def login(request, *args, **kwargs):
     """
     Displays the login form and handles the login action.
 
-    A wrapper around `django.contrib.auth.views.login` view which uses our authentication form.
+    A wrapper around Django's LoginView which uses our authentication form.
     """
 
-    assert request.user.is_anonymous()
+    assert request.user.is_anonymous
 
     kwargs.setdefault('authentication_form', forms.AuthenticationForm)
-    return auth_views.login(request, *args, **kwargs)
+    return LoginView.as_view(**kwargs)(request)

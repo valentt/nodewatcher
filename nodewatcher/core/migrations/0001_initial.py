@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             name='IpPool',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('family', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.config', b'core.interfaces.network#ip_family', max_length=50, choices=[(b'ipv4', 'IPv4'), (b'ipv6', 'IPv6')])),
+                ('family', nodewatcher.core.registry.fields.RegistryChoiceField('node.config', 'core.interfaces.network#ip_family', max_length=50, choices=[('ipv4', 'IPv4'), ('ipv6', 'IPv6')])),
                 ('network', models.CharField(max_length=50)),
                 ('prefix_length', models.IntegerField()),
                 ('status', models.IntegerField(default=0, editable=False)),
@@ -54,14 +54,14 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('router_id', models.CharField(max_length=100, editable=False)),
-                ('rid_family', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.config', b'core.routerid#family', max_length=50, editable=False, choices=[(b'ipv4', 'IPv4'), (b'ipv6', 'IPv6')])),
+                ('rid_family', nodewatcher.core.registry.fields.RegistryChoiceField('node.config', 'core.routerid#family', max_length=50, editable=False, choices=[('ipv4', 'IPv4'), ('ipv6', 'IPv6')])),
             ],
         ),
         migrations.CreateModel(
             name='AllocatedIpRouterIdConfig',
             fields=[
                 ('routeridconfig_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='core.RouterIdConfig')),
-                ('family', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.config', b'core.interfaces.network#ip_family', max_length=50, choices=[(b'ipv4', 'IPv4'), (b'ipv6', 'IPv6')])),
+                ('family', nodewatcher.core.registry.fields.RegistryChoiceField('node.config', 'core.interfaces.network#ip_family', max_length=50, choices=[('ipv4', 'IPv4'), ('ipv6', 'IPv6')])),
                 ('prefix_length', models.IntegerField(default=27)),
                 ('subnet_hint', nodewatcher.core.registry.fields.IPAddressField(host_required=True, null=True, blank=True)),
                 ('allocation', models.ForeignKey(related_name='allocations_core_allocatediprouteridconfig', on_delete=django.db.models.deletion.PROTECT, editable=False, to='core.IpPool', null=True)),

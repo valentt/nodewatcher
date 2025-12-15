@@ -1,6 +1,6 @@
 import uuid
 
-from django.core import urlresolvers
+from django import urls as urlresolvers
 
 from rest_framework import status
 
@@ -40,7 +40,7 @@ class BuildResultAPITest(test.RegistryAPITestCase):
 
         # Create some build results.
         self.build_results = []
-        for i in xrange(10):
+        for i in range(10):
             build_result = generator_models.BuildResult(
                 # We generate UUIDs so that they are nicely in sequence so that
                 # default REST API ordering does not really change the order.
@@ -59,7 +59,7 @@ class BuildResultAPITest(test.RegistryAPITestCase):
 
         # Also create some build results for another user.
         self.different_build_results = []
-        for i in xrange(10):
+        for i in range(10):
             build_result = generator_models.BuildResult(
                 # Node for user 1 is node 1.
                 user=self.users[1],

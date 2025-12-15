@@ -24,7 +24,7 @@ class Migration(migrations.Migration):
                 ('internal_for', models.CharField(max_length=100, null=True, editable=False)),
                 ('internal_id', models.CharField(max_length=100, null=True, editable=False)),
                 ('url', models.URLField(verbose_name='URL', blank=True)),
-                ('polarization', models.CharField(max_length=20, choices=[(b'horizontal', 'Horizontal'), (b'vertical', 'Vertical'), (b'circular', 'Circular'), (b'dual', 'Dual')])),
+                ('polarization', models.CharField(max_length=20, choices=[('horizontal', 'Horizontal'), ('vertical', 'Vertical'), ('circular', 'Circular'), ('dual', 'Dual')])),
                 ('angle_horizontal', models.IntegerField(default=360, verbose_name='Horizontal angle')),
                 ('angle_vertical', models.IntegerField(default=360, verbose_name='Vertical angle')),
                 ('gain', models.IntegerField(verbose_name='Gain (dBi)')),

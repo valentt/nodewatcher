@@ -95,8 +95,14 @@ class NodeEventRecordMeta(type):
             return type.__new__(cls, classname, bases, attrs)
 
         # Create the actual class
+        # Preserve __module__ and __classcell__ for Python 3.6+ compatibility
         module = attrs.pop("__module__")
-        new_class = type.__new__(cls, classname, bases, {"__module__": module})
+        new_attrs = {"__module__": module}
+        if "__classcell__" in attrs:
+            new_attrs["__classcell__"] = attrs.pop("__classcell__")
+        if "__qualname__" in attrs:
+            new_attrs["__qualname__"] = attrs.pop("__qualname__")
+        new_class = type.__new__(cls, classname, bases, new_attrs)
         new_class._attributes = collections.OrderedDict()
 
         # Ensure that source_name and source_type are set
@@ -135,12 +141,10 @@ class NodeEventRecordMeta(type):
         return new_class
 
 
-class NodeEventRecord(events_base.EventRecord):
+class NodeEventRecord(events_base.EventRecord, metaclass=NodeEventRecordMeta):
     """
     Base class for node event records.
     """
-
-    __metaclass__ = NodeEventRecordMeta
 
     source_name = None
     source_type = None

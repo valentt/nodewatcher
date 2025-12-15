@@ -3,7 +3,6 @@ import uuid
 
 from django import dispatch
 from django.contrib.auth import models as auth_models
-from django.contrib.postgres.fields import JSONField
 from django.core import exceptions as django_exceptions
 from django.db.models import signals as django_signals
 from django.db import models
@@ -113,11 +112,12 @@ class Builder(models.Model):
     )
     version = models.ForeignKey(
         BuildVersion,
+        on_delete=models.CASCADE,
         related_name='builders',
         blank=True,
         editable=False,
     )
-    metadata = JSONField(
+    metadata = models.JSONField(
         default=dict,
         blank=True,
         editable=False,
@@ -255,23 +255,27 @@ class BuildResult(models.Model):
     )
     user = models.ForeignKey(
         auth_models.User,
+        on_delete=models.CASCADE,
         help_text=_('User that requested this firmware build.'),
     )
     node = models.ForeignKey(
         core_models.Node,
+        on_delete=models.CASCADE,
         help_text=_('Node this firmware build is for.'),
     )
-    config = JSONField(
+    config = models.JSONField(
         default=dict,
         blank=True,
         help_text=_('Configuration used to build this firmware.'),
     )
     build_channel = models.ForeignKey(
         BuildChannel,
+        on_delete=models.CASCADE,
         help_text=_('Firmware build channel used.'),
     )
     builder = models.ForeignKey(
         Builder,
+        on_delete=models.CASCADE,
         help_text=_('Firmware builder host used.'),
     )
     build_log = models.TextField(
@@ -322,6 +326,7 @@ class BuildResultFile(models.Model):
     )
     result = models.ForeignKey(
         BuildResult,
+        on_delete=models.CASCADE,
         related_name='files',
     )
     file = models.FileField(

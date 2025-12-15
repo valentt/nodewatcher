@@ -13,9 +13,8 @@ class Signal(dispatch.Signal):
         Class constructor.
         """
 
-        # Always include an argument containing the current platform configuration.
-        providing_args = kwargs.setdefault('providing_args', [])
-        providing_args.append('cfg')
+        # Remove providing_args if passed (no longer supported in Django 4.0+)
+        kwargs.pop('providing_args', None)
 
         super(Signal, self).__init__(**kwargs)
 

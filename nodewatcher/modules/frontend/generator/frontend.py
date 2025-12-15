@@ -1,5 +1,5 @@
-from django.conf import urls
-from django.core import urlresolvers
+from django.urls import re_path
+from django import urls as urlresolvers
 
 from nodewatcher.core.api import urls as api_urls
 from nodewatcher.core.frontend import components
@@ -11,10 +11,10 @@ class GeneratorComponent(components.FrontendComponent):
     @classmethod
     def get_urls(cls):
         return super(GeneratorComponent, cls).get_urls() + [
-            urls.url(r'^node/(?P<pk>[^/]+)/generate_firmware/$', views.GenerateFirmware.as_view(), name='generate_firmware'),
+            re_path(r'^node/(?P<pk>[^/]+)/generate_firmware/$', views.GenerateFirmware.as_view(), name='generate_firmware'),
 
-            urls.url(r'^my/builds/$', views.ListBuilds.as_view(), name='list_builds'),
-            urls.url(r'^my/builds/(?P<pk>[^/]+)/$', views.ViewBuild.as_view(), name='view_build'),
+            re_path(r'^my/builds/$', views.ListBuilds.as_view(), name='list_builds'),
+            re_path(r'^my/builds/(?P<pk>[^/]+)/$', views.ViewBuild.as_view(), name='view_build'),
         ]
 
 components.pool.register(GeneratorComponent)
@@ -30,7 +30,7 @@ components.menus.get_menu('node_menu').add(components.MenuEntry(
 components.menus.get_menu('accounts_menu').add(components.MenuEntry(
     label=components.ugettext_lazy("My Firmware Builds"),
     url=urlresolvers.reverse_lazy('GeneratorComponent:list_builds'),
-    visible=lambda menu_entry, request, context: request.user.is_authenticated(),
+    visible=lambda menu_entry, request, context: request.user.is_authenticated,
 ))
 
 components.partials.register(components.Partial('generator_view_build_partial'))

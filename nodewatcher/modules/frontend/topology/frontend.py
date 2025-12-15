@@ -1,4 +1,4 @@
-from django.core import urlresolvers
+from django import urls as urlresolvers
 
 from nodewatcher.core.frontend import components
 

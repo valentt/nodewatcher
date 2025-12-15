@@ -1,4 +1,4 @@
-from django.conf import urls
+from django.urls import re_path
 
 from nodewatcher.core.frontend import components
 
@@ -17,7 +17,7 @@ class LandingComponent(components.FrontendComponent):
     @classmethod
     def get_urls(cls):
         return [
-            urls.url(r'^old/$', views.OldHomepage.as_view(), name='old'),
+            re_path(r'^old/$', views.OldHomepage.as_view(), name='old'),
         ]
 
 components.pool.register(LandingComponent)

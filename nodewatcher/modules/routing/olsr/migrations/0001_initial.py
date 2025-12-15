@@ -26,7 +26,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('packageconfig_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='cgm.PackageConfig')),
                 ('port', models.IntegerField(default=2006)),
-                ('allowed_host', nodewatcher.core.registry.fields.IPAddressField(default=b'127.0.0.1', help_text='IP of host that is allowed to connect to txtinfo feed.', host_required=True, verbose_name='Allowed host')),
+                ('allowed_host', nodewatcher.core.registry.fields.IPAddressField(default='127.0.0.1', help_text='IP of host that is allowed to connect to txtinfo feed.', host_required=True, verbose_name='Allowed host')),
             ],
             options={
                 'ordering': ['id'],

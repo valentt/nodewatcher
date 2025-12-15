@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
             name='TunneldiggerInterfaceConfig',
             fields=[
                 ('interfaceconfig_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='cgm.InterfaceConfig')),
-                ('routing_protocols', nodewatcher.core.registry.fields.RegistryMultipleChoiceField(blank=True, default=[], null=True, regpoint=b'node.config', enum_id=b'core.interfaces#routing_protocol', size=None)),
+                ('routing_protocols', nodewatcher.core.registry.fields.RegistryMultipleChoiceField(blank=True, default=[], null=True, regpoint='node.config', enum_id='core.interfaces#routing_protocol', size=None)),
                 ('mac', nodewatcher.core.registry.fields.MACAddressField(auto_add=True, max_length=17)),
             ],
             options={

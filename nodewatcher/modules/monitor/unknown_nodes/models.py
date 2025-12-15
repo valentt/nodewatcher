@@ -1,4 +1,3 @@
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
@@ -21,5 +20,5 @@ class UnknownNode(models.Model):
     first_seen = models.DateTimeField(auto_now_add=True)
     last_seen = models.DateTimeField(auto_now=True)
     ip_address = models.GenericIPAddressField(null=True, unpack_ipv4=True)
-    certificate = JSONField(null=True)
+    certificate = models.JSONField(null=True)
     origin = models.CharField(max_length=20, choices=ORIGIN_CHOICES, default=UNKNOWN)

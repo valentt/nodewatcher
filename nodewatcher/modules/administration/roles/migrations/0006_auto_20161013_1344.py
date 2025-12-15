@@ -21,6 +21,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='roleconfig',
             name='roles',
-            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[(b'system', 'System node'), (b'border-router', 'Border router'), (b'vpn-server', 'VPN server'), (b'redundancy-required', 'Node with redundant links requirement')], max_length=50), blank=True, default=list, enum_id=b'core.roles#roles', null=True, regpoint=b'node.config', size=None),
+            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[('system', 'System node'), ('border-router', 'Border router'), ('vpn-server', 'VPN server'), ('redundancy-required', 'Node with redundant links requirement')], max_length=50), blank=True, default=list, enum_id='core.roles#roles', null=True, regpoint='node.config', size=None),
         ),
     ]

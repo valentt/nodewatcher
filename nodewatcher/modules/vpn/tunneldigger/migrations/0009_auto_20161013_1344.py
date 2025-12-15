@@ -16,11 +16,11 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='tunneldiggerbrokerconfig',
             name='routing_protocols',
-            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[(b'olsr', 'OLSR'), (b'babel', 'Babel')], max_length=50), blank=True, default=list, enum_id=b'core.interfaces#routing_protocol', null=True, regpoint=b'node.config', size=None),
+            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[('olsr', 'OLSR'), ('babel', 'Babel')], max_length=50), blank=True, default=list, enum_id='core.interfaces#routing_protocol', null=True, regpoint='node.config', size=None),
         ),
         migrations.AlterField(
             model_name='tunneldiggerinterfaceconfig',
             name='routing_protocols',
-            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[(b'olsr', 'OLSR'), (b'babel', 'Babel')], max_length=50), blank=True, default=list, enum_id=b'core.interfaces#routing_protocol', null=True, regpoint=b'node.config', size=None),
+            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[('olsr', 'OLSR'), ('babel', 'Babel')], max_length=50), blank=True, default=list, enum_id='core.interfaces#routing_protocol', null=True, regpoint='node.config', size=None),
         ),
     ]

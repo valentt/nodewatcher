@@ -679,7 +679,7 @@ def prepare_forms(context):
                     form_count = context.user_form_count
 
                     # Generate the right amount of forms.
-                    for index in xrange(form_count):
+                    for index in range(form_count):
                         # Generate form prefix.
                         form_prefix = context.base_prefix + '_mu_' + str(index)
 

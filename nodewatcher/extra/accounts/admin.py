@@ -1,10 +1,11 @@
 from django import forms as django_forms
-from django.core import urlresolvers
+from django import urls as urlresolvers
 from django.contrib import admin
 from django.contrib.admin import widgets
 from django.contrib.auth import admin as auth_admin, models as auth_models
 from django.db.models.fields import reverse_related
-from django.utils import html, translation
+from django.utils import html
+from django.utils.text import format_lazy
 from django.utils.translation import gettext_lazy as _
 
 from guardian import shortcuts
@@ -98,9 +99,9 @@ class GroupAdminForm(django_forms.ModelForm):
             verbose_name=_("users"),
             is_stacked=False,
         ),
-        help_text=translation.string_concat(
+        help_text=format_lazy(
+            "{} {}",
             _("Members of this group."),
-            " ",
             _("Hold down \"Control\", or \"Command\" on a Mac, to select more than one."),
         )
     )

@@ -1,5 +1,5 @@
 from django import http
-from django.core import urlresolvers
+from django import urls as urlresolvers
 from django.views import generic
 
 from rest_framework import viewsets, filters

@@ -8,10 +8,10 @@ class AccountsConfig(apps.AppConfig):
     label = 'accounts'
 
     def create_profiles(self, **kwargs):
-        management.call_command('createprofiles', **kwargs)
+        management.call_command('createprofiles')
 
     def assign_default_permissions(self, **kwargs):
-        management.call_command('assigndefaultpermissions', **kwargs)
+        management.call_command('assigndefaultpermissions')
 
     def ready(self):
         super(AccountsConfig, self).ready()

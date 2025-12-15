@@ -11,7 +11,7 @@ class PartialEntries(list):
     pass
 
 
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def get_partial(context, partial_name):
     try:
         partial = PartialEntries([entry.add_context(context) for entry in components.partials.get_partial(partial_name).entries if entry.is_visible(context['request'], context)])

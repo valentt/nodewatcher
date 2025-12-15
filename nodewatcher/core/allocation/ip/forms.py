@@ -35,7 +35,7 @@ class IpAddressAllocatorFormMixin(object):
             self.fields['prefix_length'] = registry_forms.RegistryChoiceFormField(
                 label=_("Prefix Length"),
                 choices=fields.BLANK_CHOICE_DASH + [
-                    (plen, '/%s' % plen) for plen in xrange(pool.prefix_length_minimum, pool.prefix_length_maximum + 1)
+                    (plen, '/%s' % plen) for plen in range(pool.prefix_length_minimum, pool.prefix_length_maximum + 1)
                 ],
                 initial=pool.prefix_length_default,
                 coerce=int,

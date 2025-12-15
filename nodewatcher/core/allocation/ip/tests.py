@@ -2,7 +2,7 @@ import datetime
 import multiprocessing
 import unittest
 
-from django.core import urlresolvers
+from django import urls as urlresolvers
 from django.db import transaction, connection
 
 from nodewatcher.core.registry.api import test as api_test

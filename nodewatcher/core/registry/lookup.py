@@ -121,7 +121,7 @@ class RegistryQuerySet(django_models.QuerySet):
 
         try:
             field = self.model._meta.get_field(base_alias)
-        except django_models.FieldDoesNotExist:
+        except django_exceptions.FieldDoesNotExist:
             for f in self.model._meta.virtual_fields:
                 field = f
                 if field.name == base_alias:
@@ -256,7 +256,7 @@ class RegistryQuerySet(django_models.QuerySet):
             select_name = name
             # Since the field is populated by a join, it can always be null when the model doesn't exist
             field.null = True
-            field.contribute_to_class(clone.model, name, virtual_only=True)
+            field.contribute_to_class(clone.model, name, private_only=True)
             field.concrete = False
 
             if field.is_relation:
@@ -337,7 +337,7 @@ class RegistryQuerySet(django_models.QuerySet):
                 field = fields.RegistryMultipleRelationField(dst_model, related_field=dst_field_name, queryset=dst_queryset)
                 field.src_model = dst_model
                 field.src_field = dst_field_name
-                field.contribute_to_class(clone.model, field_name, virtual_only=True)
+                field.contribute_to_class(clone.model, field_name, private_only=True)
                 field.concrete = False
                 clone = clone.prefetch_related(django_models.Prefetch(field_name, queryset=dst_queryset))
                 continue
@@ -349,7 +349,7 @@ class RegistryQuerySet(django_models.QuerySet):
                 # Add proxy attributes so that the field can be used in filter.
                 field.src_model = dst_model
                 field.src_field = None
-                field.contribute_to_class(clone.model, field_name, virtual_only=True)
+                field.contribute_to_class(clone.model, field_name, private_only=True)
                 field.concrete = False
                 clone = clone.prefetch_related(django_models.Prefetch(field_name, queryset=dst_queryset))
                 continue
@@ -367,7 +367,7 @@ class RegistryQuerySet(django_models.QuerySet):
                 clone = clone.extra(select={select_name: src_column})
             else:
                 # Traverse the relation and copy the destination field descriptor.
-                dst_field_model = dst_field.rel.to
+                dst_field_model = dst_field.remote_field.model
                 dst_related_field = dst_field_model._meta.get_field(dst_related)
 
                 # TODO: Support arbitrary chain of relations

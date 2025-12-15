@@ -363,7 +363,7 @@ class FormState(dict):
 
             # Create a virtual reverse relation in the parent object.
             virtual_relation = getattr(parent, '_registry_virtual_relation', {})
-            desc = getattr(parent.__class__, cls._registry.item_parent_field.rel.related_name)
+            desc = getattr(parent.__class__, cls._registry.item_parent_field.remote_field.related_name)
             items_container = virtual_relation.setdefault(desc, [])
             parent._registry_virtual_relation = virtual_relation
 
@@ -424,7 +424,7 @@ class FormState(dict):
 
         try:
             if parent is not None:
-                return getattr(parent, cls._registry.item_parent_field.rel.related_name)[index]
+                return getattr(parent, cls._registry.item_parent_field.remote_field.related_name)[index]
             else:
                 return self[cls._registry.registry_id][index]
         except (KeyError, IndexError):

@@ -2,8 +2,6 @@ import datetime
 
 from django.utils import timezone
 
-from tastypie import resources
-
 from django_datastream import urls as datastream_urls
 
 from nodewatcher.core.api import urls as api_urls
@@ -12,11 +10,8 @@ from nodewatcher.core.registry import exceptions as registry_exceptions
 
 
 def register_resource(resource):
-    # We have to make a resource which is namespaced for resource_uri to be correctly generated.
-    class Resource(resources.NamespacedModelMixin, resource.__class__):
-        pass
-
-    api_urls.v1_api.register(Resource())
+    # Register the resource directly - NamespacedModelMixin was removed from modern tastypie
+    api_urls.v1_api.register(resource)
 
 for resource in datastream_urls.v1_api._registry.values():
     register_resource(resource)

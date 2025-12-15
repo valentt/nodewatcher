@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             name='KoruzaNetworkMeasurementConfig',
             fields=[
                 ('packageconfig_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='cgm.PackageConfig')),
-                ('role', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.config', b'irnas.koruza.netmeasure#role', default=b'primary', max_length=50, choices=[(b'primary', 'Primary'), (b'secondary', 'Secondary')])),
+                ('role', nodewatcher.core.registry.fields.RegistryChoiceField('node.config', 'irnas.koruza.netmeasure#role', default='primary', max_length=50, choices=[('primary', 'Primary'), ('secondary', 'Secondary')])),
             ],
             options={
                 'ordering': ['display_order', 'id'],

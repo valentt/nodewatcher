@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             name='RoleConfig',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('roles', nodewatcher.core.registry.fields.RegistryMultipleChoiceField(blank=True, default=[], null=True, regpoint=b'node.config', enum_id=b'core.roles#roles', size=None)),
+                ('roles', nodewatcher.core.registry.fields.RegistryMultipleChoiceField(blank=True, default=[], null=True, regpoint='node.config', enum_id='core.roles#roles', size=None)),
                 ('polymorphic_ctype', models.ForeignKey(related_name='polymorphic_roles.roleconfig_set+', editable=False, to='contenttypes.ContentType', null=True)),
                 ('root', models.ForeignKey(related_name='config_roles_roleconfig', editable=False, to='core.Node')),
             ],

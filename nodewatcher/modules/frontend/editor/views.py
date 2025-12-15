@@ -1,5 +1,6 @@
 from django import http
-from django.core import exceptions, urlresolvers
+from django import urls as urlresolvers
+from django.core import exceptions
 from django.db import transaction
 from django.views import generic
 

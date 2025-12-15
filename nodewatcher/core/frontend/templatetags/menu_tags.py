@@ -11,7 +11,7 @@ class MenuEntries(list):
     pass
 
 
-@register.assignment_tag(takes_context=True)
+@register.simple_tag(takes_context=True)
 def get_menu(context, menu_name):
     try:
         menu = MenuEntries([

@@ -47,7 +47,7 @@ class RelatedModel(models.Model):
 
 class DoubleChildRegistryItem(ChildRegistryItem):
     another = models.IntegerField(null=True, default=17)
-    related = models.ForeignKey(RelatedModel, null=True)
+    related = models.ForeignKey(RelatedModel, on_delete=models.SET_NULL, null=True)
 
     class RegistryMeta(ChildRegistryItem.RegistryMeta):
         lookup_proxies = ['another']

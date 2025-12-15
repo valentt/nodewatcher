@@ -1,4 +1,3 @@
-from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 from polymorphic import base as polymorphic_base, models as polymorphic_models
@@ -15,12 +14,10 @@ class RegistryItemModelBase(polymorphic_base.PolymorphicModelBase):
         return new_class
 
 
-class RegistryItemBase(polymorphic_models.PolymorphicModel):
+class RegistryItemBase(polymorphic_models.PolymorphicModel, metaclass=RegistryItemModelBase):
     """
     An abstract registry configuration item.
     """
-
-    __metaclass__ = RegistryItemModelBase
 
     # Upon registration, this attribute is replaced with an actual ForeignKey.
     root = None
@@ -28,7 +25,7 @@ class RegistryItemBase(polymorphic_models.PolymorphicModel):
     # order that they were shown on any edit forms.
     display_order = models.IntegerField(null=True, editable=False)
     # Custom item annotations.
-    annotations = JSONField(default=dict, editable=False)
+    annotations = models.JSONField(default=dict, editable=False)
 
     class RegistryMeta:
         registry_id = None

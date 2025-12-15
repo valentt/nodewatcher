@@ -20,7 +20,7 @@ class RenameDevice(base.Operation):
 
         self.old_id = old_id
         self.new_id = new_id
-        super(RenameDevice, self).__init__(old_id, new_id)
+        super(RenameDevice, self).__init__()
 
     def state_forwards(self, app_label, state):
         pass

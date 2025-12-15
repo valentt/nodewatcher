@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             name='AdjancencyHistory',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('protocol', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.config', b'core.interfaces#routing_protocol', max_length=50, choices=[(b'olsr', 'OLSR'), (b'babel', 'Babel')])),
+                ('protocol', nodewatcher.core.registry.fields.RegistryChoiceField('node.config', 'core.interfaces#routing_protocol', max_length=50, choices=[('olsr', 'OLSR'), ('babel', 'Babel')])),
                 ('first_seen', models.DateTimeField(auto_now_add=True)),
                 ('node_a', models.ForeignKey(related_name='+', to='core.Node')),
                 ('node_b', models.ForeignKey(related_name='+', to='core.Node')),
@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
             name='ClientAddress',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('family', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.monitoring', b'core.interfaces.network#family', max_length=50, null=True, choices=[(b'ipv4', 'IPv4'), (b'ipv6', 'IPv6')])),
+                ('family', nodewatcher.core.registry.fields.RegistryChoiceField('node.monitoring', 'core.interfaces.network#family', max_length=50, null=True, choices=[('ipv4', 'IPv4'), ('ipv6', 'IPv6')])),
                 ('address', nodewatcher.core.registry.fields.IPAddressField()),
                 ('expiry_time', models.DateTimeField(null=True)),
             ],
@@ -106,7 +106,7 @@ class Migration(migrations.Migration):
             name='NetworkAddressMonitor',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('family', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.monitoring', b'core.interfaces.network#family', max_length=50, null=True, choices=[(b'ipv4', 'IPv4'), (b'ipv6', 'IPv6')])),
+                ('family', nodewatcher.core.registry.fields.RegistryChoiceField('node.monitoring', 'core.interfaces.network#family', max_length=50, null=True, choices=[('ipv4', 'IPv4'), ('ipv6', 'IPv6')])),
                 ('address', nodewatcher.core.registry.fields.IPAddressField(null=True)),
             ],
             options={
@@ -136,7 +136,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('network', nodewatcher.core.registry.fields.IPAddressField()),
-                ('status', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.monitoring', b'network.routing.announces#status', max_length=50, null=True, choices=[(b'ok', 'OK'), (b'alias', 'Alias'), (b'unallocated', 'Unallocated'), (b'conflicting', 'Conflicting')])),
+                ('status', nodewatcher.core.registry.fields.RegistryChoiceField('node.monitoring', 'network.routing.announces#status', max_length=50, null=True, choices=[('ok', 'OK'), ('alias', 'Alias'), ('unallocated', 'Unallocated'), ('conflicting', 'Conflicting')])),
                 ('last_seen', models.DateTimeField(null=True)),
                 ('polymorphic_ctype', models.ForeignKey(related_name='polymorphic_monitor.routingannouncemonitor_set+', editable=False, to='contenttypes.ContentType', null=True)),
                 ('root', models.ForeignKey(related_name='monitoring_monitor_routingannouncemonitor', editable=False, to='core.Node')),
@@ -150,7 +150,7 @@ class Migration(migrations.Migration):
             name='RoutingTopologyMonitor',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('protocol', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.config', b'core.interfaces#routing_protocol', max_length=50, choices=[(b'olsr', 'OLSR'), (b'babel', 'Babel')])),
+                ('protocol', nodewatcher.core.registry.fields.RegistryChoiceField('node.config', 'core.interfaces#routing_protocol', max_length=50, choices=[('olsr', 'OLSR'), ('babel', 'Babel')])),
                 ('link_count', models.IntegerField(default=0)),
                 ('polymorphic_ctype', models.ForeignKey(related_name='polymorphic_monitor.routingtopologymonitor_set+', editable=False, to='contenttypes.ContentType', null=True)),
                 ('root', models.ForeignKey(related_name='monitoring_monitor_routingtopologymonitor', editable=False, to='core.Node')),
@@ -211,7 +211,7 @@ class Migration(migrations.Migration):
             name='WifiInterfaceMonitor',
             fields=[
                 ('interfacemonitor_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='monitor.InterfaceMonitor')),
-                ('mode', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.config', b'core.interfaces#wifi_mode', max_length=50, null=True, choices=[(b'mesh', 'Mesh'), (b'ap', 'AP'), (b'sta', 'STA')])),
+                ('mode', nodewatcher.core.registry.fields.RegistryChoiceField('node.config', 'core.interfaces#wifi_mode', max_length=50, null=True, choices=[('mesh', 'Mesh'), ('ap', 'AP'), ('sta', 'STA')])),
                 ('essid', models.CharField(max_length=50, null=True)),
                 ('bssid', nodewatcher.core.registry.fields.MACAddressField(max_length=17, null=True)),
                 ('protocol', models.CharField(max_length=50, null=True)),

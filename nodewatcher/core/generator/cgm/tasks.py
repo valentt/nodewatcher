@@ -6,7 +6,7 @@ import traceback
 
 import unidecode
 
-from celery.task import task as celery_task
+from celery import shared_task as celery_task
 
 from django.core.files import uploadedfile
 from django import db

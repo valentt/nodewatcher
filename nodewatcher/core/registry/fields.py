@@ -1,3 +1,4 @@
+import functools
 import operator
 import os
 
@@ -26,12 +27,12 @@ class RegistryChoiceFieldMixin(object):
 
         return registration.point(self.regpoint).get_registered_choices(self.enum_id)
 
-    def contribute_to_class(self, cls, name, virtual_only=False):
+    def contribute_to_class(self, cls, name, private_only=False, **kwargs):
         """
         Augments the containing class.
         """
 
-        super(RegistryChoiceFieldMixin, self).contribute_to_class(cls, name, virtual_only)
+        super(RegistryChoiceFieldMixin, self).contribute_to_class(cls, name, private_only=private_only, **kwargs)
 
         def get_FIELD_choice(self, field):
             value = getattr(self, field.attname)
@@ -48,11 +49,11 @@ class RegistryChoiceFieldMixin(object):
         setattr(
             cls,
             'get_%s_choice' % self.name,
-            functional.curry(get_FIELD_choice, field=self)
+            functools.partial(get_FIELD_choice, field=self)
         )
 
 
-class NullBooleanChoiceField(RegistryChoiceFieldMixin, models.NullBooleanField):
+class NullBooleanChoiceField(RegistryChoiceFieldMixin, models.BooleanField):
     """
     A null boolean field that is linked to a registered choice. For use in
     this field, registered choices should cover True/False/None values.
@@ -65,6 +66,8 @@ class NullBooleanChoiceField(RegistryChoiceFieldMixin, models.NullBooleanField):
 
         self.regpoint = regpoint
         self.enum_id = enum_id
+        kwargs['null'] = True
+        kwargs['blank'] = True
         super(NullBooleanChoiceField, self).__init__(*args, **kwargs)
 
     def deconstruct(self):
@@ -254,7 +257,8 @@ class IntraRegistryForeignKey(models.ForeignKey):
         """
         Class constructor.
         """
-
+        # Default to CASCADE if on_delete is not specified
+        kwargs.setdefault('on_delete', models.CASCADE)
         super(IntraRegistryForeignKey, self).__init__(*args, **kwargs)
 
     def contribute_to_related_class(self, cls, related):
@@ -463,25 +467,25 @@ class ReferenceChoiceField(models.ForeignKey):
                 'ReferenceChoiceField can only be used in registry item models!'
             )
 
-        if not issubclass(self.rel.to, registry_models.RegistryItemBase):
+        if not issubclass(self.remote_field.model, registry_models.RegistryItemBase):
             raise exceptions.ImproperlyConfigured(
                 'ReferenceChoiceField requires a relation with a registry item!'
             )
 
-        if cls._registry.registration_point != self.rel.to._registry.registration_point:
+        if cls._registry.registration_point != self.remote_field.model._registry.registration_point:
             raise exceptions.ImproperlyConfigured(
                 'ReferenceChoiceField can only reference items registered under the same registration point!'
             )
 
-    def contribute_to_class(self, cls, name, virtual_only=False):
+    def contribute_to_class(self, cls, name, private_only=False, **kwargs):
         """
         Ensure that field validation is run after the destination model is
         fully resolved.
         """
 
         # FIXME: Enable validation when we know how to skip it on South migrations
-        #related_fields.add_lazy_relation(cls, self, self.rel.to, self._validate_relation)
-        super(ReferenceChoiceField, self).contribute_to_class(cls, name, virtual_only=virtual_only)
+        #related_fields.add_lazy_relation(cls, self, self.remote_field.model, self._validate_relation)
+        super(ReferenceChoiceField, self).contribute_to_class(cls, name, private_only=private_only, **kwargs)
 
     def value_from_object(self, obj):
         try:
@@ -498,7 +502,7 @@ class ReferenceChoiceField(models.ForeignKey):
             'required': not self.blank,
             'label': text.capfirst(self.verbose_name),
             'help_text': self.help_text,
-            'choices_model': self.rel.to,
+            'choices_model': self.remote_field.model,
             'limit_choices_to': self._limit_choices_to,
         }
 
@@ -507,7 +511,7 @@ class ReferenceChoiceField(models.ForeignKey):
 
 class RegistryProxySingleDescriptor(object):
     def __init__(self, field_with_rel):
-        self.related = field_with_rel.rel.to
+        self.related = field_with_rel.remote_field.model
         self.cache_name = field_with_rel.get_cache_name()
 
     def is_cached(self, instance):
@@ -572,17 +576,17 @@ class RegistryProxySingleDescriptor(object):
 
 class RegistryRelationField(models.Field):
     def __init__(self, to, *args, **kwargs):
-        kwargs['rel'] = related_fields.ForeignObjectRel(self, to)
         super(RegistryRelationField, self).__init__(*args, **kwargs)
+        self.remote_field = related_fields.ForeignObjectRel(self, to)
 
-    def contribute_to_class(self, cls, name, virtual_only=False):
-        super(RegistryRelationField, self).contribute_to_class(cls, name, virtual_only=virtual_only)
+    def contribute_to_class(self, cls, name, private_only=False, **kwargs):
+        super(RegistryRelationField, self).contribute_to_class(cls, name, private_only=private_only, **kwargs)
         setattr(cls, name, RegistryProxySingleDescriptor(self))
 
 
 class RegistryProxyMultipleDescriptor(object):
     def __init__(self, field_with_rel):
-        self.related_model = field_with_rel.rel.to
+        self.related_model = field_with_rel.remote_field.model
         self.related_field = field_with_rel.related_field
         self.cache_name = field_with_rel.get_cache_name()
         self.queryset = field_with_rel.queryset
@@ -698,9 +702,9 @@ class RegistryMultipleRelationField(models.Field):
     def __init__(self, to, *args, **kwargs):
         self.related_field = kwargs.pop('related_field', None)
         self.queryset = kwargs.pop('queryset', None)
-        kwargs['rel'] = related_fields.ForeignObjectRel(self, to)
         super(RegistryMultipleRelationField, self).__init__(*args, **kwargs)
+        self.remote_field = related_fields.ForeignObjectRel(self, to)
 
-    def contribute_to_class(self, cls, name, virtual_only=False):
-        super(RegistryMultipleRelationField, self).contribute_to_class(cls, name, virtual_only=virtual_only)
+    def contribute_to_class(self, cls, name, private_only=False, **kwargs):
+        super(RegistryMultipleRelationField, self).contribute_to_class(cls, name, private_only=private_only, **kwargs)
         setattr(cls, name, RegistryProxyMultipleDescriptor(self))

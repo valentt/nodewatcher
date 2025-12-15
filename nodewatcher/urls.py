@@ -1,6 +1,7 @@
-from django.conf import settings, urls
-from django.conf.urls import static
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib import admin
+from django.urls import re_path, include
 
 
 # Importing nodewatcher.core.frontend.urls auto-discovers frontend components.
@@ -11,20 +12,20 @@ admin.autodiscover()
 
 urlpatterns = [
     # Language switching.
-    urls.url(r'^i18n/', urls.include('django.conf.urls.i18n')),
+    re_path(r'^i18n/', include('django.conf.urls.i18n')),
 
     # Registry.
-    urls.url(r'^registry/', urls.include('nodewatcher.core.registry.urls', namespace='registry', app_name='registry')),
+    re_path(r'^registry/', include(('nodewatcher.core.registry.urls', 'registry'), namespace='registry')),
 
     # API.
-    urls.url(r'^api/v2/', urls.include(api_urls.v2_api.urls, namespace='apiv2', app_name='apiv2')),
-    urls.url(r'^api/', urls.include(api_urls.v1_api.urls, namespace='api', app_name='api')),
+    re_path(r'^api/v2/', include((api_urls.v2_api.urls, 'apiv2'), namespace='apiv2')),
+    re_path(r'^api/', include((api_urls.v1_api.urls, 'api'), namespace='api')),
 
     # Django admin interface.
-    urls.url(r'^admin/', urls.include(admin.site.urls)),
+    re_path(r'^admin/', admin.site.urls),
 
     # Frontend.
-    urls.url(r'^', urls.include(frontend_urls)),
+    re_path(r'^', include(frontend_urls)),
 ]
 
 handler403 = 'missing.views.forbidden_view'
@@ -34,14 +35,14 @@ if settings.DEBUG:
     from django.views import defaults
 
     urlpatterns += [
-        urls.url(r'^400/$', lambda request: defaults.bad_request(request, Exception("Dummy exception."))),
+        re_path(r'^400/$', lambda request: defaults.bad_request(request, Exception("Dummy exception."))),
         # See CSRF_FAILURE_VIEW in settings.py as well.
-        urls.url(r'^403/$', lambda request: missing_views.forbidden_view(request, Exception("Dummy exception."))),
-        urls.url(r'^404/$', lambda request: defaults.page_not_found(request, Exception("Dummy exception."))),
-        urls.url(r'^500/$', defaults.server_error),
+        re_path(r'^403/$', lambda request: missing_views.forbidden_view(request, Exception("Dummy exception."))),
+        re_path(r'^404/$', lambda request: defaults.page_not_found(request, Exception("Dummy exception."))),
+        re_path(r'^500/$', defaults.server_error),
     ]
 
 if settings.DEBUG:
     # Serve static files in DEBUG mode.
-    urlpatterns += static.static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    urlpatterns += static.static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

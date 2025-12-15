@@ -36,7 +36,9 @@ django-filter>=23.0,<24.0
 django-queryinspect>=1.1,<2.0
 
 # Django REST Framework
-djangorestframework>=3.14,<4.0
+djangorestframework>=3.15,<4.0
+djangorestframework-gis>=1.0,<2.0
+drf_ujson2>=1.7,<2.0
 
 # Networking/SSH
 paramiko>=3.0,<4.0
@@ -57,6 +59,8 @@ grako>=3.99,<4.0
 
 # Data/streams (datastream installed separately due to setup.py bug)
 influxdb>=5.3,<6.0
+cachetools>=5.0,<6.0
+python-dateutil>=2.8,<3.0
 
 # Redis
 redis>=4.5,<5.0
@@ -66,9 +70,9 @@ docutils>=0.19,<1.0
 sphinx-me>=0.3
 
 # Custom forks (may need to be updated or replaced)
-git+https://github.com/zestedesavoir/django-cors-middleware.git@1b9f8f5a10cc4251ac9a9c255bbb34a4962ed3f3
-git+https://github.com/wlanslovenija/django-tastypie.git@d8c51ef2ef55efa49409f7ac1f1c44b1258be8b9
-git+https://github.com/wlanslovenija/django-rest-framework-gis.git@d2f8adab93be1cab75696485e9b0c56d41248328
-git+https://github.com/wlanslovenija/drf-ujson-renderer.git@96cee399260daf469b7e4b004fa245edf9dd253c
+django-cors-headers>=4.3,<5.0
+# Use official tastypie - custom fork is Python 2 incompatible
+django-tastypie>=0.14,<1.0
+# Replaced with PyPI packages: djangorestframework-gis and drf_ujson2
 # Use PyPI pyScss instead of fork
 pyScss>=1.4.0,<2.0

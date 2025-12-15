@@ -16,8 +16,8 @@ class Migration(migrations.Migration):
             name='CommotionNetworkConfig',
             fields=[
                 ('networkconfig_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='cgm.NetworkConfig')),
-                ('network_class', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.config', b'commotion.network#network_class', max_length=50, verbose_name='Class', choices=[(b'mesh', 'Mesh'), (b'client', 'Client'), (b'wired', 'Wired')])),
-                ('dhcp', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.config', b'commotion.network#dhcp', default=b'auto', choices=[(b'auto', 'Auto'), (b'server', 'Server'), (b'client', 'Client')], max_length=50, blank=True, null=True, verbose_name='DHCP')),
+                ('network_class', nodewatcher.core.registry.fields.RegistryChoiceField('node.config', 'commotion.network#network_class', max_length=50, verbose_name='Class', choices=[('mesh', 'Mesh'), ('client', 'Client'), ('wired', 'Wired')])),
+                ('dhcp', nodewatcher.core.registry.fields.RegistryChoiceField('node.config', 'commotion.network#dhcp', default='auto', choices=[('auto', 'Auto'), ('server', 'Server'), ('client', 'Client')], max_length=50, blank=True, null=True, verbose_name='DHCP')),
             ],
             options={
                 'ordering': ['id'],

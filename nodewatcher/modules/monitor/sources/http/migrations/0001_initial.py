@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             name='HttpTelemetrySourceConfig',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('source', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.config', b'core.telemetry.http#source', default=b'poll', max_length=50, verbose_name='Telemetry Source', choices=[(b'poll', 'Periodic Poll'), (b'push', 'Push From Node')])),
+                ('source', nodewatcher.core.registry.fields.RegistryChoiceField('node.config', 'core.telemetry.http#source', default='poll', max_length=50, verbose_name='Telemetry Source', choices=[('poll', 'Periodic Poll'), ('push', 'Push From Node')])),
                 ('polymorphic_ctype', models.ForeignKey(related_name='polymorphic_monitor_sources_http.httptelemetrysourceconfig_set+', editable=False, to='contenttypes.ContentType', null=True)),
                 ('root', models.ForeignKey(related_name='config_monitor_sources_http_httptelemetrysourceconfig', editable=False, to='core.Node')),
             ],

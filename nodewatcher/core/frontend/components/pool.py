@@ -3,7 +3,8 @@ import copy
 import re
 
 from django import shortcuts
-from django.conf import settings, urls
+from django.conf import settings
+from django.urls import re_path, include
 
 from ....utils import loader
 
@@ -113,7 +114,7 @@ class FrontendComponentsPool(object):
         main = self.get_main()
         main_url = main.get_main_url()
 
-        patterns += [urls.url(r'^$', main_url['view'], kwargs=main_url.get('kwargs', None), name='main_page')]
+        patterns += [re_path(r'^$', main_url['view'], kwargs=main_url.get('kwargs', None), name='main_page')]
 
         for component in self.get_all_components():
             component_urls = []
@@ -121,21 +122,21 @@ class FrontendComponentsPool(object):
             try:
                 component_main_url = component.get_main_url()
                 component_main_regex = r'^$' if component is main else component_main_url['regex']
-                component_urls += [urls.url(component_main_regex, component_main_url['view'], kwargs=component_main_url.get('kwargs', None), name=component_main_url.get('name', None))]
+                component_urls += [re_path(component_main_regex, component_main_url['view'], kwargs=component_main_url.get('kwargs', None), name=component_main_url.get('name', None))]
 
                 if component is main:
                     # Add redirect from specified regex to main page
                     # It has to be specified outside current component namespace,
                     # so we just add it directly to patterns, it is main url so
                     # it should be before others in the component anyway
-                    patterns += [urls.url(component_main_url['regex'], lambda request: shortcuts.redirect('main_page', **component_main_url.get('kwargs', {})), name='main_page_redirect')]
+                    patterns += [re_path(component_main_url['regex'], lambda request: shortcuts.redirect('main_page', **component_main_url.get('kwargs', {})), name='main_page_redirect')]
 
             except exceptions.FrontendComponentWithoutMain:
                 pass
 
             component_urls += component.get_urls()
 
-            patterns += urls.url(r'^', urls.include(component_urls, namespace=component.get_name(), app_name=component.get_name())),
+            patterns += re_path(r'^', include((component_urls, component.get_name()), namespace=component.get_name())),
 
         return patterns
 

@@ -325,7 +325,7 @@ class WifiInterfaceConfig(InterfaceConfig, RoutableInterface, UplinkableInterfac
 
     mode = registry_fields.RegistryChoiceField('node.config', 'core.interfaces#wifi_mode')
     # For STA nodes, store (optional) where they are connected to.
-    connect_to = models.ForeignKey(core_models.Node, blank=True, null=True, related_name='+')
+    connect_to = models.ForeignKey(core_models.Node, on_delete=models.SET_NULL, blank=True, null=True, related_name='+')
     essid = models.CharField(max_length=50, null=True, verbose_name="ESSID")
     bssid = registry_fields.MACAddressField(verbose_name="BSSID", blank=True, null=True)
     bitrates_preset = registry_fields.RegistryChoiceField(

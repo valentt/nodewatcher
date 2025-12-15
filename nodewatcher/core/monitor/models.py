@@ -51,8 +51,8 @@ class TopologyLink(polymorphic_models.PolymorphicModel):
     Generic topology link not associated with any specific routing protocol.
     """
 
-    monitor = models.ForeignKey(RoutingTopologyMonitor, related_name='links')
-    peer = models.ForeignKey(core_models.Node, related_name='links')
+    monitor = models.ForeignKey(RoutingTopologyMonitor, on_delete=models.CASCADE, related_name='links')
+    peer = models.ForeignKey(core_models.Node, on_delete=models.CASCADE, related_name='links')
     last_seen = models.DateTimeField(null=True)
 
 
@@ -201,7 +201,7 @@ class Measurement(models.Model):
     Mixin for measurement monitor models.
     """
 
-    source = models.ForeignKey(core_models.Node, null=True)
+    source = models.ForeignKey(core_models.Node, on_delete=models.CASCADE, null=True)
     start = models.DateTimeField(null=True)
     end = models.DateTimeField(null=True)
 
@@ -250,7 +250,7 @@ class ClientAddress(models.Model):
     A client address.
     """
 
-    client = models.ForeignKey(ClientMonitor, related_name='addresses')
+    client = models.ForeignKey(ClientMonitor, on_delete=models.CASCADE, related_name='addresses')
     family = registry_fields.RegistryChoiceField('node.monitoring', 'core.interfaces.network#family', null=True)
     address = registry_fields.IPAddressField()
     expiry_time = models.DateTimeField(null=True)
@@ -261,8 +261,8 @@ class AdjancencyHistory(models.Model):
     Determines if two nodes were adjacent anytime in history.
     """
 
-    node_a = models.ForeignKey(core_models.Node, related_name='+')
-    node_b = models.ForeignKey(core_models.Node, related_name='+')
+    node_a = models.ForeignKey(core_models.Node, on_delete=models.CASCADE, related_name='+')
+    node_b = models.ForeignKey(core_models.Node, on_delete=models.CASCADE, related_name='+')
     protocol = registry_fields.RegistryChoiceField('node.config', 'core.interfaces#routing_protocol')
     first_seen = models.DateTimeField(auto_now_add=True)
 

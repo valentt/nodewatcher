@@ -7,7 +7,7 @@ class ProjectAPITest(test.RegistryAPITestCase):
     def setUp(self):
         # Create some projects.
         self.projects = []
-        for i in xrange(3):
+        for i in range(3):
             project = models.Project(
                 name='Project %d' % i,
                 description='This is a nice project number %d.' % i,

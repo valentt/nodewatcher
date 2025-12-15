@@ -1,6 +1,6 @@
-import urlparse
+from urllib.parse import urlunparse
 
-from django.core import urlresolvers
+from django import urls as urlresolvers
 from django.conf import settings
 from django.utils.translation import gettext as _
 
@@ -61,7 +61,7 @@ def general(node, cfg):
             agent.push_server_pubkey = pubkey.path()
 
         # Configure agent for periodic push.
-        agent.push_url = urlparse.urlunparse((
+        agent.push_url = urlunparse((
             schema,
             settings.MONITOR_HTTP_PUSH_HOST,
             urlresolvers.reverse('HttpPushComponent:endpoint', kwargs={'uuid': str(node.uuid)}),

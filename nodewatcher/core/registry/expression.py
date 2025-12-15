@@ -80,6 +80,14 @@ class Lookup(object):
 
 
 class LookupExpressionSemantics(expression_parser.ExpressionSemantics):
+    def registry_id(self, ast):
+        # Filter out separator tokens ('.')
+        return [item for item in ast if item != '.']
+
+    def fields(self, ast):
+        # Filter out separator tokens ('__')
+        return [item for item in ast if item != '__']
+
     def constraint(self, ast):
         return Lookup(ast.operator, ast.field, ast.value)
 

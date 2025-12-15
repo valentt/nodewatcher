@@ -85,7 +85,7 @@ class RemoveFormAction(RegistryFormAction):
         # Move form data as forms might be renumbered.
         form_prefix = context.base_prefix + '_mu_'
         reduce_by = 0
-        for i in xrange(context.user_form_count):
+        for i in range(context.user_form_count):
             if i in self.indices:
                 for key in context.data.keys():
                     if key.startswith(form_prefix + str(i) + '_') or key.startswith(form_prefix + str(i) + '-'):

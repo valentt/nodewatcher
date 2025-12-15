@@ -17,9 +17,9 @@ class Migration(migrations.Migration):
             name='StatusMonitor',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('network', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.monitoring', b'core.status#network', max_length=50, null=True, choices=[(b'up', 'Up'), (b'down', 'Down'), (b'visible', 'Visible'), (None, 'Unknown')])),
-                ('monitored', nodewatcher.core.registry.fields.NullBooleanChoiceField(b'node.monitoring', b'core.status#monitored')),
-                ('health', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.monitoring', b'core.status#health', max_length=50, null=True, choices=[(b'healthy', 'Healthy'), (b'warnings', 'Warnings'), (b'errors', 'Errors'), (None, 'Unknown')])),
+                ('network', nodewatcher.core.registry.fields.RegistryChoiceField('node.monitoring', 'core.status#network', max_length=50, null=True, choices=[('up', 'Up'), ('down', 'Down'), ('visible', 'Visible'), (None, 'Unknown')])),
+                ('monitored', nodewatcher.core.registry.fields.NullBooleanChoiceField('node.monitoring', 'core.status#monitored')),
+                ('health', nodewatcher.core.registry.fields.RegistryChoiceField('node.monitoring', 'core.status#health', max_length=50, null=True, choices=[('healthy', 'Healthy'), ('warnings', 'Warnings'), ('errors', 'Errors'), (None, 'Unknown')])),
                 ('polymorphic_ctype', models.ForeignKey(related_name='polymorphic_status.statusmonitor_set+', editable=False, to='contenttypes.ContentType', null=True)),
                 ('root', models.ForeignKey(related_name='monitoring_status_statusmonitor', editable=False, to='core.Node')),
             ],

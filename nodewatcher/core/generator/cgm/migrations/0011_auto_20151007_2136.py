@@ -21,6 +21,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='wifiinterfaceconfig',
             name='bitrates_preset',
-            field=nodewatcher.core.registry.fields.RegistryChoiceField(b'node.config', b'core.interfaces#wifi_bitrates_preset', blank=True, max_length=50, null=True, choices=[(None, 'Allow all supported bitrates'), (b'exclude-80211b', 'Exclude legacy 802.11b bitrates'), (b'exclude-80211bg', 'Exclude legacy 802.11b/g bitrates'), (b'custom', 'Custom bitrate configuration')]),
+            field=nodewatcher.core.registry.fields.RegistryChoiceField('node.config', 'core.interfaces#wifi_bitrates_preset', blank=True, max_length=50, null=True, choices=[(None, 'Allow all supported bitrates'), ('exclude-80211b', 'Exclude legacy 802.11b bitrates'), ('exclude-80211bg', 'Exclude legacy 802.11b/g bitrates'), ('custom', 'Custom bitrate configuration')]),
         ),
     ]

@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
                 ('build_log', models.TextField(help_text='Last lines of the build log.', null=True, blank=True)),
                 ('created', models.DateTimeField(help_text='Timestamp when build result was created.', auto_now_add=True)),
                 ('last_modified', models.DateTimeField(help_text='Timestamp when build result was last modified.', auto_now=True)),
-                ('status', models.CharField(default=b'pending', help_text='Build status.', max_length=15, choices=[(b'pending', 'pending'), (b'building', 'building'), (b'failed', 'failed'), (b'ok', 'ok')])),
+                ('status', models.CharField(default='pending', help_text='Build status.', max_length=15, choices=[('pending', 'pending'), ('building', 'building'), ('failed', 'failed'), ('ok', 'ok')])),
                 ('build_channel', models.ForeignKey(help_text='Firmware build channel used.', to='generator.BuildChannel')),
                 ('builder', models.ForeignKey(help_text='Firmware builder host used.', to='generator.Builder')),
                 ('node', models.ForeignKey(help_text='Node this firmware build is for.', to='core.Node')),

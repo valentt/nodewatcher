@@ -145,7 +145,7 @@ class UserProfileAndSettingsChangeForm(forms_models.ModelForm):
         fields = forms_models.ALL_FIELDS
 
 
-class AccountRegistrationForm(metaforms.FieldsetsFormMixin, metaforms.ParentsIncludedModelFormMixin, UserCreationForm, UserProfileAndSettingsChangeForm):
+class AccountRegistrationForm(metaforms.FieldsetsFormMixin, metaforms.ParentsIncludedModelFormMixin, UserCreationForm, UserProfileAndSettingsChangeForm, metaclass=metaforms.ParentsIncludedModelFormMetaclass):
     """
     This class defines combined form for `django.contrib.auth.models.User` and `nodewatcher.extra.accounts.models.UserProfileAndSettings` objects.
     It is used for user registration.
@@ -164,8 +164,6 @@ class AccountRegistrationForm(metaforms.FieldsetsFormMixin, metaforms.ParentsInc
         profile.save()
 
         return user
-
-    __metaclass__ = metaforms.ParentsIncludedModelFormMetaclass
 
 
 class AuthenticationForm(auth_forms.AuthenticationForm):
@@ -227,7 +225,7 @@ class PasswordChangeForm(auth_forms.PasswordChangeForm):
 PasswordChangeForm.base_fields = auth_forms.PasswordChangeForm.base_fields
 
 
-class AccountChangeForm(metaforms.FieldsetsFormMixin, metaforms.ParentsIncludedModelFormMixin, UserChangeForm, UserProfileAndSettingsChangeForm):
+class AccountChangeForm(metaforms.FieldsetsFormMixin, metaforms.ParentsIncludedModelFormMixin, UserChangeForm, UserProfileAndSettingsChangeForm, metaclass=metaforms.ParentsIncludedModelFormMetaclass):
     """
     This class defines combined change form for `django.contrib.auth.models.User` and `nodewatcher.extra.accounts.models.UserProfileAndSettings` objects.
     """
@@ -235,5 +233,3 @@ class AccountChangeForm(metaforms.FieldsetsFormMixin, metaforms.ParentsIncludedM
     error_css_class = 'error'
     required_css_class = 'required'
     fieldsets = UserChangeForm.fieldsets + list(UserProfileAndSettingsChangeForm.Meta.model.fieldsets)
-
-    __metaclass__ = metaforms.ParentsIncludedModelFormMetaclass

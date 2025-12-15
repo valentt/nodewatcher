@@ -22,7 +22,7 @@ class AntennaEquipmentConfigFormMeta(model_forms.ModelFormMetaclass):
         return model_forms.ModelFormMetaclass.__new__(cls, name, bases, attrs)
 
 
-class AntennaEquipmentConfigForm(forms.ModelForm):
+class AntennaEquipmentConfigForm(forms.ModelForm, metaclass=AntennaEquipmentConfigFormMeta):
     """
     Antenna equipment configuration form.
     """
@@ -32,8 +32,6 @@ class AntennaEquipmentConfigForm(forms.ModelForm):
     class Meta:
         model = antenna_models.AntennaEquipmentConfig
         fields = '__all__'
-
-    __metaclass__ = AntennaEquipmentConfigFormMeta
 
     def modify_to_context(self, item, cfg, request):
         """

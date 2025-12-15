@@ -27,7 +27,7 @@ if apps.is_installed('nodewatcher.modules.administration.projects'):
     from nodewatcher.modules.administration.projects import models as projects_models
 
     class PerProjectDnsServer(DnsServer):
-        project = models.ForeignKey(projects_models.Project, related_name='+')
+        project = models.ForeignKey(projects_models.Project, on_delete=models.CASCADE, related_name='+')
 
         class Meta:
             verbose_name = _("Project-specific DNS server")

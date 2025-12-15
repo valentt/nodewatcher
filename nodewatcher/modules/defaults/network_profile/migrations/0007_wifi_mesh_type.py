@@ -33,7 +33,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='networkprofileconfig',
             name='wireless_mesh_type',
-            field=nodewatcher.core.registry.fields.RegistryChoiceField(b'node.config', b'network.profile#wireless_mesh_type', blank=True, default=b'ad-hoc', help_text='Type of interface that should be used for wireless meshihng.', max_length=50, null=True),
+            field=nodewatcher.core.registry.fields.RegistryChoiceField('node.config', 'network.profile#wireless_mesh_type', blank=True, default='ad-hoc', help_text='Type of interface that should be used for wireless meshihng.', max_length=50, null=True),
         ),
         migrations.RunPython(add_wifi_mesh_type, reverse_code=migrations.RunPython.noop),
     ]

@@ -16,7 +16,7 @@ class Migration(migrations.Migration):
             name='AnotherRegistryItem',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('interesting', models.CharField(default=b'nope', max_length=30, null=True)),
+                ('interesting', models.CharField(default='nope', max_length=30, null=True)),
                 ('polymorphic_ctype', models.ForeignKey(related_name='polymorphic_registry_tests.anotherregistryitem_set+', editable=False, to='contenttypes.ContentType', null=True)),
             ],
             options={
@@ -40,15 +40,15 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(max_length=30)),
-                ('level', nodewatcher.core.registry.fields.RegistryChoiceField(b'thing.first', b'foo.simple#level', max_length=50, null=True, choices=[(b'level-x', b'Level 0'), (b'level-a', b'Level 1'), (b'level-m', b'Level 2')])),
+                ('level', nodewatcher.core.registry.fields.RegistryChoiceField('thing.first', 'foo.simple#level', max_length=50, null=True, choices=[('level-x', 'Level 0'), ('level-a', 'Level 1'), ('level-m', 'Level 2')])),
             ],
         ),
         migrations.CreateModel(
             name='SimpleRegistryItem',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('interesting', models.CharField(default=b'nope', max_length=30, null=True)),
-                ('level', nodewatcher.core.registry.fields.RegistryChoiceField(b'thing.first', b'foo.simple#level', max_length=50, null=True, choices=[(b'level-x', b'Level 0'), (b'level-a', b'Level 1'), (b'level-m', b'Level 2')])),
+                ('interesting', models.CharField(default='nope', max_length=30, null=True)),
+                ('level', nodewatcher.core.registry.fields.RegistryChoiceField('thing.first', 'foo.simple#level', max_length=50, null=True, choices=[('level-x', 'Level 0'), ('level-a', 'Level 1'), ('level-m', 'Level 2')])),
             ],
             options={
                 'ordering': ['id'],

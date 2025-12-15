@@ -13,7 +13,7 @@ class KoruzaMonitor(registration.bases.NodeMonitoringRegistryItem):
     # Unit serial number.
     serial_number = models.CharField(max_length=50, null=True)
     # MCU connected state.
-    mcu_connected = models.NullBooleanField()
+    mcu_connected = models.BooleanField(null=True)
     # Current motor coordinates.
     motor_x = models.IntegerField(null=True)
     motor_y = models.IntegerField(null=True)

@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('display_order', models.IntegerField(editable=False, null=True)),
                 ('annotations', models.TextField(default='{}', editable=False)),
-                ('switch', nodewatcher.core.registry.fields.RegistryChoiceField(b'node.config', b'core.switch#switch', max_length=50)),
+                ('switch', nodewatcher.core.registry.fields.RegistryChoiceField('node.config', 'core.switch#switch', max_length=50)),
                 ('vlan_preset', models.CharField(max_length=50)),
                 ('polymorphic_ctype', models.ForeignKey(editable=False, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='polymorphic_cgm.switchconfig_set+', to='contenttypes.ContentType')),
                 ('root', models.ForeignKey(editable=False, on_delete=django.db.models.deletion.CASCADE, related_name='config_cgm_switchconfig', to='core.Node')),
@@ -54,7 +54,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='allocatednetworkconfig',
             name='routing_announces',
-            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[(b'olsr', 'OLSR HNA'), (b'babel', 'Babel')], max_length=50), blank=True, default=list, enum_id=b'core.interfaces.network#routing_announce', null=True, regpoint=b'node.config', size=None, verbose_name='Announce Via'),
+            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[('olsr', 'OLSR HNA'), ('babel', 'Babel')], max_length=50), blank=True, default=list, enum_id='core.interfaces.network#routing_announce', null=True, regpoint='node.config', size=None, verbose_name='Announce Via'),
         ),
         migrations.AlterField(
             model_name='authenticationconfig',
@@ -64,7 +64,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='bridgeinterfaceconfig',
             name='routing_protocols',
-            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[(b'olsr', 'OLSR'), (b'babel', 'Babel')], max_length=50), blank=True, default=list, enum_id=b'core.interfaces#routing_protocol', null=True, regpoint=b'node.config', size=None),
+            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[('olsr', 'OLSR'), ('babel', 'Babel')], max_length=50), blank=True, default=list, enum_id='core.interfaces#routing_protocol', null=True, regpoint='node.config', size=None),
         ),
         migrations.AlterField(
             model_name='ethernetinterfaceconfig',
@@ -74,7 +74,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='ethernetinterfaceconfig',
             name='routing_protocols',
-            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[(b'olsr', 'OLSR'), (b'babel', 'Babel')], max_length=50), blank=True, default=list, enum_id=b'core.interfaces#routing_protocol', null=True, regpoint=b'node.config', size=None),
+            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[('olsr', 'OLSR'), ('babel', 'Babel')], max_length=50), blank=True, default=list, enum_id='core.interfaces#routing_protocol', null=True, regpoint='node.config', size=None),
         ),
         migrations.AlterField(
             model_name='interfaceconfig',
@@ -94,7 +94,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='staticnetworkconfig',
             name='routing_announces',
-            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[(b'olsr', 'OLSR HNA'), (b'babel', 'Babel')], max_length=50), blank=True, default=list, enum_id=b'core.interfaces.network#routing_announce', null=True, regpoint=b'node.config', size=None, verbose_name='Announce Via'),
+            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[('olsr', 'OLSR HNA'), ('babel', 'Babel')], max_length=50), blank=True, default=list, enum_id='core.interfaces.network#routing_announce', null=True, regpoint='node.config', size=None, verbose_name='Announce Via'),
         ),
         migrations.AlterField(
             model_name='wifiinterfaceconfig',
@@ -104,6 +104,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='wifiinterfaceconfig',
             name='routing_protocols',
-            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[(b'olsr', 'OLSR'), (b'babel', 'Babel')], max_length=50), blank=True, default=list, enum_id=b'core.interfaces#routing_protocol', null=True, regpoint=b'node.config', size=None),
+            field=nodewatcher.core.registry.fields.RegistryMultipleChoiceField(base_field=models.CharField(choices=[('olsr', 'OLSR'), ('babel', 'Babel')], max_length=50), blank=True, default=list, enum_id='core.interfaces#routing_protocol', null=True, regpoint='node.config', size=None),
         ),
     ]

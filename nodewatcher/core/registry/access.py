@@ -62,9 +62,13 @@ class RegistryResolver(object):
         this registration point.
         """
 
-        for obj in self._root._meta.get_all_related_objects():
-            if issubclass(obj.model, self._regpoint.item_base) and obj.field.name == 'root':
-                for model in getattr(self._root, obj.field.rel.related_name).all():
+        # Get all related fields (reverse FKs, M2Ms, etc.)
+        for obj in self._root._meta.get_fields():
+            # Only handle reverse foreign key relations (ManyToOneRel)
+            if not hasattr(obj, 'related_model') or not hasattr(obj, 'field'):
+                continue
+            if issubclass(obj.related_model, self._regpoint.item_base) and obj.field.name == 'root':
+                for model in getattr(self._root, obj.get_accessor_name()).all():
                     yield model.cast()
 
     def __getattr__(self, key):

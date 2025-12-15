@@ -2,7 +2,7 @@ import collections
 import collections.abc
 
 from django import apps as django_apps
-from django.contrib.postgres.fields import JSONField
+from django.db.models import JSONField
 from django.core import exceptions as django_exceptions
 from django.db import models as django_models
 
@@ -247,7 +247,7 @@ class RegistrationPoint(object):
 
         # Augment the item with hierarchy information, discover foreign keys
         for field in child._meta.fields:
-            if isinstance(field, registry_fields.IntraRegistryForeignKey) and issubclass(parent, field.rel.to):
+            if isinstance(field, registry_fields.IntraRegistryForeignKey) and issubclass(parent, field.remote_field.model):
                 if not field.null:
                     # Foreign key is required for this subitem, so it can't be a top-level item
                     top_level = False
@@ -435,6 +435,10 @@ class RegistrationPoint(object):
         Returns a list of previously registered choice instances.
         """
 
+        # Handle byte strings from Python 2 migrations
+        if isinstance(choices_id, bytes):
+            choices_id = choices_id.decode('utf-8')
+
         return self.choices_registry.setdefault(choices_id, LazyChoiceList())
 
     def get_lookup_proxy(self, field_name):
@@ -466,7 +470,7 @@ class RegistrationPoint(object):
                 dst_field = model._meta.get_field(field)
                 # If the field exists we have found our model.
                 return (model, dst_field)
-            except django_models.FieldDoesNotExist:
+            except django_exceptions.FieldDoesNotExist:
                 continue
         else:
             raise ValueError("No registry item under '%s' provides field '%s'!" % (registry_id, field))
@@ -629,7 +633,7 @@ def create_point(model, namespace, mixins=None):
                 '__module__': 'nodewatcher.core.registry.models',
                 'Meta': Meta,
                 'root': django_models.ForeignKey(
-                    model, null=False, editable=False, related_name='{0}_%(app_label)s_%(class)s'.format(namespace)
+                    model, on_delete=django_models.CASCADE, null=False, editable=False, related_name='{0}_%(app_label)s_%(class)s'.format(namespace)
                 )
             }
         )
@@ -670,6 +674,10 @@ def point(name):
 
     :param name: Registration point name
     """
+
+    # Handle byte strings from Python 2 migrations
+    if isinstance(name, bytes):
+        name = name.decode('utf-8')
 
     return registry_state.points[name]
 

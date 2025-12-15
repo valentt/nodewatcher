@@ -1,15 +1,10 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from django.utils.encoding import python_2_unicode_compatible
 
 from nodewatcher.core.allocation.ip import models as ip_models
 
 
-@python_2_unicode_compatible
 class Country(models.Model):
     """
     Country definition for IP allocation.
@@ -37,7 +32,6 @@ class Country(models.Model):
         return self.name
 
 
-@python_2_unicode_compatible
 class Region(models.Model):
     """
     Region (county/province) for IP allocation.
@@ -79,7 +73,6 @@ class Region(models.Model):
         return "10.{}.0.1".format(self.ip_second_octet)
 
 
-@python_2_unicode_compatible
 class ProjectPoolSettings(models.Model):
     """
     Links an IP pool to a project with allocation settings.
@@ -162,7 +155,6 @@ class ProjectPoolSettings(models.Model):
         return self.get_max_clients_for_prefix(self.self_service_max_prefix)
 
 
-@python_2_unicode_compatible
 class UserAllocationRequest(models.Model):
     """
     Request from a user for IP allocation within a project pool.

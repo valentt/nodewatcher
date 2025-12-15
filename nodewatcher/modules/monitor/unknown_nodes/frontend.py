@@ -1,5 +1,5 @@
-from django.conf import urls
-from django.core import urlresolvers
+from django.urls import re_path
+from django import urls as urlresolvers
 
 from nodewatcher.core.api import urls as api_urls
 from nodewatcher.core.frontend import components
@@ -11,8 +11,8 @@ class UnknownNodesComponent(components.FrontendComponent):
     @classmethod
     def get_urls(cls):
         return super(UnknownNodesComponent, cls).get_urls() + [
-            urls.url(r'^my/unknown_nodes/$', views.ListUnknownNodes.as_view(), name='list'),
-            urls.url(r'^my/unknown_nodes/register/(?P<uuid>[^/]+)/$', views.RegisterUnknownNode.as_view(), name='register'),
+            re_path(r'^my/unknown_nodes/$', views.ListUnknownNodes.as_view(), name='list'),
+            re_path(r'^my/unknown_nodes/register/(?P<uuid>[^/]+)/$', views.RegisterUnknownNode.as_view(), name='register'),
         ]
 
 components.pool.register(UnknownNodesComponent)

@@ -1,6 +1,6 @@
 import datetime
 
-from django.core import urlresolvers
+from django import urls as urlresolvers
 from django.utils import timezone
 
 from nodewatcher.core import models as core_models

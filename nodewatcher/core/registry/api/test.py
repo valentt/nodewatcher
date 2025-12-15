@@ -2,7 +2,7 @@ import json
 import uuid
 
 from django.contrib.auth import models as auth_models
-from django.core import urlresolvers
+from django import urls as urlresolvers
 
 from guardian import shortcuts
 from rest_framework import test

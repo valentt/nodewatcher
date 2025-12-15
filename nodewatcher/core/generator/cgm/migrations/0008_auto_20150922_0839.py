@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='wifiinterfaceconfig',
             name='essid',
-            field=models.CharField(max_length=50, null=True, verbose_name=b'ESSID'),
+            field=models.CharField(max_length=50, null=True, verbose_name='ESSID'),
         ),
     ]

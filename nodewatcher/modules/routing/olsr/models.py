@@ -38,7 +38,7 @@ class LinkLocalAddress(models.Model):
     A link-local address belonging to an OLSR router.
     """
 
-    router = models.ForeignKey(OlsrRoutingTopologyMonitor, related_name='link_local')
+    router = models.ForeignKey(OlsrRoutingTopologyMonitor, on_delete=models.CASCADE, related_name='link_local')
     address = registry_fields.IPAddressField(host_required=True, db_index=True)
     interface = models.CharField(max_length=50, null=True)
 

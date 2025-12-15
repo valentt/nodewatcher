@@ -1,8 +1,8 @@
 import collections
-import six
 
 from django.contrib.admin import utils as admin_utils
 from django.forms import forms, models as forms_models
+from django.forms.boundfield import BoundField
 
 from . import utils
 
@@ -22,7 +22,7 @@ def get_declared_fields(bases, attrs, with_base_fields=True):
 
     fields = [
         (field_name, attrs.pop(field_name))
-        for field_name, obj in list(six.iteritems(attrs)) if isinstance(obj, forms.Field)
+        for field_name, obj in list(attrs.items()) if isinstance(obj, forms.Field)
     ]
     fields.sort(key=lambda x: x[1].creation_counter)
 
@@ -32,11 +32,11 @@ def get_declared_fields(bases, attrs, with_base_fields=True):
     if with_base_fields:
         for base in bases[::-1]:
             if hasattr(base, 'base_fields'):
-                fields = list(six.iteritems(base.base_fields)) + fields
+                fields = list(base.base_fields.items()) + fields
     else:
         for base in bases[::-1]:
             if hasattr(base, 'declared_fields'):
-                fields = list(six.iteritems(base.declared_fields)) + fields
+                fields = list(base.declared_fields.items()) + fields
 
     return collections.OrderedDict(fields)
 
@@ -179,7 +179,7 @@ class ParentsIncludedModelFormMixin(object):
     save.alters_data = True
 
 
-class FieldsetBoundField(forms.BoundField):
+class FieldsetBoundField(BoundField):
     """
     This class extends `django.forms.forms import.BoundField` to also carry information about the fieldset this field is in.
     """
