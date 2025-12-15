@@ -28,7 +28,7 @@ class NodeCgmValidator(formprocessors.RegistryFormProcessor):
             # Ignore builder configuration errors at this point as we are only trying
             # to validate configuration, not actually generating anything.
             pass
-        except cgm_base.ValidationError, e:
+        except cgm_base.ValidationError as e:
             raise registry_forms.RegistryValidationError(*e.args)
 
 registration.point('node.config').add_form_processor(NodeCgmValidator, order=9000)

@@ -9,7 +9,7 @@ def intersect(a, b):
     the second dictionary.
     """
 
-    return dict(filter(lambda (x, y): x in a, b.items()))
+    return {k: v for k, v in b.items() if k in a}
 
 
 def initial_accepts_request(request, form_class):

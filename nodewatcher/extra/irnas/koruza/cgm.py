@@ -79,13 +79,13 @@ def koruza_network_measurement(node, pkgcfg, cfg):
     cfg.files.install(
         '/www/cgi-bin/koruza/netmeasured_get',
         'irnas/koruza/netmeasured_get',
-        mode=0755
+        mode=0o755
     )
 
     cfg.files.install(
         '/www/cgi-bin/koruza/netmeasured_reset',
         'irnas/koruza/netmeasured_reset',
-        mode=0755
+        mode=0o755
     )
 
     # Configure webcam support if available.

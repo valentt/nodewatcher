@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 
 
 # We have to translate names.
-languages_choices = map(lambda (code, name): (code, _(name)), settings.LANGUAGES)
+languages_choices = [(code, _(name)) for code, name in settings.LANGUAGES]
 
 
 def get_initial_language(request=None):

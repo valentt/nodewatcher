@@ -17,7 +17,7 @@ class GenerateFirmwareForm(forms.Form):
         try:
             if not cgm_base.generate_firmware(self.node, only_validate=True):
                 raise forms.ValidationError(_("No build platform is configured for this node!"), code='no_platform')
-        except cgm_base.ValidationError, e:
+        except cgm_base.ValidationError as e:
             raise forms.ValidationError(e.args[0])
         except exceptions.NoBuildChannelsConfigured:
             raise forms.ValidationError(_("No build channels have been configured!"), code='no_build_channels')

@@ -114,10 +114,10 @@ class Builder(object):
         builder.write_file(
             os.path.join(temp_path, 'etc', 'dropbear', 'authorized_keys'),
             ssh_authorized_keys.getvalue().encode('ascii'),
-            mode=0600,
+            mode=0o600,
         )
 
-        builder.chmod(os.path.join(temp_path, 'etc', 'dropbear'), 0755)
+        builder.chmod(os.path.join(temp_path, 'etc', 'dropbear'), 0o755)
 
         # Prepare any custom files.
         for path, custom_file in cfg['_files'].items():

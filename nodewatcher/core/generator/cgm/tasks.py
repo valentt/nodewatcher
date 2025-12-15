@@ -48,7 +48,7 @@ def background_build(self, result_uuid):
     # Build the firmware and obtain firmware files
     try:
         files = platform.build(result)
-    except exceptions.BuildError, e:
+    except exceptions.BuildError as e:
         if len(e.args) > 0:
             error_message = 'ERROR: %s' % e.args[0]
 

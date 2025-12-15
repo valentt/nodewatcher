@@ -142,35 +142,35 @@ class FontIcons(object):
         font.familyname = self._name
 
         for identifier, icon in self._icons.items():
-            print "Exporting glyph '%s' for character '%s'" % (identifier, hex(icon['character']))
+            print("Exporting glyph '%s' for character '%s'" % (identifier, hex(icon['character'])))
             icon['glyph'].export(font.createChar(icon['character']))
 
         #fp, ttftmp = tempfile.mkstemp(suffix=TTF_SUFFIX)
         #os.close(fp)
-        print "Exporting TTF font ..."
+        print("Exporting TTF font ...")
         font.generate(os.path.join(directory, self._identifier + TTF_SUFFIX))
         files.append(os.path.join(directory, self._identifier + TTF_SUFFIX))
         #print "Optimizing TTF font ..."
         #subprocess.call(['ttfautohint', '-s', '-v', ttftmp, os.path.join(directory, self._identifier + TTF_SUFFIX)])
 
         if not ttfonly:
-            print "Exporting EOT font ..."
+            print("Exporting EOT font ...")
             fd = os.open(os.path.join(directory, self._identifier + EOT_SUFFIX), os.O_WRONLY | os.O_CREAT)
             subprocess.call(['mkeot', os.path.join(directory, self._identifier + TTF_SUFFIX)], stdout=fd)
             os.close(fd)
             files.append(os.path.join(directory, self._identifier + EOT_SUFFIX))
 
-            print "Exporting WOFF font ..."
+            print("Exporting WOFF font ...")
             font.generate(os.path.join(directory, self._identifier + WOFF_SUFFIX))
             files.append(os.path.join(directory, self._identifier + WOFF_SUFFIX))
-            print "Exporting SVG font ..."
+            print("Exporting SVG font ...")
             font.generate(os.path.join(directory, self._identifier + SVG_SUFFIX))
             files.append(os.path.join(directory, self._identifier + SVG_SUFFIX))
 
             try:
                 import scour
 
-                print "Optimizing SVG font ..."
+                print("Optimizing SVG font ...")
                 options, rargs = scour_options_parser.parse_args([])
                 svgin = maybe_gziped_file(os.path.join(directory, self._identifier + SVG_SUFFIX))
                 in_string = svgin.read()
@@ -181,7 +181,7 @@ class FontIcons(object):
                 svgout.close()
 
             except:
-                print "Unable to clean up SVG, install scour library"
+                print("Unable to clean up SVG, install scour library")
 
         return files
 

@@ -201,7 +201,7 @@ class PlatformFileManager(object):
 
         self._files = {}
 
-    def install(self, destination, template, context=None, mode=0644):
+    def install(self, destination, template, context=None, mode=0o644):
         """
         Installs a file to the destination device.
 

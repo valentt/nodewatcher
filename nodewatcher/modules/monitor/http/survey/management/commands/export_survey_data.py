@@ -69,7 +69,7 @@ class Command(base.BaseCommand):
             sort_keys=True,
             indent=4,
             separators=(',', ': '),
-        ))
+        )
 
         if output:
             with io.open(output, 'w', encoding='utf-8') as f:

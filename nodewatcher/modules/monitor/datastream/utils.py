@@ -36,7 +36,7 @@ def datastream_copy(source, destination, start=None, end=None, remove_all=False)
     ds_destination = datastream.Datastream(destination)
 
     # Load all stream metadata into memory.
-    print "Loading streams from source."
+    print("Loading streams from source.")
     streams = {}
     for stream in ds_source.find_streams():
         streams[stream['stream_id']] = {
@@ -45,19 +45,19 @@ def datastream_copy(source, destination, start=None, end=None, remove_all=False)
         }
 
     # Topologically sort the streams based on dependencies.
-    print "Resolving dependencies with %d streams." % len(streams)
+    print("Resolving dependencies with %d streams." % len(streams))
     sorted_streams = toposort.topological_sort(streams)
 
     if remove_all:
-        print "Dropping destination streams."
+        print("Dropping destination streams.")
         ds_destination.delete_streams()
 
-    print "Importing streams."
+    print("Importing streams.")
     stream_no = 1
     stream_map = {}
     for stream_batch in sorted_streams:
         for stream in stream_batch:
-            print "[%d/%d] Importing stream." % (stream_no, len(streams))
+            print("[%d/%d] Importing stream." % (stream_no, len(streams)))
 
             stream = datastream.Stream(stream['stream'])
             value_downsamplers = list(set(stream.value_downsamplers).intersection(ds_destination.backend.value_downsamplers))
@@ -87,18 +87,18 @@ def datastream_copy(source, destination, start=None, end=None, remove_all=False)
 
             if not hasattr(stream, 'derived_from'):
                 # Copy data.
-                print "Copying data."
+                print("Copying data.")
                 batch = []
                 size_of_batch = 0
 
                 try:
                     def append_current_batch():
-                        for i in xrange(10):
+                        for i in range(10):
                             try:
                                 ds_destination.append_multiple(batch)
                                 break
                             except datastream.exceptions.StreamAppendFailed:
-                                print "WARNING: Destination stream append failed. Retry #%d after 30 seconds." % (i + 1)
+                                print("WARNING: Destination stream append failed. Retry #%d after 30 seconds." % (i + 1))
                                 time.sleep(30)
 
                     for datapoint in ds_source.get_data(stream.id, stream.highest_granularity, start=start, end=end):
@@ -115,7 +115,7 @@ def datastream_copy(source, destination, start=None, end=None, remove_all=False)
                 except datastream.exceptions.StreamNotFound:
                     # Stream has been removed while import was in progress. Remove the stream from
                     # destination as well.
-                    print "Skipping removed stream."
+                    print("Skipping removed stream.")
 
                     try:
                         ds_destination.delete_streams({'import_id': stream.id})
@@ -123,16 +123,16 @@ def datastream_copy(source, destination, start=None, end=None, remove_all=False)
                         # Do not abort import when a stream cannot be deleted.
                         pass
                 except:
-                    print "ERROR: Failed to copy data for source stream %s (target %s)." % (stream.id, stream_id)
-                    print "ERROR: Last batch was (%d items, %d bytes):" % (len(batch), size_of_batch)
+                    print("ERROR: Failed to copy data for source stream %s (target %s)." % (stream.id, stream_id))
+                    print("ERROR: Last batch was (%d items, %d bytes):" % (len(batch), size_of_batch))
                     for value in batch:
-                        print "  %s" % repr(value['value'])
-                    print "ERROR: Aborting due to exception."
+                        print("  %s" % repr(value['value']))
+                    print("ERROR: Aborting due to exception.")
                     raise
 
             stream_no += 1
 
-    print "Backprocessing streams."
+    print("Backprocessing streams.")
     ds_destination.backprocess_streams()
 
-    print "Imported %d/%d streams." % (len(ds_destination.find_streams()), stream_no - 1)
+    print("Imported %d/%d streams." % (len(ds_destination.find_streams()), stream_no - 1))
