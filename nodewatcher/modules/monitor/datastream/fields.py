@@ -1,4 +1,4 @@
-import collections
+import collections.abc
 import copy
 
 from django.core import exceptions
@@ -51,7 +51,7 @@ class TagReference(object):
         elif isinstance(self.transform, str):
             return self.transform % tag_values
         elif len(tag_values) == 1:
-            return tag_values.values()[0]
+            return next(iter(tag_values.values()))
         else:
             raise ValueError("Multiple tags specified without transform callable!")
 
@@ -227,12 +227,12 @@ class Field(object):
 
         def reset_tags(tags, current_tags, default_tags):
             for tag, value in tags.items():
-                if isinstance(value, collections.Mapping):
+                if isinstance(value, collections.abc.Mapping):
                     # Value is a further mapping, we should descend. If there is nothing under
                     # defaults for this tag, then act as if the default is an empty dictionary.
                     # This is needed to remove existing values in case there is no default.
                     default_value = default_tags.get(tag, {})
-                    if not isinstance(default_value, collections.Mapping):
+                    if not isinstance(default_value, collections.abc.Mapping):
                         continue
 
                     current_value = current_tags.setdefault(tag, {})
@@ -261,7 +261,7 @@ class Field(object):
 
         def update(d, u):
             for k, v in u.items():
-                if isinstance(v, collections.Mapping):
+                if isinstance(v, collections.abc.Mapping):
                     r = update(d.get(k, {}), v)
                     d[k] = r
                 else:

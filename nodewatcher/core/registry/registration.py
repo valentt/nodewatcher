@@ -1,4 +1,5 @@
 import collections
+import collections.abc
 
 from django import apps as django_apps
 from django.contrib.postgres.fields import JSONField
@@ -42,7 +43,7 @@ class Choice(object):
         return "<Choice '%s'>" % self.name
 
 
-class LazyChoiceList(collections.Sequence):
+class LazyChoiceList(collections.abc.Sequence):
     def __init__(self):
         super(LazyChoiceList, self).__init__()
         self._list = nw_datastructures.OrderedSet()
@@ -150,7 +151,7 @@ class RegistrationPoint(object):
         item_dict = container.setdefault(item._registry.registry_id, {})
         item_dict[item._meta.model_name] = item
         return collections.OrderedDict(
-            sorted(container.items(), key=lambda x: x[1].values()[0]._registry.form_weight)
+            sorted(container.items(), key=lambda x: next(iter(x[1].values()))._registry.form_weight)
         )
 
     def _register_item(self, item, object_toplevel=True):

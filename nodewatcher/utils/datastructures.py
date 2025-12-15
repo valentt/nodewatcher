@@ -1,8 +1,8 @@
-import collections
+import collections.abc
 
 
 # Based on http://code.activestate.com/recipes/576694/ (r9)
-class OrderedSet(collections.MutableSet):
+class OrderedSet(collections.abc.MutableSet):
     def __init__(self, iterable=None):
         self.end = end = []
         end += [None, end, end] # sentinel node for doubly linked list

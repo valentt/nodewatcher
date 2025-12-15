@@ -309,7 +309,7 @@ class FormState(dict):
         if not items:
             return None
 
-        return items.values()[0]
+        return next(iter(items.values()))
 
     def append_default_item(self, registry_id, parent_identifier=None):
         """
@@ -478,7 +478,7 @@ class FormState(dict):
 
         def convert_items(parent=None):
             for cls in registration_point.get_children(parent):
-                toplevel_cls = cls.values()[0]
+                toplevel_cls = next(iter(cls.values()))
 
                 for item in registration_point.get_accessor(root).by_registry_id(toplevel_cls._registry.registry_id, queryset=True):
                     # Skip already converted items.

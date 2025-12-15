@@ -104,7 +104,7 @@ class Options(object):
 
         # Sort children based on form weight.
         self.item_children = collections.OrderedDict(
-            sorted(self.item_children.items(), key=lambda x: x[1].values()[0]._registry.form_weight)
+            sorted(self.item_children.items(), key=lambda x: next(iter(x[1].values()))._registry.form_weight)
         )
 
         # Setup the parent relation and verify that one doesn't already exist.

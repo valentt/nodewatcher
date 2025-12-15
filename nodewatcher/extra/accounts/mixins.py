@@ -1,4 +1,4 @@
-import collections
+import collections.abc
 
 from django.conf import settings
 from django.contrib import auth, messages
@@ -78,7 +78,7 @@ class PermissionRequiredMixin(object):
     def get_required_permissions(self, request=None):
         if isinstance(self.permission_required, str):
             perms = [self.permission_required]
-        elif isinstance(self.permission_required, collections.Iterable):
+        elif isinstance(self.permission_required, collections.abc.Iterable):
             perms = [p for p in self.permission_required]
         else:
             raise exceptions.ImproperlyConfigured("'PermissionRequiredMixin' requires "

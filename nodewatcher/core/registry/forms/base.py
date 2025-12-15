@@ -192,7 +192,7 @@ class RegistryMetaForm(django_forms.Form):
 
         # Choose a default item in case one is not set
         if selected_item is None:
-            selected_item = context.items.values()[0]
+            selected_item = next(iter(context.items.values()))
         selected_item = selected_item._meta.model_name
 
         if not static and (len(context.items) > 1 or force_selector_widget):
@@ -259,7 +259,7 @@ def generate_form_for_class(context, prefix, data, index, instance=None,
     # Fallback to default item in case of severe problems (this should not happen in normal
     # operation, but might happen when someone tampers with the form)
     if selected_item is None:
-        selected_item = context.items.values()[0]
+        selected_item = next(iter(context.items.values()))
 
     # Items have changed between submissions, we should copy some field values from the
     # previous form to the new one
@@ -533,9 +533,9 @@ def prepare_forms(context):
                 if all([issubclass(x, item_cls) for x in context.items.values()]):
                     break
             else:
-                item_cls = context.items.values()[0]._registry.get_toplevel_class()
+                item_cls = next(iter(context.items.values()))._registry.get_toplevel_class()
         else:
-            item_cls = context.items.values()[0]._registry.get_toplevel_class()
+            item_cls = next(iter(context.items.values()))._registry.get_toplevel_class()
         cls_meta = item_cls._registry
 
         if context.hierarchy_prefix is not None:
@@ -601,7 +601,7 @@ def prepare_forms(context):
         if not context.items:
             continue
 
-        context.default_item_cls = context.items.values()[0]
+        context.default_item_cls = next(iter(context.items.values()))
 
         if cls_meta.multiple:
             # This is an item class that supports multiple objects of the same class.
@@ -722,11 +722,11 @@ def prepare_forms(context):
         else:
             # This item class only supports a single object to be selected
             try:
-                mdl = context.existing_models.values()[0]
+                mdl = next(iter(context.existing_models.values()))
 
                 if context.save or context.flags & FORM_ONLY_DEFAULTS:
                     mdl = None
-            except IndexError:
+            except StopIteration:
                 mdl = None
 
             assert not context.subforms

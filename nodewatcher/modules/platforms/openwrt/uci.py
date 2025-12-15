@@ -209,8 +209,8 @@ class UCIPackage(object):
 
         if kwargs:
             # Adding a named section.
-            section_key = kwargs.values()[0]
-            section_type = kwargs.keys()[0]
+            section_key = next(iter(kwargs.values()))
+            section_type = next(iter(kwargs.keys()))
             if not UCI_IDENTIFIER.match(section_key):
                 raise ValueError("Invalid named UCI section name '%s'." % section_key)
 
