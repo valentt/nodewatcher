@@ -1,6 +1,6 @@
 from django.core import validators, exceptions
 from django.utils import deconstruct
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class NodeNameValidator(validators.RegexValidator):

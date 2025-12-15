@@ -6,7 +6,7 @@ from django import dispatch
 from django.core import exceptions
 from django.contrib.postgres import fields as postgres_fields
 from django.db import models
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 
 from guardian import shortcuts
 
@@ -164,9 +164,9 @@ class VLANConfig(registration.bases.NodeConfigRegistryItem):
 
     def __str__(self):
         if not self.name:
-            return ugettext("VLAN %(switch)s.vlan%(vlan)s") % {'switch': self.switch.switch, 'vlan': self.vlan}
+            return gettext("VLAN %(switch)s.vlan%(vlan)s") % {'switch': self.switch.switch, 'vlan': self.vlan}
 
-        return ugettext("VLAN %(switch)s.vlan%(vlan)s (%(name)s)") % {
+        return gettext("VLAN %(switch)s.vlan%(vlan)s (%(name)s)") % {
             'switch': self.switch.switch,
             'vlan': self.vlan,
             'name': self.name
@@ -262,9 +262,9 @@ class BridgeInterfaceConfig(InterfaceConfig, RoutableInterface, UplinkableInterf
 
     def __str__(self):
         if not self.name:
-            return ugettext("Bridge interface (unnamed)")
+            return gettext("Bridge interface (unnamed)")
 
-        return ugettext("Bridge interface (%(name)s)") % {'name': self.name}
+        return gettext("Bridge interface (%(name)s)") % {'name': self.name}
 
 registration.point('node.config').register_item(BridgeInterfaceConfig)
 
@@ -282,9 +282,9 @@ class EthernetInterfaceConfig(InterfaceConfig, RoutableInterface, UplinkableInte
 
     def __str__(self):
         if not self.eth_port:
-            return ugettext("Ethernet interface (unbound)")
+            return gettext("Ethernet interface (unbound)")
 
-        return ugettext("Ethernet interface (%(eth_port)s)") % {'eth_port': self.eth_port}
+        return gettext("Ethernet interface (%(eth_port)s)") % {'eth_port': self.eth_port}
 
 registration.point('node.config').register_item(EthernetInterfaceConfig)
 
@@ -426,9 +426,9 @@ class MobileInterfaceConfig(InterfaceConfig, UplinkableInterface):
 
     def __str__(self):
         if not self.device:
-            return ugettext("Mobile interface (unbound)")
+            return gettext("Mobile interface (unbound)")
 
-        return ugettext("Mobile interface (%(device)s)") % {'device': self.get_device_display()}
+        return gettext("Mobile interface (%(device)s)") % {'device': self.get_device_display()}
 
 registration.point('node.config').register_choice('core.interfaces#mobile_device', registration.Choice('ppp0', _("PPP over USB0")))
 registration.point('node.config').register_choice('core.interfaces#mobile_device', registration.Choice('ppp1', _("PPP over USB1")))

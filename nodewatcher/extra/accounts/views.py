@@ -4,7 +4,7 @@ from django.contrib import auth, messages
 from django.contrib.auth import models as auth_models, views as auth_views
 from django.contrib.sites import shortcuts as sites_shortcuts
 from django.core import urlresolvers
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from registration import models as registration_models
 from registration.backends.model_activation import views as registration_views

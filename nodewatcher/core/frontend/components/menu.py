@@ -2,7 +2,7 @@ import copy
 import re
 
 from django.conf import settings
-from django.core import urlresolvers
+from django import urls as urlresolvers
 from django.template import loader
 from django.utils import translation
 
@@ -20,7 +20,8 @@ VALID_NAME = re.compile('^[A-Za-z_][A-Za-z0-9_]*$')
 
 
 def ugettext_lazy(message):
-    translated = translation.ugettext_lazy(message)
+    """Wrapper for gettext_lazy that preserves the original message."""
+    translated = translation.gettext_lazy(message)
     translated.message = message
     return translated
 

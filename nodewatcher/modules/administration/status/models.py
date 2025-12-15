@@ -1,4 +1,4 @@
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from nodewatcher.core.registry import registration, fields as registry_fields
 # Following import needed for 'node.monitoring' registration point

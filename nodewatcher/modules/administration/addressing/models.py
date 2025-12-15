@@ -1,4 +1,4 @@
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from nodewatcher.core.allocation.ip import models as ip_models
 from nodewatcher.core.registry import registration

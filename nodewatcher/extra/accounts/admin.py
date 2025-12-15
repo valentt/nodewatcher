@@ -5,7 +5,7 @@ from django.contrib.admin import widgets
 from django.contrib.auth import admin as auth_admin, models as auth_models
 from django.db.models.fields import reverse_related
 from django.utils import html, translation
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from guardian import shortcuts
 

@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from nodewatcher.core import models as core_models
 from nodewatcher.core.generator.cgm import models as cgm_models

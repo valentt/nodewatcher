@@ -3,7 +3,7 @@ import re
 from django.db import models
 from django.db.models import fields
 from django.forms import fields as form_fields, widgets
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 __all__ = (
     'RegistryChoiceFormField', 'RegistryMultipleChoiceFormField',

@@ -1,7 +1,7 @@
 import uuid
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from . import validators as core_validators
 from .registry import fields as registry_fields, registration
@@ -37,7 +37,7 @@ class Node(models.Model):
 
     def get_absolute_url(self):
         # TODO: Should we make this extensible?
-        from django.core.urlresolvers import reverse
+        from django.urls import reverse
         return reverse('DisplayComponent:node', kwargs={'pk': self.pk})
 
 # Create registration point

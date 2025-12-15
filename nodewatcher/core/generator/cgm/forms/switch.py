@@ -1,6 +1,6 @@
 from django import forms
 from django.db.models import fields
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from nodewatcher.core.registry import forms as registry_forms, registration
 

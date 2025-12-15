@@ -5,7 +5,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa, dsa, ec
 
 from django.template import loader as template_loader
 from django.forms import widgets
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from . import models
 

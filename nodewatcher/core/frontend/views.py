@@ -1,7 +1,7 @@
 from django import http
 from django.core import exceptions
 from django.utils import encoding
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 class NodeNameMixin(object):

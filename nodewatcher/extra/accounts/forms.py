@@ -3,7 +3,7 @@ from django.forms import forms, models as forms_models
 from django.contrib.admin import utils as admin_utils
 from django.contrib import auth
 from django.contrib.auth import admin as auth_admin, forms as auth_forms
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from nodewatcher.modules.frontend.setup import forms as setup_forms
 

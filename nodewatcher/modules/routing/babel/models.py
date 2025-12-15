@@ -1,5 +1,5 @@
 from django.db import models
-from django.utils.translation import ugettext_lazy as _, gettext_noop
+from django.utils.translation import gettext_lazy as _, gettext_noop
 
 from nodewatcher.core.monitor import models as monitor_models
 from nodewatcher.core.registry import registration, fields as registry_fields

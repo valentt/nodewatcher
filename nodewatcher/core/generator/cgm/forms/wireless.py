@@ -2,7 +2,7 @@ from django import forms
 from django.db.models import fields
 from django.forms import fields as widgets
 from django.utils import encoding
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from nodewatcher.core import models as core_models
 from nodewatcher.core.allocation.ip import forms as ip_forms

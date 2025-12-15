@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db.models import fields
 from django.utils import translation
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 # We have to translate names.

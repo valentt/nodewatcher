@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.utils import crypto
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from nodewatcher.core.generator.cgm import base as cgm_base, models as cgm_models
 from nodewatcher.core.registry import exceptions as registry_exceptions

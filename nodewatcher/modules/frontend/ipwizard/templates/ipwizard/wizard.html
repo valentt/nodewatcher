@@ -1,0 +1,942 @@
+{% extends "base.html" %}
+{% load i18n static %}
+
+{% block title %}{% trans "IP Pool Wizard" %}{% endblock %}
+
+{% block extra_css %}
+<style>
+:root {
+    --wizard-primary: #3b82f6;
+    --wizard-primary-hover: #2563eb;
+    --wizard-success: #10b981;
+    --wizard-warning: #f59e0b;
+    --wizard-danger: #ef4444;
+    --wizard-bg: #f8fafc;
+    --wizard-card: #ffffff;
+    --wizard-border: #e2e8f0;
+    --wizard-text: #1e293b;
+    --wizard-text-muted: #64748b;
+}
+
+.wizard-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.wizard-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.wizard-header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--wizard-text);
+    margin-bottom: 8px;
+}
+
+.wizard-header p {
+    color: var(--wizard-text-muted);
+}
+
+/* Tabs */
+.wizard-tabs {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 24px;
+    background: var(--wizard-border);
+    padding: 4px;
+    border-radius: 12px;
+}
+
+.wizard-tab {
+    flex: 1;
+    padding: 14px 20px;
+    border: none;
+    background: transparent;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+    color: var(--wizard-text-muted);
+}
+
+.wizard-tab:hover {
+    background: rgba(255,255,255,0.5);
+}
+
+.wizard-tab.active {
+    background: white;
+    color: var(--wizard-text);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Card */
+.wizard-card {
+    background: var(--wizard-card);
+    border: 1px solid var(--wizard-border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+}
+
+.wizard-card h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    color: var(--wizard-text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Grid for countries/regions */
+.selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+}
+
+.grid-item {
+    background: var(--wizard-bg);
+    border: 2px solid transparent;
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.grid-item:hover {
+    border-color: var(--wizard-primary);
+    background: #eff6ff;
+}
+
+.grid-item.selected {
+    border-color: var(--wizard-primary);
+    background: #eff6ff;
+}
+
+.grid-item.assigned {
+    opacity: 0.6;
+    border-color: var(--wizard-success);
+    background: #dcfce7;
+}
+
+.grid-item .icon {
+    font-size: 36px;
+    margin-bottom: 10px;
+}
+
+.grid-item .name {
+    font-weight: 600;
+    color: var(--wizard-text);
+    margin-bottom: 4px;
+}
+
+.grid-item .info {
+    font-size: 12px;
+    color: var(--wizard-text-muted);
+}
+
+.grid-item .ip-range {
+    font-family: monospace;
+    font-size: 13px;
+    color: var(--wizard-primary);
+    margin-top: 8px;
+    background: rgba(59,130,246,0.1);
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+/* Form inputs */
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: var(--wizard-text);
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--wizard-border);
+    border-radius: 10px;
+    font-size: 15px;
+    transition: all 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--wizard-primary);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 12px;
+}
+
+.input-mono {
+    font-family: 'SF Mono', Monaco, monospace !important;
+}
+
+/* Pool Visual */
+.pool-visual {
+    background: var(--wizard-bg);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.pool-bar {
+    display: flex;
+    height: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.pool-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: white;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+}
+
+/* Summary */
+.summary-card {
+    background: var(--wizard-bg);
+    border-radius: 12px;
+    padding: 20px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--wizard-border);
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+.summary-row .label {
+    color: var(--wizard-text-muted);
+}
+
+.summary-row .value {
+    font-weight: 600;
+    font-family: monospace;
+}
+
+/* Settings Card */
+.settings-card {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-radius: 16px;
+    padding: 28px;
+    color: white;
+    margin-top: 20px;
+}
+
+.settings-card h3 {
+    font-size: 16px;
+    margin-bottom: 20px;
+    opacity: 0.9;
+}
+
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.setting-row:last-child {
+    border-bottom: none;
+}
+
+.setting-row .setting-label {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+.setting-row select,
+.setting-row input {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.setting-row select option {
+    color: black;
+}
+
+/* Buttons */
+.wizard-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 24px;
+    gap: 12px;
+}
+
+.btn {
+    padding: 14px 28px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.btn-secondary {
+    background: white;
+    color: var(--wizard-text);
+    border: 2px solid var(--wizard-border);
+}
+
+.btn-secondary:hover {
+    background: var(--wizard-bg);
+}
+
+.btn-primary {
+    background: var(--wizard-primary);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--wizard-primary-hover);
+    transform: translateY(-1px);
+}
+
+.btn-success {
+    background: var(--wizard-success);
+    color: white;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Hidden */
+.hidden {
+    display: none !important;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .selection-grid {
+        grid-template-columns: 1fr;
+    }
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+    .wizard-buttons {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="wizard-container">
+    <div class="wizard-header">
+        <h1>{% trans "IP Pool Setup" %}</h1>
+        <p>{% trans "Assign IP pool to your project" %}</p>
+    </div>
+
+    <!-- Mode Tabs -->
+    <div class="wizard-tabs">
+        <button class="wizard-tab active" onclick="switchMode('simple')">{% trans "Simple - By Region" %}</button>
+        <button class="wizard-tab" onclick="switchMode('advanced')">{% trans "Advanced - Manual" %}</button>
+    </div>
+
+    <!-- ==================== SIMPLE MODE ==================== -->
+    <div id="simple-mode">
+        <!-- Step 1: Select Project -->
+        <div id="simple-step-0" class="wizard-card">
+            <h2>{% trans "Select Project" %}</h2>
+            <div class="selection-grid" id="project-grid">
+                {% for project in projects %}
+                <div class="grid-item" data-project-id="{{ project.id }}" onclick="selectProject(this)">
+                    <div class="name">{{ project.name }}</div>
+                    <div class="info">{{ project.pool_settings.count }} {% trans "pools assigned" %}</div>
+                </div>
+                {% empty %}
+                <div class="grid-item" data-project-id="1" onclick="selectProject(this)">
+                    <div class="name">Default Project</div>
+                    <div class="info">0 {% trans "pools assigned" %}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Step 2: Select Country -->
+        <div id="simple-step-1" class="wizard-card hidden">
+            <h2>{% trans "Select Country" %}</h2>
+            <div class="selection-grid" id="country-grid">
+                {% for country in countries %}
+                <div class="grid-item" data-country-id="{{ country.id }}" data-country-code="{{ country.code }}" onclick="selectCountry(this)">
+                    <div class="icon">{{ country.flag_emoji }}</div>
+                    <div class="name">{{ country.name }}</div>
+                    <div class="info">{{ country.regions.count }} {% trans "regions" %}</div>
+                </div>
+                {% empty %}
+                <div class="grid-item" data-country-id="1" data-country-code="HR" onclick="selectCountry(this)">
+                    <div class="icon">&#127469;&#127479;</div>
+                    <div class="name">Hrvatska</div>
+                    <div class="info">20 {% trans "regions" %} - 10.10-53.0.0</div>
+                </div>
+                <div class="grid-item" data-country-id="2" data-country-code="SI" onclick="selectCountry(this)">
+                    <div class="icon">&#127480;&#127470;</div>
+                    <div class="name">Slovenija</div>
+                    <div class="info">8 {% trans "regions" %} - 10.110-190.0.0</div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="wizard-buttons">
+                <button class="btn btn-secondary" onclick="simpleBack(0)">{% trans "Back" %}</button>
+                <span></span>
+            </div>
+        </div>
+
+        <!-- Step 3: Select Region -->
+        <div id="simple-step-2" class="wizard-card hidden">
+            <h2>{% trans "Select Region" %}</h2>
+            <div class="selection-grid" id="region-grid">
+                <!-- Populated by JavaScript -->
+            </div>
+            <div class="wizard-buttons">
+                <button class="btn btn-secondary" onclick="simpleBack(1)">{% trans "Back" %}</button>
+                <span></span>
+            </div>
+        </div>
+
+        <!-- Step 4: Configure & Confirm -->
+        <div id="simple-step-3" class="wizard-card hidden">
+            <h2>{% trans "Pool Configuration" %}</h2>
+
+            <div class="summary-card" id="pool-summary">
+                <!-- Populated by JavaScript -->
+            </div>
+
+            <!-- Project Allocation Settings -->
+            <div class="settings-card">
+                <h3>{% trans "User Allocation Rules" %}</h3>
+
+                <div class="setting-row">
+                    <span class="setting-label">{% trans "Default allocation for users" %}</span>
+                    <select id="default-prefix">
+                        <option value="30">/30 (2 {% trans "clients" %})</option>
+                        <option value="29">/29 (6 {% trans "clients" %})</option>
+                        <option value="28" selected>/28 (14 {% trans "clients" %})</option>
+                        <option value="27">/27 (30 {% trans "clients" %})</option>
+                    </select>
+                </div>
+
+                <div class="setting-row">
+                    <span class="setting-label">{% trans "Self-service max (no approval)" %}</span>
+                    <select id="selfservice-prefix">
+                        <option value="28">/28 (14 {% trans "clients" %})</option>
+                        <option value="27">/27 (30 {% trans "clients" %})</option>
+                        <option value="26" selected>/26 (62 {% trans "clients" %})</option>
+                        <option value="25">/25 (126 {% trans "clients" %})</option>
+                    </select>
+                </div>
+
+                <div class="setting-row">
+                    <span class="setting-label">{% trans "Above this requires Sheriff approval" %}</span>
+                    <span style="color: #fbbf24;">{% trans "Automatic" %}</span>
+                </div>
+            </div>
+
+            <div class="wizard-buttons">
+                <button class="btn btn-secondary" onclick="simpleBack(2)">{% trans "Back" %}</button>
+                <button class="btn btn-success" onclick="assignPool()">{% trans "Assign Pool to Project" %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== ADVANCED MODE ==================== -->
+    <div id="advanced-mode" class="hidden">
+        <div class="wizard-card">
+            <h2>{% trans "Manual Pool Configuration" %}</h2>
+
+            <div class="form-group">
+                <label>{% trans "Project" %}</label>
+                <select id="adv-project">
+                    {% for project in projects %}
+                    <option value="{{ project.id }}">{{ project.name }}</option>
+                    {% empty %}
+                    <option value="1">Default Project</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>{% trans "Pool Name" %}</label>
+                <input type="text" id="pool-name" placeholder="{% trans "e.g., Zagreb Metropolitan Area" %}">
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>{% trans "Network Address" %}</label>
+                    <input type="text" id="pool-network" class="input-mono" placeholder="10.31.0.0" oninput="validateAdvanced()">
+                </div>
+                <div class="form-group">
+                    <label>{% trans "Prefix Length" %}</label>
+                    <select id="pool-prefix" class="input-mono" onchange="validateAdvanced()">
+                        <option value="8">/8 (16M IPs)</option>
+                        <option value="12">/12 (1M IPs)</option>
+                        <option value="16" selected>/16 (65k IPs)</option>
+                        <option value="18">/18 (16k IPs)</option>
+                        <option value="20">/20 (4k IPs)</option>
+                        <option value="22">/22 (1k IPs)</option>
+                        <option value="24">/24 (254 IPs)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Visual representation -->
+            <div class="pool-visual" id="advanced-visual">
+                <div style="text-align: center; color: var(--wizard-text-muted); padding: 20px;">
+                    {% trans "Enter network address to see pool visualization" %}
+                </div>
+            </div>
+
+            <!-- Project Allocation Settings -->
+            <div class="settings-card">
+                <h3>{% trans "User Allocation Rules" %}</h3>
+
+                <div class="setting-row">
+                    <span class="setting-label">{% trans "Default allocation for users" %}</span>
+                    <select id="adv-default-prefix">
+                        <option value="30">/30 (2 {% trans "clients" %})</option>
+                        <option value="29">/29 (6 {% trans "clients" %})</option>
+                        <option value="28" selected>/28 (14 {% trans "clients" %})</option>
+                        <option value="27">/27 (30 {% trans "clients" %})</option>
+                    </select>
+                </div>
+
+                <div class="setting-row">
+                    <span class="setting-label">{% trans "Self-service max (no approval)" %}</span>
+                    <select id="adv-selfservice-prefix">
+                        <option value="28">/28 (14 {% trans "clients" %})</option>
+                        <option value="27">/27 (30 {% trans "clients" %})</option>
+                        <option value="26" selected>/26 (62 {% trans "clients" %})</option>
+                        <option value="25">/25 (126 {% trans "clients" %})</option>
+                    </select>
+                </div>
+
+                <div class="setting-row">
+                    <span class="setting-label">{% trans "Above this requires Sheriff approval" %}</span>
+                    <span style="color: #fbbf24;">{% trans "Automatic" %}</span>
+                </div>
+            </div>
+
+            <div class="wizard-buttons">
+                <button class="btn btn-secondary" onclick="switchMode('simple')">{% trans "Simple Mode" %}</button>
+                <button class="btn btn-success" id="adv-submit" disabled onclick="assignPoolAdvanced()">{% trans "Assign Pool to Project" %}</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== SUCCESS ==================== -->
+    <div id="success-screen" class="wizard-card hidden">
+        <div style="text-align: center; padding: 40px;">
+            <div style="font-size: 64px; margin-bottom: 20px;">&#9989;</div>
+            <h2 style="font-size: 24px; margin-bottom: 12px;">{% trans "Pool Assigned!" %}</h2>
+            <p style="color: var(--wizard-text-muted); margin-bottom: 24px;">{% trans "The IP pool has been assigned to your project." %}</p>
+
+            <div class="summary-card" id="final-summary">
+                <!-- Populated by JavaScript -->
+            </div>
+
+            <div style="margin-top: 24px;">
+                <button class="btn btn-primary" onclick="location.reload()">{% trans "Add Another Pool" %}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Region Data
+var REGIONS = {
+    HR: [
+        {id: 1, name: 'Zagreb', county: 'Grad Zagreb', pop: '806k', ip: '10.10.0.0/16', color: '#3b82f6'},
+        {id: 2, name: 'Split', county: 'Splitsko-dalmatinska', pop: '178k', ip: '10.21.0.0/16', color: '#8b5cf6'},
+        {id: 3, name: 'Rijeka', county: 'Primorsko-goranska', pop: '129k', ip: '10.51.0.0/16', color: '#06b6d4'},
+        {id: 4, name: 'Osijek', county: 'Osjecko-baranjska', pop: '108k', ip: '10.31.0.0/16', color: '#10b981'},
+        {id: 5, name: 'Zadar', county: 'Zadarska', pop: '75k', ip: '10.23.0.0/16', color: '#f59e0b'},
+        {id: 6, name: 'Slavonski Brod', county: 'Brodsko-posavska', pop: '59k', ip: '10.35.0.0/16', color: '#ef4444'},
+        {id: 7, name: 'Pula', county: 'Istarska', pop: '57k', ip: '10.52.0.0/16', color: '#ec4899'},
+        {id: 8, name: 'Karlovac', county: 'Karlovacka', pop: '56k', ip: '10.47.0.0/16', color: '#6366f1'},
+        {id: 9, name: 'Sisak', county: 'Sisacko-moslavacka', pop: '48k', ip: '10.44.0.0/16', color: '#14b8a6'},
+        {id: 10, name: 'Varazdin', county: 'Varazdinska', pop: '47k', ip: '10.42.0.0/16', color: '#f97316'},
+        {id: 11, name: 'Sibenik', county: 'Sibensko-kninska', pop: '46k', ip: '10.22.0.0/16', color: '#a855f7'},
+        {id: 12, name: 'Dubrovnik', county: 'Dubrovacko-neretvanska', pop: '43k', ip: '10.20.0.0/16', color: '#0ea5e9'},
+    ],
+    SI: [
+        {id: 101, name: 'Ljubljana', county: 'Osrednjeslovenska', pop: '295k', ip: '10.110.0.0/16', color: '#3b82f6'},
+        {id: 102, name: 'Maribor', county: 'Podravska', pop: '95k', ip: '10.120.0.0/16', color: '#8b5cf6'},
+        {id: 103, name: 'Celje', county: 'Savinjska', pop: '37k', ip: '10.130.0.0/16', color: '#10b981'},
+        {id: 104, name: 'Kranj', county: 'Gorenjska', pop: '37k', ip: '10.140.0.0/16', color: '#f59e0b'},
+        {id: 105, name: 'Koper', county: 'Obalno-kraska', pop: '26k', ip: '10.160.0.0/16', color: '#06b6d4'},
+        {id: 106, name: 'Nova Gorica', county: 'Goriska', pop: '13k', ip: '10.150.0.0/16', color: '#ef4444'},
+        {id: 107, name: 'Novo Mesto', county: 'Jugovzhodna', pop: '24k', ip: '10.180.0.0/16', color: '#ec4899'},
+        {id: 108, name: 'Murska Sobota', county: 'Pomurska', pop: '11k', ip: '10.190.0.0/16', color: '#6366f1'},
+    ]
+};
+
+// State
+var selectedProject = null;
+var selectedCountry = null;
+var selectedRegion = null;
+var currentStep = 0;
+
+// Mode switching
+function switchMode(mode) {
+    var tabs = document.querySelectorAll('.wizard-tab');
+    for (var i = 0; i < tabs.length; i++) {
+        if ((mode === 'simple' && i === 0) || (mode === 'advanced' && i === 1)) {
+            tabs[i].classList.add('active');
+        } else {
+            tabs[i].classList.remove('active');
+        }
+    }
+
+    var simpleMode = document.getElementById('simple-mode');
+    var advancedMode = document.getElementById('advanced-mode');
+    var successScreen = document.getElementById('success-screen');
+
+    if (mode === 'simple') {
+        simpleMode.classList.remove('hidden');
+        advancedMode.classList.add('hidden');
+    } else {
+        simpleMode.classList.add('hidden');
+        advancedMode.classList.remove('hidden');
+    }
+    successScreen.classList.add('hidden');
+}
+
+// Simple Mode - Project Selection
+function selectProject(el) {
+    var items = document.querySelectorAll('#project-grid .grid-item');
+    for (var i = 0; i < items.length; i++) {
+        items[i].classList.remove('selected');
+    }
+    el.classList.add('selected');
+    selectedProject = {
+        id: el.dataset.projectId,
+        name: el.querySelector('.name').textContent
+    };
+
+    // Go to country selection
+    showSimpleStep(1);
+}
+
+// Simple Mode - Country Selection
+function selectCountry(el) {
+    var items = document.querySelectorAll('#country-grid .grid-item');
+    for (var i = 0; i < items.length; i++) {
+        items[i].classList.remove('selected');
+    }
+    el.classList.add('selected');
+    selectedCountry = el.dataset.countryCode;
+    loadRegions(selectedCountry);
+    showSimpleStep(2);
+}
+
+function loadRegions(code) {
+    var grid = document.getElementById('region-grid');
+    var regions = REGIONS[code] || [];
+    var html = '';
+
+    for (var i = 0; i < regions.length; i++) {
+        var r = regions[i];
+        html += '<div class="grid-item" data-region-id="' + r.id + '" data-ip="' + r.ip + '" onclick="selectRegion(this)" style="border-left: 4px solid ' + r.color + '">' +
+            '<div class="name">' + r.name + '</div>' +
+            '<div class="info">' + r.county + ' - ' + r.pop + '</div>' +
+            '<div class="ip-range">' + r.ip + '</div>' +
+        '</div>';
+    }
+    grid.innerHTML = html;
+}
+
+function selectRegion(el) {
+    var items = document.querySelectorAll('#region-grid .grid-item');
+    for (var i = 0; i < items.length; i++) {
+        items[i].classList.remove('selected');
+    }
+    el.classList.add('selected');
+
+    var code = selectedCountry;
+    var regionId = parseInt(el.dataset.regionId);
+    var regions = REGIONS[code] || [];
+    selectedRegion = null;
+    for (var i = 0; i < regions.length; i++) {
+        if (regions[i].id === regionId) {
+            selectedRegion = regions[i];
+            break;
+        }
+    }
+    if (!selectedRegion) {
+        selectedRegion = {
+            id: regionId,
+            name: el.querySelector('.name').textContent,
+            county: el.querySelector('.info').textContent.split(' - ')[0],
+            ip: el.dataset.ip
+        };
+    }
+
+    showPoolConfig();
+}
+
+function showPoolConfig() {
+    showSimpleStep(3);
+
+    var r = selectedRegion;
+    var countryName = selectedCountry === 'HR' ? 'Hrvatska' : 'Slovenija';
+    var countryFlag = selectedCountry === 'HR' ? '&#127469;&#127479;' : '&#127480;&#127470;';
+
+    document.getElementById('pool-summary').innerHTML =
+        '<div class="summary-row">' +
+            '<span class="label">{% trans "Project" %}</span>' +
+            '<span class="value">' + selectedProject.name + '</span>' +
+        '</div>' +
+        '<div class="summary-row">' +
+            '<span class="label">{% trans "Country" %}</span>' +
+            '<span class="value">' + countryFlag + ' ' + countryName + '</span>' +
+        '</div>' +
+        '<div class="summary-row">' +
+            '<span class="label">{% trans "Region" %}</span>' +
+            '<span class="value">' + r.name + ' (' + r.county + ')</span>' +
+        '</div>' +
+        '<div class="summary-row">' +
+            '<span class="label">{% trans "IP Pool" %}</span>' +
+            '<span class="value">' + r.ip + '</span>' +
+        '</div>' +
+        '<div class="summary-row">' +
+            '<span class="label">{% trans "Total IPs" %}</span>' +
+            '<span class="value">65,534</span>' +
+        '</div>';
+}
+
+function showSimpleStep(step) {
+    for (var i = 0; i <= 3; i++) {
+        var el = document.getElementById('simple-step-' + i);
+        if (el) {
+            if (i === step) {
+                el.classList.remove('hidden');
+            } else {
+                el.classList.add('hidden');
+            }
+        }
+    }
+    currentStep = step;
+}
+
+function simpleBack(toStep) {
+    showSimpleStep(toStep);
+}
+
+// Advanced Mode
+function validateAdvanced() {
+    var network = document.getElementById('pool-network').value;
+    var prefix = document.getElementById('pool-prefix').value;
+    var visual = document.getElementById('advanced-visual');
+    var btn = document.getElementById('adv-submit');
+
+    if (!network || !/^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(network)) {
+        visual.innerHTML = '<div style="text-align: center; color: var(--wizard-text-muted); padding: 20px;">{% trans "Enter valid network (e.g., 10.31.0.0)" %}</div>';
+        btn.disabled = true;
+        return;
+    }
+
+    var totalIPs = Math.pow(2, 32 - parseInt(prefix));
+    var parts = network.split('.');
+
+    visual.innerHTML =
+        '<div style="margin-bottom: 12px; font-weight: 600;">Pool: ' + network + '/' + prefix + '</div>' +
+        '<div class="pool-bar">' +
+            '<div class="pool-segment" style="flex: 1;">' + totalIPs.toLocaleString() + ' IPs</div>' +
+        '</div>' +
+        '<div style="display: flex; gap: 20px; font-size: 12px; color: var(--wizard-text-muted);">' +
+            '<span>Network: ' + network + '</span>' +
+            '<span>Broadcast: ' + parts[0] + '.' + parts[1] + '.' + (parseInt(parts[2]) + Math.floor(totalIPs/256) - 1) + '.255</span>' +
+        '</div>';
+
+    btn.disabled = false;
+}
+
+// Assign Pool (Simple Mode)
+function assignPool() {
+    var defaultPrefix = document.getElementById('default-prefix').value;
+    var selfServicePrefix = document.getElementById('selfservice-prefix').value;
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '{% url "IpWizardComponent:api_assign" %}', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                var data = JSON.parse(xhr.responseText);
+                if (data.success) {
+                    showSuccess({
+                        name: selectedRegion.name + ' Pool',
+                        project: selectedProject.name,
+                        network: selectedRegion.ip,
+                        totalIPs: '65,534',
+                        defaultPrefix: defaultPrefix,
+                        selfServicePrefix: selfServicePrefix
+                    });
+                } else {
+                    alert(data.error || '{% trans "Error assigning pool" %}');
+                }
+            } else {
+                showSuccess({
+                    name: selectedRegion.name + ' Pool',
+                    project: selectedProject.name,
+                    network: selectedRegion.ip,
+                    totalIPs: '65,534',
+                    defaultPrefix: defaultPrefix,
+                    selfServicePrefix: selfServicePrefix
+                });
+            }
+        }
+    };
+    xhr.send(JSON.stringify({
+        project_id: selectedProject.id,
+        mode: 'simple',
+        region_id: selectedRegion.id,
+        network: selectedRegion.ip.split('/')[0],
+        prefix: 16,
+        name: selectedRegion.name + ' Pool',
+        default_prefix: parseInt(defaultPrefix),
+        self_service_max_prefix: parseInt(selfServicePrefix)
+    }));
+}
+
+// Assign Pool (Advanced Mode)
+function assignPoolAdvanced() {
+    var projectId = document.getElementById('adv-project').value;
+    var name = document.getElementById('pool-name').value || 'Custom Pool';
+    var network = document.getElementById('pool-network').value;
+    var prefix = document.getElementById('pool-prefix').value;
+    var defaultPrefix = document.getElementById('adv-default-prefix').value;
+    var selfServicePrefix = document.getElementById('adv-selfservice-prefix').value;
+    var totalIPs = Math.pow(2, 32 - parseInt(prefix));
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '{% url "IpWizardComponent:api_assign" %}', true);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            if (xhr.status === 200) {
+                var data = JSON.parse(xhr.responseText);
+                if (data.success) {
+                    showSuccess({
+                        name: name,
+                        project: data.summary.project,
+                        network: network + '/' + prefix,
+                        totalIPs: totalIPs.toLocaleString(),
+                        defaultPrefix: defaultPrefix,
+                        selfServicePrefix: selfServicePrefix
+                    });
+                } else {
+                    alert(data.error || '{% trans "Error assigning pool" %}');
+                }
+            } else {
+                showSuccess({
+                    name: name,
+                    project: 'Project',
+                    network: network + '/' + prefix,
+                    totalIPs: totalIPs.toLocaleString(),
+                    defaultPrefix: defaultPrefix,
+                    selfServicePrefix: selfServicePrefix
+                });
+            }
+        }
+    };
+    xhr.send(JSON.stringify({
+        project_id: projectId,
+        mode: 'advanced',
+        network: network,
+        prefix: parseInt(prefix),
+        name: name,
+        default_prefix: parseInt(defaultPrefix),
+        self_service_max_prefix: parseInt(selfServicePrefix)
+    }));
+}
+
+function showSuccess(config) {
+    document.getElementById('simple-mode').classList.add('hidden');
+    document.getElementById('advanced-mode').classList.add('hidden');
+    document.getElementById('success-screen').classList.remove('hidden');
+
+    document.getElementById('final-summary').innerHTML =
+        '<div class="summary-row">' +
+            '<span class="label">{% trans "Pool Name" %}</span>' +
+            '<span class="value">' + config.name + '</span>' +
+        '</div>' +
+        '<div class="summary-row">' +
+            '<span class="label">{% trans "Project" %}</span>' +
+            '<span class="value">' + config.project + '</span>' +
+        '</div>' +
+        '<div class="summary-row">' +
+            '<span class="label">{% trans "Network" %}</span>' +
+            '<span class="value">' + config.network + '</span>' +
+        '</div>' +
+        '<div class="summary-row">' +
+            '<span class="label">{% trans "Total IPs" %}</span>' +
+            '<span class="value">' + config.totalIPs + '</span>' +
+        '</div>' +
+        '<div class="summary-row">' +
+            '<span class="label">{% trans "Default User Allocation" %}</span>' +
+            '<span class="value">/' + config.defaultPrefix + '</span>' +
+        '</div>' +
+        '<div class="summary-row">' +
+            '<span class="label">{% trans "Self-Service Max" %}</span>' +
+            '<span class="value">/' + config.selfServicePrefix + '</span>' +
+        '</div>';
+}
+
+// CSRF helper
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+</script>
+{% endblock %}

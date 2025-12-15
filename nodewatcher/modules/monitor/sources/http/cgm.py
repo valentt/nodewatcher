@@ -2,7 +2,7 @@ import urlparse
 
 from django.core import urlresolvers
 from django.conf import settings
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from nodewatcher.core.generator.cgm import base as cgm_base
 

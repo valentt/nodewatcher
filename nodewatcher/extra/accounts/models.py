@@ -4,7 +4,7 @@ from django.db import models as django_models
 from django.db.models import signals as models_signals
 from django.contrib.auth import models as auth_models
 from django.template import loader
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from registration import models as registration_models
 
@@ -59,7 +59,7 @@ class UserProfileAndSettings(django_models.Model):
         return u"profile and settings for %s" % (self.user)
 
     def get_absolute_url(self):
-        from django.core.urlresolvers import reverse
+        from django.urls import reverse
         return reverse('AccountsComponent:user_account',)
 
 

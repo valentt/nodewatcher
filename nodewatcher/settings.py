@@ -176,7 +176,7 @@ TEMPLATES = [
     },
 ]
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -185,7 +185,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'nodewatcher.core.frontend.middleware.ClientNodeMiddleware',
-)
+]
 
 # TODO: We should not use this everywhere, only on specific views.
 ATOMIC_REQUESTS = True
@@ -337,6 +337,7 @@ INSTALLED_APPS += [
     'nodewatcher.modules.frontend.topology',
     'nodewatcher.modules.frontend.generator',
     'nodewatcher.modules.frontend.map',
+    'nodewatcher.modules.frontend.ipwizard',
     'nodewatcher.modules.administration.banner',
     'nodewatcher.modules.sensors.generic',
     'nodewatcher.modules.defaults.network_profile',

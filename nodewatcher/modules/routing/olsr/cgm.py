@@ -1,4 +1,4 @@
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from nodewatcher.core import models as core_models
 from nodewatcher.core.generator.cgm import base as cgm_base, resources as cgm_resources, models as cgm_models

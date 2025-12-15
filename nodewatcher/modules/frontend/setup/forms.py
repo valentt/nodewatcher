@@ -1,7 +1,7 @@
 from django import forms
 from django.core import validators as core_validators
 from django.contrib.auth import forms as auth_forms, models as auth_models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from guardian import utils as guardian_utils
 

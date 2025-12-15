@@ -1,19 +1,25 @@
-{% extends "admin/index.html" %}
+{% extends "admin/base_site.html" %}
 {% load i18n static dashboard_tags %}
+
+{% block title %}{% trans 'Dashboard' %} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
 {% block extrastyle %}
 {{ block.super }}
 <style>
-    /* Clean professional dashboard */
+    /* Modern Admin Dashboard */
     .nw-dashboard {
-        margin-bottom: 32px;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 24px;
     }
 
+    /* Header */
     .nw-header {
         margin-bottom: 32px;
+        padding-top: 8px;
     }
 
-    .nw-header h2 {
+    .nw-header h1 {
         color: #111;
         font-size: 28px;
         font-weight: 600;
@@ -22,7 +28,7 @@
     }
 
     .nw-header p {
-        color: #666;
+        color: #111;
         font-size: 14px;
         margin: 0;
     }
@@ -32,70 +38,76 @@
         display: grid;
         grid-template-columns: repeat(4, 1fr);
         gap: 16px;
-        margin-bottom: 24px;
+        margin-bottom: 32px;
     }
 
     @media (max-width: 900px) {
         .nw-stats { grid-template-columns: repeat(2, 1fr); }
     }
 
+    @media (max-width: 500px) {
+        .nw-stats { grid-template-columns: 1fr; }
+    }
+
     .nw-stat {
         background: #fff;
         border: 1px solid #e5e5e7;
-        border-radius: 8px;
+        border-radius: 12px;
         padding: 20px 24px;
         text-decoration: none;
         display: block;
-        transition: border-color 0.15s, box-shadow 0.15s;
+        transition: all 0.2s ease;
     }
 
     .nw-stat:hover {
         border-color: #3b82f6;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        transform: translateY(-2px);
     }
 
     .nw-stat-label {
-        font-size: 12px;
+        font-size: 11px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.5px;
-        color: #888;
+        color: #111;
         margin-bottom: 8px;
     }
 
     .nw-stat-value {
-        font-size: 32px;
-        font-weight: 600;
+        font-size: 36px;
+        font-weight: 700;
         color: #111;
         line-height: 1;
     }
 
-    /* Actions */
-    .nw-actions {
+    /* Quick Actions */
+    .nw-quick-actions {
         display: flex;
         gap: 12px;
         flex-wrap: wrap;
         margin-bottom: 32px;
-        padding-bottom: 32px;
-        border-bottom: 1px solid #e5e5e7;
     }
 
     .nw-btn {
         display: inline-flex;
         align-items: center;
-        gap: 6px;
-        padding: 10px 16px;
+        gap: 8px;
+        padding: 12px 20px;
         background: #111;
         color: #fff !important;
         text-decoration: none !important;
-        border-radius: 6px;
-        font-size: 13px;
+        border-radius: 8px;
+        font-size: 14px;
         font-weight: 500;
-        transition: background 0.15s;
+        transition: all 0.15s ease;
+        border: none;
+        cursor: pointer;
     }
 
     .nw-btn:hover {
         background: #333;
+        transform: translateY(-1px);
     }
 
     .nw-btn.primary {
@@ -106,59 +118,689 @@
         background: #2563eb;
     }
 
-    /* Full width content */
-    #content-main {
-        display: block !important;
+    .nw-btn svg {
+        width: 16px;
+        height: 16px;
     }
 
-    /* App modules grid */
-    .app-list {
+    /* Tabs Navigation */
+    .nw-tabs {
+        display: flex;
+        gap: 4px;
+        border-bottom: 1px solid #e5e5e7;
+        margin-bottom: 24px;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .nw-tab {
+        padding: 12px 20px;
+        font-size: 14px;
+        font-weight: 500;
+        color: #111;
+        text-decoration: none;
+        border-bottom: 2px solid transparent;
+        transition: all 0.15s ease;
+        white-space: nowrap;
+        cursor: pointer;
+        background: none;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+    }
+
+    .nw-tab:hover {
+        color: #000;
+        background: #f5f5f5;
+    }
+
+    .nw-tab.active {
+        color: #fff;
+        background: #111;
+        border-radius: 6px 6px 0 0;
+        border-bottom-color: #111;
+    }
+
+    .nw-tab-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 20px;
+        height: 20px;
+        padding: 0 6px;
+        background: #e5e5e7;
+        border-radius: 10px;
+        font-size: 11px;
+        font-weight: 600;
+        margin-left: 8px;
+    }
+
+    .nw-tab.active .nw-tab-badge {
+        background: #111;
+        color: #fff;
+    }
+
+    /* Tab Content */
+    .nw-tab-content {
+        display: none;
+    }
+
+    .nw-tab-content.active {
+        display: block;
+    }
+
+    /* Module Cards Grid */
+    .nw-modules {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 16px;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 20px;
     }
 
-    .app-list .module {
+    .nw-module {
+        background: #fff;
+        border: 1px solid #e5e5e7;
+        border-radius: 12px;
+        overflow: hidden;
+        transition: all 0.2s ease;
+    }
+
+    .nw-module:hover {
+        border-color: #d0d0d5;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .nw-module-header {
+        background: #fafafa;
+        padding: 16px 20px;
+        border-bottom: 1px solid #e5e5e7;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .nw-module-icon {
+        width: 36px;
+        height: 36px;
+        background: #111;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+    }
+
+    .nw-module-icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    .nw-module-icon.blue { background: #3b82f6; }
+    .nw-module-icon.green { background: #10b981; }
+    .nw-module-icon.purple { background: #8b5cf6; }
+    .nw-module-icon.orange { background: #f59e0b; }
+    .nw-module-icon.red { background: #ef4444; }
+
+    .nw-module-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: #111;
         margin: 0;
     }
 
-    /* Hide recent actions on index - it's mostly empty */
-    #recent-actions-module {
+    .nw-module-desc {
+        font-size: 12px;
+        color: #111;
+        margin: 2px 0 0 0;
+    }
+
+    .nw-module-body {
+        padding: 8px 0;
+    }
+
+    .nw-module-link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 20px;
+        color: #333;
+        text-decoration: none;
+        transition: background 0.1s ease;
+    }
+
+    .nw-module-link:hover {
+        background: #f5f5f7;
+    }
+
+    .nw-module-link-text {
+        font-size: 14px;
+    }
+
+    .nw-module-link-actions {
+        display: flex;
+        gap: 8px;
+    }
+
+    .nw-module-link-action {
+        font-size: 12px;
+        color: #3b82f6;
+        text-decoration: none;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: background 0.1s;
+    }
+
+    .nw-module-link-action:hover {
+        background: #dbeafe;
+    }
+
+    /* Empty state */
+    .nw-empty {
+        text-align: center;
+        padding: 48px 24px;
+        color: #888;
+    }
+
+    .nw-empty svg {
+        width: 48px;
+        height: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+    }
+
+    /* Collapsed section */
+    .nw-collapsed-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 16px 0;
+        color: #666;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        border: none;
+        background: none;
+        width: 100%;
+        text-align: left;
+    }
+
+    .nw-collapsed-toggle:hover {
+        color: #333;
+    }
+
+    .nw-collapsed-toggle svg {
+        width: 16px;
+        height: 16px;
+        transition: transform 0.2s;
+    }
+
+    .nw-collapsed-toggle.open svg {
+        transform: rotate(90deg);
+    }
+
+    .nw-collapsed-content {
         display: none;
+    }
+
+    .nw-collapsed-content.open {
+        display: block;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="nw-dashboard">
+    <!-- Header -->
     <div class="nw-header">
-        <h2>Network Management</h2>
-        <p>Nodewatcher administration dashboard</p>
+        <h1>{% trans 'Network Dashboard' %}</h1>
+        <p>{% trans 'Manage your mesh network infrastructure' %}</p>
     </div>
 
+    <!-- Stats Cards -->
     <div class="nw-stats">
         <a href="{% url 'admin:core_node_changelist' %}" class="nw-stat">
-            <div class="nw-stat-label">Nodes</div>
+            <div class="nw-stat-label">{% trans 'Nodes' %}</div>
             <div class="nw-stat-value">{% get_node_count %}</div>
         </a>
         <a href="{% url 'admin:projects_project_changelist' %}" class="nw-stat">
-            <div class="nw-stat-label">Projects</div>
+            <div class="nw-stat-label">{% trans 'Projects' %}</div>
             <div class="nw-stat-value">{% get_project_count %}</div>
         </a>
         <a href="{% url 'admin:auth_user_changelist' %}" class="nw-stat">
-            <div class="nw-stat-label">Users</div>
+            <div class="nw-stat-label">{% trans 'Users' %}</div>
             <div class="nw-stat-value">{% get_user_count %}</div>
         </a>
         <a href="{% url 'admin:core_ippool_changelist' %}" class="nw-stat">
-            <div class="nw-stat-label">IP Pools</div>
+            <div class="nw-stat-label">{% trans 'IP Pools' %}</div>
             <div class="nw-stat-value">{% get_ip_pool_count %}</div>
         </a>
     </div>
 
-    <div class="nw-actions">
-        <a href="{% url 'admin:projects_project_add' %}" class="nw-btn primary">+ New Project</a>
+    <!-- Quick Actions -->
+    <div class="nw-quick-actions">
+        <a href="{% url 'admin:projects_project_add' %}" class="nw-btn primary">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+            {% trans 'New Project' %}
+        </a>
+        <a href="{% url 'admin:auth_user_add' %}" class="nw-btn">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+            {% trans 'New User' %}
+        </a>
+    </div>
+
+    <!-- Tabs Navigation -->
+    <div class="nw-tabs" role="tablist">
+        <button class="nw-tab active" data-tab="network" role="tab">
+            {% trans 'Network' %}
+        </button>
+        <button class="nw-tab" data-tab="users" role="tab">
+            {% trans 'Users & Access' %}
+        </button>
+        <button class="nw-tab" data-tab="services" role="tab">
+            {% trans 'Services' %}
+        </button>
+        <button class="nw-tab" data-tab="builds" role="tab">
+            {% trans 'Build System' %}
+        </button>
+        <button class="nw-tab" data-tab="system" role="tab">
+            {% trans 'System' %}
+        </button>
+    </div>
+
+    <!-- Tab: Network -->
+    <div class="nw-tab-content active" data-tab="network">
+        <div class="nw-modules">
+            <!-- Projects -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon blue">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'Projects' %}</h3>
+                        <p class="nw-module-desc">{% trans 'Network communities and areas' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:projects_project_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'All Projects' %}</span>
+                        <span class="nw-module-link-actions">
+                            <span class="nw-module-link-action" onclick="event.preventDefault(); window.location='{% url 'admin:projects_project_add' %}'">+ {% trans 'Add' %}</span>
+                        </span>
+                    </a>
+                    <a href="{% url 'admin:projects_ssid_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'SSIDs' %}</span>
+                        <span class="nw-module-link-actions">
+                            <span class="nw-module-link-action" onclick="event.preventDefault(); window.location='{% url 'admin:projects_ssid_add' %}'">+ {% trans 'Add' %}</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Nodes -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon green">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'Nodes' %}</h3>
+                        <p class="nw-module-desc">{% trans 'Network devices and routers' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:core_node_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'All Nodes' %}</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- IP Pools -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon purple">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'IP Pools' %}</h3>
+                        <p class="nw-module-desc">{% trans 'Address allocation pools' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:core_ippool_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'All IP Pools' %}</span>
+                        <span class="nw-module-link-actions">
+                            <span class="nw-module-link-action" onclick="event.preventDefault(); window.location='{% url 'admin:core_ippool_add' %}'">+ {% trans 'Add' %}</span>
+                        </span>
+                    </a>
+                    <a href="{% url 'IpWizardComponent:wizard' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'IP Pool Wizard' %}</span>
+                    </a>
+                    <a href="{% url 'admin:ipwizard_projectpoolsettings_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'Project Pool Settings' %}</span>
+                    </a>
+                    <a href="{% url 'admin:ipwizard_country_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'Countries & Regions' %}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Users & Access -->
+    <div class="nw-tab-content" data-tab="users">
+        <div class="nw-modules">
+            <!-- Users -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon blue">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'Users' %}</h3>
+                        <p class="nw-module-desc">{% trans 'User accounts and profiles' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:auth_user_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'All Users' %}</span>
+                        <span class="nw-module-link-actions">
+                            <span class="nw-module-link-action" onclick="event.preventDefault(); window.location='{% url 'admin:auth_user_add' %}'">+ {% trans 'Add' %}</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Groups -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon green">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'Groups' %}</h3>
+                        <p class="nw-module-desc">{% trans 'Permission groups' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:auth_group_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'All Groups' %}</span>
+                        <span class="nw-module-link-actions">
+                            <span class="nw-module-link-action" onclick="event.preventDefault(); window.location='{% url 'admin:auth_group_add' %}'">+ {% trans 'Add' %}</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Public Keys -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon purple">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'Public Keys' %}</h3>
+                        <p class="nw-module-desc">{% trans 'SSH authentication keys' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:authentication_public_key_globalauthenticationkey_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'Global Auth Keys' %}</span>
+                        <span class="nw-module-link-actions">
+                            <span class="nw-module-link-action" onclick="event.preventDefault(); window.location='{% url 'admin:authentication_public_key_globalauthenticationkey_add' %}'">+ {% trans 'Add' %}</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Services -->
+    <div class="nw-tab-content" data-tab="services">
+        <div class="nw-modules">
+            <!-- DNS -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon blue">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'DNS Servers' %}</h3>
+                        <p class="nw-module-desc">{% trans 'Domain name resolution' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:services_dns_dnsserver_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'All DNS Servers' %}</span>
+                        <span class="nw-module-link-actions">
+                            <span class="nw-module-link-action" onclick="event.preventDefault(); window.location='{% url 'admin:services_dns_dnsserver_add' %}'">+ {% trans 'Add' %}</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- VPN -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon green">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'VPN Servers' %}</h3>
+                        <p class="nw-module-desc">{% trans 'Tunneldigger brokers' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:vpn_tunneldigger_tunneldiggerserver_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'Tunneldigger Servers' %}</span>
+                        <span class="nw-module-link-actions">
+                            <span class="nw-module-link-action" onclick="event.preventDefault(); window.location='{% url 'admin:vpn_tunneldigger_tunneldiggerserver_add' %}'">+ {% trans 'Add' %}</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: Build System -->
+    <div class="nw-tab-content" data-tab="builds">
+        <div class="nw-modules">
+            <!-- Build Channels -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon orange">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'Build Channels' %}</h3>
+                        <p class="nw-module-desc">{% trans 'Firmware release channels' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:generator_buildchannel_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'All Channels' %}</span>
+                        <span class="nw-module-link-actions">
+                            <span class="nw-module-link-action" onclick="event.preventDefault(); window.location='{% url 'admin:generator_buildchannel_add' %}'">+ {% trans 'Add' %}</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Builders -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon blue">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'Builders' %}</h3>
+                        <p class="nw-module-desc">{% trans 'Build server configuration' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:generator_builder_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'All Builders' %}</span>
+                        <span class="nw-module-link-actions">
+                            <span class="nw-module-link-action" onclick="event.preventDefault(); window.location='{% url 'admin:generator_builder_add' %}'">+ {% trans 'Add' %}</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Build Versions -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon purple">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'Build Versions' %}</h3>
+                        <p class="nw-module-desc">{% trans 'Available firmware versions' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:generator_buildversion_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'All Versions' %}</span>
+                        <span class="nw-module-link-actions">
+                            <span class="nw-module-link-action" onclick="event.preventDefault(); window.location='{% url 'admin:generator_buildversion_add' %}'">+ {% trans 'Add' %}</span>
+                        </span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Build Results -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon green">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'Build Results' %}</h3>
+                        <p class="nw-module-desc">{% trans 'Firmware build history' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:generator_buildresult_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'All Results' %}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tab: System -->
+    <div class="nw-tab-content" data-tab="system">
+        <div class="nw-modules">
+            <!-- OAuth2 -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'OAuth2' %}</h3>
+                        <p class="nw-module-desc">{% trans 'API authentication tokens' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:oauth2_provider_application_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'Applications' %}</span>
+                    </a>
+                    <a href="{% url 'admin:oauth2_provider_accesstoken_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'Access Tokens' %}</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- API Keys (Tastypie) -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'API Keys' %}</h3>
+                        <p class="nw-module-desc">{% trans 'Tastypie API access' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:tastypie_apikey_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'All API Keys' %}</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Sites -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'Sites' %}</h3>
+                        <p class="nw-module-desc">{% trans 'Django sites framework' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:sites_site_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'All Sites' %}</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Registration -->
+            <div class="nw-module">
+                <div class="nw-module-header">
+                    <div class="nw-module-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                    </div>
+                    <div>
+                        <h3 class="nw-module-title">{% trans 'Registration' %}</h3>
+                        <p class="nw-module-desc">{% trans 'User registration settings' %}</p>
+                    </div>
+                </div>
+                <div class="nw-module-body">
+                    <a href="{% url 'admin:registration_registrationprofile_changelist' %}" class="nw-module-link">
+                        <span class="nw-module-link-text">{% trans 'Registration Profiles' %}</span>
+                    </a>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
-{{ block.super }}
+<script>
+(function() {
+    // Tab switching
+    const tabs = document.querySelectorAll('.nw-tab');
+    const contents = document.querySelectorAll('.nw-tab-content');
+
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            const target = tab.dataset.tab;
+
+            // Update tabs
+            tabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+
+            // Update content
+            contents.forEach(c => {
+                c.classList.remove('active');
+                if (c.dataset.tab === target) {
+                    c.classList.add('active');
+                }
+            });
+
+            // Save to localStorage
+            localStorage.setItem('nw-admin-tab', target);
+        });
+    });
+
+    // Restore saved tab
+    const savedTab = localStorage.getItem('nw-admin-tab');
+    if (savedTab) {
+        const tab = document.querySelector(`.nw-tab[data-tab="${savedTab}"]`);
+        if (tab) tab.click();
+    }
+})();
+</script>
 {% endblock %}

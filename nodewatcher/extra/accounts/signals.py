@@ -1,6 +1,6 @@
 from django import dispatch
 from django.contrib import auth, messages
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 @dispatch.receiver(auth.user_logged_in, dispatch_uid='user_login_message')

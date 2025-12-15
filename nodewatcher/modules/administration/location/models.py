@@ -2,7 +2,7 @@ import pytz
 
 from django.contrib.gis.db import models as gis_models
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 import timezone_field
 from django_countries import fields as country_field

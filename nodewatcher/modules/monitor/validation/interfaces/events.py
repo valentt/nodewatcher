@@ -1,4 +1,4 @@
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from nodewatcher.core.events import declarative as events, pool
 from nodewatcher.core.generator.cgm import models as cgm_models

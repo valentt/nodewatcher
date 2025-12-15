@@ -3,7 +3,7 @@ import datetime
 from django.apps import apps
 from django.contrib.postgres import fields as postgres_fields
 from django.db import models
-from django.utils.translation import ugettext_lazy as _, ugettext
+from django.utils.translation import gettext_lazy as _, gettext
 
 from polymorphic import models as polymorphic_models
 
@@ -61,9 +61,9 @@ class TunneldiggerInterfaceConfig(cgm_models.InterfaceConfig, cgm_models.Routabl
 
     def __str__(self):
         if not self.server:
-            return ugettext("Tunneldigger interface (no server)")
+            return gettext("Tunneldigger interface (no server)")
 
-        return ugettext("Tunneldigger interface (%(server)s)") % {'server': self.server}
+        return gettext("Tunneldigger interface (%(server)s)") % {'server': self.server}
 
 registration.point('node.config').register_item(TunneldiggerInterfaceConfig)
 

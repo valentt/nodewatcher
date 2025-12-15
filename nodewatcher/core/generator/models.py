@@ -7,7 +7,7 @@ from django.contrib.postgres.fields import JSONField
 from django.core import exceptions as django_exceptions
 from django.db.models import signals as django_signals
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from .. import models as core_models
 from . import connection, exceptions

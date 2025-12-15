@@ -1,5 +1,5 @@
 from django.core import urlresolvers
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from nodewatcher.core.events import declarative as events, pool
 

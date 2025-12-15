@@ -1,5 +1,5 @@
 from django import dispatch
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from nodewatcher.core.generator.cgm import base as cgm_base
 

@@ -1,4 +1,4 @@
-from django.utils.translation import ugettext as _
+from django.utils.translation import gettext as _
 
 from nodewatcher.core import models as core_models
 from nodewatcher.core.allocation.ip import models as pool_models

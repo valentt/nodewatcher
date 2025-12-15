@@ -1,6 +1,6 @@
 from django import dispatch
 from django.contrib import messages
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from nodewatcher.core import models
 from nodewatcher.core.registry import permissions

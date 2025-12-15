@@ -6,7 +6,7 @@ from django.contrib import auth, messages
 from django.core import exceptions
 from django.utils import decorators
 from django.utils.six.moves.urllib import parse
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 
 def user_test_required(test_func, message_func=None, message_level_func=lambda u: messages.INFO, redirect_url_func=lambda u: None, redirect_field_name=auth.REDIRECT_FIELD_NAME, decorator_id=None):

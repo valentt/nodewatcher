@@ -9,7 +9,7 @@ from django.db.models import constants, query as django_query
 from django.db.models.fields import related as related_fields
 from django.forms import fields as widgets
 from django.utils import text, functional
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from ...utils import ipaddr
 

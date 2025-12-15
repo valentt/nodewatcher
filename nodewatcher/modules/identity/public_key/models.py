@@ -4,7 +4,7 @@ from cryptography.hazmat import backends
 
 from django.core import exceptions as django_exceptions
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 
 from nodewatcher.core.registry import registration
 from nodewatcher.modules.identity.base import models as base_models
