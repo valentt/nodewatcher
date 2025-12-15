@@ -1,5 +1,5 @@
 # Core dependencies
-Django>=3.2,<4.0
+Django>=5.2,<6.0
 Jinja2>=3.0,<4.0
 MarkupSafe>=2.0,<3.0
 Pygments>=2.15,<3.0
@@ -55,8 +55,7 @@ py-radix>=0.10,<1.0
 networkx>=3.1,<4.0
 grako>=3.99,<4.0
 
-# Data/streams
-datastream[influxdb]>=0.5.19
+# Data/streams (datastream installed separately due to setup.py bug)
 influxdb>=5.3,<6.0
 
 # Redis
@@ -67,9 +66,9 @@ docutils>=0.19,<1.0
 sphinx-me>=0.3
 
 # Custom forks (may need to be updated or replaced)
-git+https://github.com/zestedesavoir/django-cors-middleware.git@1b9f8f5a10cc4251ac9a9c255bbb34a4962ed3f3#egg=cors_middleware-zestedesavoir
-git+https://github.com/wlanslovenija/django-tastypie.git@d8c51ef2ef55efa49409f7ac1f1c44b1258be8b9#egg=django_tastypie-wlanslovenija
-git+https://github.com/wlanslovenija/django-datastream.git@a54a2e735950c5c31ec71613750bdf1ce194389f#egg=django_datastream-master
-git+https://github.com/wlanslovenija/pyScss.git@026664cf390ffb6883994cbc54c5b3d3f507a48d#egg=pyScss-wlanslovenija
-git+https://github.com/wlanslovenija/django-rest-framework-gis.git@d2f8adab93be1cab75696485e9b0c56d41248328#egg=djangorestframework_gis-wlanslovenija
-git+https://github.com/wlanslovenija/drf-ujson-renderer.git@96cee399260daf469b7e4b004fa245edf9dd253c#egg=drf_ujson-wlanslovenija
+git+https://github.com/zestedesavoir/django-cors-middleware.git@1b9f8f5a10cc4251ac9a9c255bbb34a4962ed3f3
+git+https://github.com/wlanslovenija/django-tastypie.git@d8c51ef2ef55efa49409f7ac1f1c44b1258be8b9
+git+https://github.com/wlanslovenija/django-rest-framework-gis.git@d2f8adab93be1cab75696485e9b0c56d41248328
+git+https://github.com/wlanslovenija/drf-ujson-renderer.git@96cee399260daf469b7e4b004fa245edf9dd253c
+# Use PyPI pyScss instead of fork
+pyScss>=1.4.0,<2.0
