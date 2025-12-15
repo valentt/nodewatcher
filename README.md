@@ -8,34 +8,23 @@
 
 ---
 
-## Project History & Status
+## What is nodewatcher?
 
-### Origins: wlan slovenija (2009-2018)
+nodewatcher is a comprehensive platform for managing community mesh networks. It helps network operators and communities to:
 
-nodewatcher was originally created by **[wlan slovenija](https://en.wikipedia.org/wiki/Wlan_slovenija)** - a pioneering open wireless community network in Slovenia.
+- **Plan** wireless network deployments with geographic visualization
+- **Deploy** nodes with automatically generated custom firmware
+- **Monitor** network health, performance, and connectivity in real-time
+- **Maintain** large-scale mesh networks with minimal manual intervention
 
-| Year | Milestone |
-|------|-----------|
-| **2009** | Project founded in Ljubljana with 10 initial nodes |
-| **2009-2017** | Network grew to 400+ active nodes, 1.6M+ connections |
-| **2012-2017** | Multiple Google Summer of Code participations |
-| **2015** | International collaboration: FunkFeuer (Austria), Otvorena mreža (Croatia) |
-| **2015** | Deployed access points for refugees and migrants |
-| **October 2018** | Last upstream commit - project became dormant |
+### Who is it for?
 
-> **Note:** The original wlan slovenija infrastructure (wlan-si.net, dev.wlan-si.net, docs.nodewatcher.net) is no longer operational. The project was abandoned after 2018.
+- **Community networks** - Open wireless mesh networks like Freifunk, Guifi, etc.
+- **Network operators** - Managing fleets of OpenWrt-based routers
+- **Researchers** - Studying mesh network behavior and performance
+- **ISPs** - Running wireless last-mile infrastructure
 
-### Revival: Otvorena mreža (2025-)
-
-In **December 2025**, the project was revived and completely modernized by **[Valent Turković](https://github.com/valentt)** from **Otvorena mreža** (Open Network), a Croatian community network initiative that was a partner network of wlan slovenija since 2015.
-
-#### What's New in v3.1.0
-
-- Complete migration from **Python 2.7 → Python 3.10+**
-- Upgrade from **Django 1.x → Django 5.2 LTS**
-- **70+ dependencies** updated to modern, maintained versions
-- **200+ compatibility fixes** across 140+ files
-- Comprehensive [migration documentation](PYTHON3_MIGRATION.md)
+> **Note:** This project was abandoned from 2018-2025 and has been revived. See [Project History](#project-history) for details.
 
 ---
 
@@ -172,27 +161,8 @@ curl "http://localhost:8000/api/v2/node/?fields=config:core.general&fields=monit
 
 | Document | Description |
 |----------|-------------|
-| [PYTHON3_MIGRATION.md](PYTHON3_MIGRATION.md) | Detailed Python 3 / Django 5.2 migration guide |
+| [PYTHON3_MIGRATION.md](PYTHON3_MIGRATION.md) | Python 3 / Django 5.2 migration guide |
 | [docs/](docs/) | Technical documentation and feature specs |
-
-### Historical References
-
-- [nodewatcher paper](https://github.com/wlanslovenija/nodewatcher-paper) - Academic paper (2015)
-- [Wikipedia: wlan slovenija](https://en.wikipedia.org/wiki/Wlan_slovenija) - Project history
-
----
-
-## Community Networks
-
-### Historical Users (2009-2018)
-- **wlan slovenija** (Slovenia) - Original developer
-- **Otvorena mreža** (Croatia) - Partner network
-- **FunkFeuer** (Austria) - Partner network
-
-### Current (2025-)
-- **Otvorena mreža** (Croatia) - Current maintainer
-
-*Using nodewatcher for your community network? Open an issue to be listed here!*
 
 ---
 
@@ -206,19 +176,6 @@ Contributions are welcome!
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-For major changes, please open an issue first to discuss.
-
----
-
-## Version History
-
-| Version | Date | Maintainer | Notes |
-|---------|------|------------|-------|
-| **v3.1.0** | Dec 2025 | Otvorena mreža | Python 3 / Django 5.2 migration |
-| v3.0.x | 2017-2018 | wlan slovenija | Last original releases |
-| v2.0 | 2015-2017 | wlan slovenija | Stable production version |
-| v1.0 | 2009-2014 | wlan slovenija | Initial releases |
-
 ---
 
 ## License
@@ -229,19 +186,54 @@ GNU Affero General Public License v3.0 - see [LICENSE](LICENSE) file.
 
 ## Contact & Support
 
-- **Current Maintainer:** [Valent Turković](https://github.com/valentt)
+- **Maintainer:** [Valent Turković](https://github.com/valentt)
 - **Repository:** https://github.com/valentt/nodewatcher
 - **Issues:** https://github.com/valentt/nodewatcher/issues
 
 ---
 
-## Acknowledgments
+## Project History
+
+### Origins: wlan slovenija (2009-2018)
+
+nodewatcher was originally created by **[wlan slovenija](https://en.wikipedia.org/wiki/Wlan_slovenija)** - a pioneering open wireless community network in Slovenia.
+
+| Year | Milestone |
+|------|-----------|
+| **2009** | Project founded in Ljubljana with 10 initial nodes |
+| **2009-2017** | Network grew to 400+ active nodes, 1.6M+ connections |
+| **2012-2017** | Multiple Google Summer of Code participations |
+| **2015** | International collaboration with FunkFeuer (Austria) and Otvorena mreža (Croatia) |
+| **October 2018** | Last upstream commit - project became dormant |
+
+The original wlan slovenija infrastructure (wlan-si.net, dev.wlan-si.net, docs.nodewatcher.net) is no longer operational.
+
+### Revival: Otvorena mreža (2025)
+
+In December 2025, the project was revived by **[Valent Turković](https://github.com/valentt)** from **Otvorena mreža** (Croatia), a partner network since 2015.
+
+**v3.1.0 updates:**
+- Migration from Python 2.7 to Python 3.10+
+- Upgrade from Django 1.x to Django 5.2 LTS
+- 70+ dependencies updated
+- 200+ compatibility fixes
+
+### Version History
+
+| Version | Date | Maintainer | Notes |
+|---------|------|------------|-------|
+| **v3.1.0** | Dec 2025 | Otvorena mreža | Python 3 / Django 5.2 migration |
+| v3.0.x | 2017-2018 | wlan slovenija | Last original releases |
+| v2.0 | 2015-2017 | wlan slovenija | Stable production version |
+| v1.0 | 2009-2014 | wlan slovenija | Initial releases |
+
+### Historical References
+
+- [nodewatcher paper](https://github.com/wlanslovenija/nodewatcher-paper) - Academic paper (2015)
+- [Wikipedia: wlan slovenija](https://en.wikipedia.org/wiki/Wlan_slovenija) - Project history
+
+### Acknowledgments
 
 - **wlan slovenija team** - Original developers (Jernej Kos, Mitar Milutinović, and contributors)
 - **Google Summer of Code** - Student contributor funding (2012-2017)
 - **European Commission** - Project co-funding
-- **All community contributors** - Testing, documentation, translations
-
----
-
-*This project was dormant from 2018-2025. Revived and modernized by Otvorena mreža.*
