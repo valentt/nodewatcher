@@ -119,7 +119,7 @@ class EthernetInterfaceConfigForm(uplink.UplinkableFormMixin, forms.ModelForm):
                 switch_descriptor = device.get_switch(switch.switch)
                 for vlan in switch.vlans:
                     ethernet_ports.append(
-                        (switch_descriptor.get_port_identifier(vlan.vlan), unicode(vlan))
+                        (switch_descriptor.get_port_identifier(vlan.vlan), str(vlan))
                     )
         except (KeyError, IndexError, AttributeError):
             pass

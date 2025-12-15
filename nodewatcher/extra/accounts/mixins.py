@@ -76,7 +76,7 @@ class PermissionRequiredMixin(object):
             return settings.LOGIN_URL
 
     def get_required_permissions(self, request=None):
-        if isinstance(self.permission_required, basestring):
+        if isinstance(self.permission_required, str):
             perms = [self.permission_required]
         elif isinstance(self.permission_required, collections.Iterable):
             perms = [p for p in self.permission_required]

@@ -6,7 +6,7 @@ def topological_sort(data, dependency_key='dependencies'):
     Performs a topological sort.
     """
 
-    dep_graph = {item: set(value[dependency_key]) for item, value in data.iteritems()}
+    dep_graph = {item: set(value[dependency_key]) for item, value in data.items()}
     if not dep_graph:
         return
 
@@ -15,12 +15,12 @@ def topological_sort(data, dependency_key='dependencies'):
         value.discard(key)
 
     # Find all items that don't depend on anything
-    extra_items_in_deps = functools.reduce(set.union, dep_graph.itervalues()) - set(dep_graph.iterkeys())
+    extra_items_in_deps = functools.reduce(set.union, dep_graph.values()) - set(dep_graph.keys())
     # Add empty dependences where needed
     dep_graph.update({item: set() for item in extra_items_in_deps})
 
     while True:
-        ordered = {item for item, dep in dep_graph.iteritems() if not dep}
+        ordered = {item for item, dep in dep_graph.items() if not dep}
         if not ordered:
             break
 
@@ -28,7 +28,7 @@ def topological_sort(data, dependency_key='dependencies'):
 
         dep_graph = {
             item: (dep - ordered)
-            for item, dep in dep_graph.iteritems()
+            for item, dep in dep_graph.items()
             if item not in ordered
         }
 

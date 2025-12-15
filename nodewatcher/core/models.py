@@ -24,7 +24,7 @@ class Node(models.Model):
 
         super(Node, self).save(**kwargs)
 
-    def __unicode__(self):
+    def __str__(self):
         """
         Returns a string representation of this node.
         """

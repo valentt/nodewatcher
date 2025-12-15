@@ -499,7 +499,7 @@ class RegistrationPoint(object):
         A generator that iterates through registered choices.
         """
 
-        return self.choices_registry.iteritems()
+        return self.choices_registry.items()
 
     def add_mixins(self, *mixins):
         """

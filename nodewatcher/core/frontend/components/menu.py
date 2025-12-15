@@ -27,7 +27,7 @@ def ugettext_lazy(message):
 
 class MenuEntry(object):
     def __init__(self, label=None, url=None, visible=None, weight=0, classes=None, template='menu_entry.html', extra_context=None):
-        if isinstance(label, basestring):
+        if isinstance(label, str):
             self._name = label
             self._label = label
         elif getattr(label, 'message'):
@@ -152,7 +152,7 @@ class Menu(DeferredMenu):
 
     @staticmethod
     def _setting_name(setting):
-        if isinstance(setting, basestring):
+        if isinstance(setting, str):
             return setting
         else:
             # We require name to be present
@@ -160,7 +160,7 @@ class Menu(DeferredMenu):
 
     @staticmethod
     def _setting_weight(setting, list_index):
-        if isinstance(setting, basestring):
+        if isinstance(setting, str):
             return {
                 'name': setting,
                 # We use list index as a base for weight

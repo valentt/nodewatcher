@@ -180,7 +180,7 @@ class StoreNode(monitor_processors.NodeProcessor):
             context.node_available = True
 
         # Store results into monitoring schema
-        for size, result in results.iteritems():
+        for size, result in results.items():
             rm, _ = monitor_models.RttMeasurementMonitor.objects.get_or_create(
                 root=node,
                 packet_size=size,

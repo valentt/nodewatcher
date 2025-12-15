@@ -20,7 +20,7 @@ def url_add_params(url, **kwargs):
     r = urlparse.urlparse(url)
     query = QueryDict(r.query, mutable=True)
     try:
-        for key, val in kwargs.iteritems():
+        for key, val in kwargs.items():
             if hasattr(val, '__iter__'):
                 query.setlist(key, val)
             else:

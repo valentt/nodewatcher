@@ -50,7 +50,7 @@ class BuildChannel(models.Model):
         help_text=_('Use this build channel as default.'),
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
     def __repr__(self):
@@ -86,7 +86,7 @@ class BuildVersion(models.Model):
         help_text=_('Build version name.'),
     )
 
-    def __unicode__(self):
+    def __str__(self):
         return self.name
 
 
@@ -212,7 +212,7 @@ class Builder(models.Model):
 
         return connection.BuilderConnection(self)
 
-    def __unicode__(self):
+    def __str__(self):
         return self.host
 
     def __repr__(self):

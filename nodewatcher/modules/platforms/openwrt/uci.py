@@ -162,7 +162,7 @@ class UCISection(object):
                 output.append('config %s' % section)
 
         # Output section values
-        for key, value in self._values.iteritems():
+        for key, value in self._values.items():
             if key.startswith('_'):
                 continue
             output += self.format_value(key, value, package, section, idx, fmt)
@@ -233,14 +233,14 @@ class UCIPackage(object):
         Returns an iterator over the named sections.
         """
 
-        return self._named_sections.iteritems()
+        return self._named_sections.items()
 
     def ordered_sections(self):
         """
         Returns an iterator over the ordered sections.
         """
 
-        return self._ordered_sections.iteritems()
+        return self._ordered_sections.items()
 
     def find_named_section(self, section_type, **query):
         """
@@ -347,10 +347,10 @@ class UCIPackage(object):
         """
 
         output = []
-        for name, section in self._named_sections.iteritems():
+        for name, section in self._named_sections.items():
             output += section.format(self._package, name, fmt=fmt)
 
-        for name, sections in self._ordered_sections.iteritems():
+        for name, sections in self._ordered_sections.items():
             for idx, section in enumerate(sections):
                 output += section.format(self._package, name, idx, fmt=fmt)
 

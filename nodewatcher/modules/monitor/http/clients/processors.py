@@ -66,7 +66,7 @@ class ClientInfo(monitor_processors.NodeProcessor):
             return context
 
         client_count = 0
-        for client_id, data in context.http.core.clients.iteritems():
+        for client_id, data in context.http.core.clients.items():
             if client_id.startswith('_'):
                 continue
 

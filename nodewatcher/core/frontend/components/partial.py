@@ -119,7 +119,7 @@ class Partial(DeferredPartial):
 
     @staticmethod
     def _setting_name(setting):
-        if isinstance(setting, basestring):
+        if isinstance(setting, str):
             return setting
         else:
             # We require name to be present
@@ -127,7 +127,7 @@ class Partial(DeferredPartial):
 
     @staticmethod
     def _setting_weight(setting, list_index):
-        if isinstance(setting, basestring):
+        if isinstance(setting, str):
             return {
                 'name': setting,
                 # We use list index as a base for weight

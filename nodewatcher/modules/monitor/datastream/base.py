@@ -68,7 +68,7 @@ class StreamsBase(object):
 
         # Make a local copy of all field descriptors for this model
         self._local_fields = collections.OrderedDict()
-        for name, field in self._shared_fields.iteritems():
+        for name, field in self._shared_fields.items():
             field = copy.deepcopy(field)
             self._local_fields[name] = field
             setattr(self, name, field)

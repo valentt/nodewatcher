@@ -34,7 +34,7 @@ class TopologyStreams(ds_base.StreamsBase):
 class TopologyStreamsData(object):
     def __init__(self, vertices, edges):
         self.topology = {
-            'v': [dict(i=uuid, **attrs) for uuid, attrs in vertices.iteritems()],
+            'v': [dict(i=uuid, **attrs) for uuid, attrs in vertices.items()],
             'e': edges,
         }
 

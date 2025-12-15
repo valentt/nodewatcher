@@ -30,7 +30,7 @@ class MonitorConfig(object):
         # TODO: Should we also support dynamic run registration?
 
         # Load monitor run definitions from the settings file.
-        for run, config in settings.MONITOR_RUNS.iteritems():
+        for run, config in settings.MONITOR_RUNS.items():
             processors = []
             for proc_modules in config['processors']:
                 # Support nested lists in order to make processor list reuse easier.

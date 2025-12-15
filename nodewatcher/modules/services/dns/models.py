@@ -19,7 +19,7 @@ class DnsServer(polymorphic_models.PolymorphicModel):
     class Meta:
         verbose_name = _("DNS server")
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s (%s)" % (self.name, self.address)
 
 # In case projects module is installed, we support per-project server configuration.

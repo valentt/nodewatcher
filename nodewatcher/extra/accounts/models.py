@@ -55,7 +55,7 @@ class UserProfileAndSettings(django_models.Model):
         verbose_name = _('user profile and settings')
         verbose_name_plural = _('users profiles and settings')
 
-    def __unicode__(self):
+    def __str__(self):
         return u"profile and settings for %s" % (self.user)
 
     def get_absolute_url(self):

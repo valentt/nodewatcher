@@ -63,7 +63,7 @@ class ProcessorContext(dict):
         Merge this dictionary with another (recursively).
         """
 
-        for k, v in other.iteritems():
+        for k, v in other.items():
             if k in self:
                 try:
                     self[k] = self[k].merge_with(v)

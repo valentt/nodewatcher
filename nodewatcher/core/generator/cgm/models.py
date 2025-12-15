@@ -162,7 +162,7 @@ class VLANConfig(registration.bases.NodeConfigRegistryItem):
         registry_name = _("VLAN Configuration")
         multiple = True
 
-    def __unicode__(self):
+    def __str__(self):
         if not self.name:
             return ugettext("VLAN %(switch)s.vlan%(vlan)s") % {'switch': self.switch.switch, 'vlan': self.vlan}
 
@@ -260,7 +260,7 @@ class BridgeInterfaceConfig(InterfaceConfig, RoutableInterface, UplinkableInterf
         if not self.name:
             self.name = "Bridge%(id)s" % {'id': random.choice(string.uppercase)}
 
-    def __unicode__(self):
+    def __str__(self):
         if not self.name:
             return ugettext("Bridge interface (unnamed)")
 
@@ -280,7 +280,7 @@ class EthernetInterfaceConfig(InterfaceConfig, RoutableInterface, UplinkableInte
     class RegistryMeta(InterfaceConfig.RegistryMeta):
         registry_name = _("Ethernet Interface")
 
-    def __unicode__(self):
+    def __str__(self):
         if not self.eth_port:
             return ugettext("Ethernet interface (unbound)")
 
@@ -424,7 +424,7 @@ class MobileInterfaceConfig(InterfaceConfig, UplinkableInterface):
         registry_name = _("Mobile Interface")
         sensitive_fields = ['pin', 'username', 'password']
 
-    def __unicode__(self):
+    def __str__(self):
         if not self.device:
             return ugettext("Mobile interface (unbound)")
 

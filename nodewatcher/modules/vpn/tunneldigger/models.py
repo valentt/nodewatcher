@@ -27,7 +27,7 @@ class TunneldiggerServer(polymorphic_models.PolymorphicModel):
     class Meta:
         verbose_name = _("Tunneldigger server")
 
-    def __unicode__(self):
+    def __str__(self):
         return u"%s (%s)" % (self.name, self.address)
 
 # In case projects module is installed, we support per-project server configuration.
@@ -59,7 +59,7 @@ class TunneldiggerInterfaceConfig(cgm_models.InterfaceConfig, cgm_models.Routabl
     class RegistryMeta(cgm_models.InterfaceConfig.RegistryMeta):
         registry_name = _("Tunneldigger Interface")
 
-    def __unicode__(self):
+    def __str__(self):
         if not self.server:
             return ugettext("Tunneldigger interface (no server)")
 

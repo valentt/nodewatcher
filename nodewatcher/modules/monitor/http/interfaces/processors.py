@@ -59,7 +59,7 @@ class Interfaces(monitor_processors.NodeProcessor):
             return context
 
         interfaces = {}
-        for name, data in context.http.core.interfaces.iteritems():
+        for name, data in context.http.core.interfaces.items():
             if name.startswith('_') or name in ('lo',):
                 continue
 

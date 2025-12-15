@@ -419,7 +419,7 @@ class IPAddressField(models.Field):
         if isinstance(value, ipaddr._IPAddrBase):
             value = str(value)
 
-        return unicode(value)
+        return str(value)
 
     def formfield(self, **kwargs):
         """

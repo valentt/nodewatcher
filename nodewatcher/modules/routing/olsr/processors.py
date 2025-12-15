@@ -91,7 +91,7 @@ class GlobalTopology(monitor_processors.NetworkProcessor):
                 ).save()
 
         # Prepare smaller router ID maps for each node.
-        for router_id, neighbours in topology.iteritems():
+        for router_id, neighbours in topology.items():
             node_id = router_id_map[router_id]
             olsr_data = context.for_node[node_id].routing.olsr
 

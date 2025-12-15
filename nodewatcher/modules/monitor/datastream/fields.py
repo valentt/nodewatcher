@@ -48,7 +48,7 @@ class TagReference(object):
 
         if callable(self.transform):
             return self.transform(descriptor.get_model(), **tag_values)
-        elif isinstance(self.transform, basestring):
+        elif isinstance(self.transform, str):
             return self.transform % tag_values
         elif len(tag_values) == 1:
             return tag_values.values()[0]
@@ -146,7 +146,7 @@ class Field(object):
         output = None
         if isinstance(tags, dict):
             output = {}
-            for key, value in tags.iteritems():
+            for key, value in tags.items():
                 output[key] = self._process_tag_references(value, descriptor)
         elif isinstance(tags, list):
             output = []
@@ -260,7 +260,7 @@ class Field(object):
         """
 
         def update(d, u):
-            for k, v in u.iteritems():
+            for k, v in u.items():
                 if isinstance(v, collections.Mapping):
                     r = update(d.get(k, {}), v)
                     d[k] = r

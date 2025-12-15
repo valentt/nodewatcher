@@ -118,7 +118,7 @@ class FormState(dict):
             items.append(self.lookup_item_by_id(item_id))
         else:
             # Resolve parent item when specified as a filter expression.
-            if isinstance(parent, basestring):
+            if isinstance(parent, str):
                 parent = self.lookup_item_by_id(parent)
                 if parent is None:
                     raise ValueError("Parent item cannot be found.")
@@ -143,7 +143,7 @@ class FormState(dict):
                 # Filter based on partial values.
                 if kwargs:
                     match = True
-                    for key, value in kwargs.iteritems():
+                    for key, value in kwargs.items():
                         if not key.startswith('_') and getattr(item, key, None) != value:
                             match = False
                             break
@@ -396,7 +396,7 @@ class FormState(dict):
         item._id = self.get_identifier(item)
         self._item_map[item._id] = item
 
-        for field, value in attributes.iteritems():
+        for field, value in attributes.items():
             try:
                 setattr(item, field, value)
             except (exceptions.ValidationError, ValueError):

@@ -49,7 +49,7 @@ class AuthenticationKey(models.Model):
 
         self.fingerprint = key.get_fingerprint()
 
-    def __unicode__(self):
+    def __str__(self):
         return u'%s (%s)' % (self.name, self.fingerprint)
 
 

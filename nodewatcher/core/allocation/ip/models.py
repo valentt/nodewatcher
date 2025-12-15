@@ -313,7 +313,7 @@ class IpPool(allocation_models.PoolBase):
 
         return _("unknown")
 
-    def __unicode__(self):
+    def __str__(self):
         """
         Returns a string representation of this pool.
         """
@@ -470,13 +470,13 @@ class IpAddressAllocator(allocation_models.AddressAllocator):
             if self.subnet_hint:
                 raise registry_forms.RegistryValidationError(
                     _(u"Unable to satisfy address allocation request for %(subnet_hint)s/%(prefix)s from '%(pool)s'!") % {
-                        'subnet_hint': str(self.subnet_hint.network), 'prefix': self.prefix_length, 'pool': unicode(self.pool),
+                        'subnet_hint': str(self.subnet_hint.network), 'prefix': self.prefix_length, 'pool': str(self.pool),
                     }
                 )
             else:
                 raise registry_forms.RegistryValidationError(
                     _(u"Unable to satisfy address allocation request for /%(prefix)s from '%(pool)s'!") % {
-                        'prefix': self.prefix_length, 'pool': unicode(self.pool),
+                        'prefix': self.prefix_length, 'pool': str(self.pool),
                     }
                 )
 

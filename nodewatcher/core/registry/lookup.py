@@ -272,7 +272,7 @@ class RegistryQuerySet(django_models.QuerySet):
             return select_name
 
         parser = expression.LookupExpressionParser()
-        for field_name, dst in kwargs.iteritems():
+        for field_name, dst in kwargs.items():
             info = None
             dst_queryset = None
             dst_field = None
@@ -298,7 +298,7 @@ class RegistryQuerySet(django_models.QuerySet):
                             raise ValueError("Registration point not specified.")
                     else:
                         registration_point = registration.point('%s.%s' % (clone.model._meta.concrete_model._meta.model_name, info.registration_point))
-                except KeyError, name:
+                except KeyError as name:
                     raise ValueError("Invalid registration point: %s" % name)
 
                 if info.field:

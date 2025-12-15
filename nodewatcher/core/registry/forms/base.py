@@ -76,7 +76,7 @@ class BasicRegistryRenderItem(object):
         else:
             return None
 
-    def __unicode__(self):
+    def __str__(self):
         """
         Renders this item.
         """
@@ -165,7 +165,7 @@ class RootRegistryRenderItem(NestedRegistryRenderItem):
 
         self.errors.append(message)
 
-    def __unicode__(self):
+    def __str__(self):
         """
         Renders this item.
         """
@@ -201,7 +201,7 @@ class RegistryMetaForm(django_forms.Form):
             item_widget = django_forms.HiddenInput
 
         # Generate list of item choices
-        item_choices = [(name, item._registry.registry_name) for name, item in context.items.iteritems()]
+        item_choices = [(name, item._registry.registry_name) for name, item in context.items.items()]
 
         self.fields['item'] = django_forms.TypedChoiceField(
             choices=item_choices,
@@ -291,7 +291,7 @@ def generate_form_for_class(context, prefix, data, index, instance=None,
     # Populate data with default values from the registry item instance
     if selected_item != previous_item and instance is not None:
         model_data = django_forms.model_to_dict(instance)
-        for field_name, values in model_data.iteritems():
+        for field_name, values in model_data.items():
             field_name_prefix = context.get_prefix(prefix, selected_item, field_name)
             if data is not None and field_name_prefix not in data:
                 context.data_from_field(prefix, selected_item, field_name, values, data)
@@ -327,7 +327,7 @@ def generate_form_for_class(context, prefix, data, index, instance=None,
         form_modified = modify_to_context(form)
 
         # Enable form fields to modify themselves accoording to current context
-        for name, field in form.fields.iteritems():
+        for name, field in form.fields.items():
             if modify_to_context(field):
                 form_modified = True
     else:
@@ -343,7 +343,7 @@ def generate_form_for_class(context, prefix, data, index, instance=None,
 
                 # Setup dependencies among forms
                 dependencies = set()
-                for name, field in form.fields.iteritems():
+                for name, field in form.fields.items():
                     if hasattr(field, 'get_dependencies'):
                         value = field.widget.value_from_datadict(form.data, form.files, form.add_prefix(name))
                         dependencies.update(field.get_dependencies(value))
@@ -793,7 +793,7 @@ def prepare_root_forms(regpoint, request, root=None, data=None, save=False, form
     if save and flags & FORM_ONLY_DEFAULTS:
         raise ValueError("You cannot use save and FORM_ONLY_DEFAULTS at the same time!")
 
-    if isinstance(regpoint, basestring):
+    if isinstance(regpoint, str):
         regpoint = registration.point(regpoint)
 
     # Transform data into a mutable dictionary in case an immutable one is passed
@@ -905,7 +905,7 @@ def prepare_root_forms(regpoint, request, root=None, data=None, save=False, form
             for processor in form_processors:
                 try:
                     processor.postprocess(root)
-                except RegistryValidationError, e:
+                except RegistryValidationError as e:
                     context.validation_errors = True
                     forms.add_error(e.message)
 

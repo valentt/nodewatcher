@@ -62,9 +62,7 @@ class Command(base.BaseCommand):
 
         graph = extract_nodes.all_nodes_survey_graph(at)
 
-        # TODO: "unicode" does not exist anymore in Python 3.5.
-        #       But json.dumps returns there a normal string, and not once str and once unicode like in Python 2.
-        json_graph = unicode(json.dumps(
+        json_graph = json.dumps(
             graph,
             ensure_ascii=False,
             cls=django_json.DjangoJSONEncoder,

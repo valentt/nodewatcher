@@ -102,7 +102,7 @@ class SCSSFilesProcessor(StaticFilesProcessor):
 
             output_file = base.ContentFile(encoding.smart_str(output))
             saved_name = storage._save(output_filename, output_file)
-            saved_name = encoding.force_unicode(saved_name.replace('\\', '/'))
+            saved_name = str(saved_name.replace('\\', '/'))
 
             return saved_name, True, True
 

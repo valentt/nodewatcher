@@ -27,7 +27,7 @@ class Antenna(models.Model):
     angle_vertical = models.IntegerField(default=360, verbose_name=_("Vertical angle"))
     gain = models.IntegerField(verbose_name=_("Gain (dBi)"))
 
-    def __unicode__(self):
+    def __str__(self):
         """
         Returns a string representation of this model.
         """

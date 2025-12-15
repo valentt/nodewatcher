@@ -120,7 +120,7 @@ class HttpTelemetryParser(object):
         # Convert data to nodewatcher context format
         def convert_to_context(data):
             result = tree.__class__()
-            for key, value in data.iteritems():
+            for key, value in data.items():
                 if isinstance(value, dict):
                     value = convert_to_context(value)
 
@@ -128,7 +128,7 @@ class HttpTelemetryParser(object):
 
             return result
 
-        for key, value in data.iteritems():
+        for key, value in data.items():
             key = key.split('.')
             value = convert_to_context(value)
             reduce(lambda x, y: x.setdefault(y, x.__class__()), key[:-1], tree)[key[-1]] = value

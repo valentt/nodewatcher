@@ -165,12 +165,12 @@ class UCIConfiguration(cgm_base.PlatformConfiguration):
         if fmt == uci.UCIFormat.DUMP:
             # UCI dump format.
             output = []
-            for name, package in self._packages.iteritems():
+            for name, package in self._packages.items():
                 output += package.format(fmt=fmt)
         elif fmt == uci.UCIFormat.FILES:
             # UCI split into multiple files.
             output = {}
-            for name, package in self._packages.iteritems():
+            for name, package in self._packages.items():
                 output[name] = '\n'.join(package.format(fmt=fmt))
 
         return output
