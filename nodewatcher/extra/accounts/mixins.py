@@ -61,7 +61,7 @@ class PermissionRequiredMixin(object):
     permission_object = None
 
     def message(self, user):
-        if user.is_authenticated():
+        if user.is_authenticated:
             return _("You do not have necessary permission to access the previous page.")
         else:
             return _("You have to be logged in while accessing the previous page. Please login to continue.")
@@ -70,7 +70,7 @@ class PermissionRequiredMixin(object):
         return messages.ERROR
 
     def redirect_url(self, user):
-        if user.is_authenticated():
+        if user.is_authenticated:
             return settings.LOGIN_REDIRECT_URL
         else:
             return settings.LOGIN_URL

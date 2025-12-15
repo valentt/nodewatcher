@@ -61,7 +61,7 @@ class UserAuthenticationKeyViewSet(viewsets.ReadOnlyModelViewSet):
 
         qs = super(UserAuthenticationKeyViewSet, self).get_queryset()
         user = self.request.user
-        if not user.is_authenticated():
+        if not user.is_authenticated:
             return qs.none()
 
         qs = qs.filter(user=user)

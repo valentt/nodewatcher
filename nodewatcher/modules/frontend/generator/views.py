@@ -96,7 +96,7 @@ class BuildResultViewSet(registry_api.RegistryRootViewSetMixin,
 
         qs = super(BuildResultViewSet, self).get_queryset()
         user = self.request.user
-        if not user.is_authenticated():
+        if not user.is_authenticated:
             return qs.none()
 
         qs = qs.filter(

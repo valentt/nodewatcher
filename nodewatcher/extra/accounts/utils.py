@@ -37,4 +37,8 @@ def initial_accepts_request(request, form_class):
         kwargs['initial'] = initial
         return form_class(*args, **kwargs)
 
+    # Copy class attributes that django-registration expects
+    wrapper._meta = form_class._meta
+    wrapper.base_fields = form_class.base_fields
+
     return wrapper
