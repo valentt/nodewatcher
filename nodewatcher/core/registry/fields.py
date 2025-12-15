@@ -512,7 +512,8 @@ class ReferenceChoiceField(models.ForeignKey):
 class RegistryProxySingleDescriptor(object):
     def __init__(self, field_with_rel):
         self.related = field_with_rel.remote_field.model
-        self.cache_name = field_with_rel.get_cache_name()
+        # Django 4.0+ removed get_cache_name(), use field name directly
+        self.cache_name = field_with_rel.name
 
     def is_cached(self, instance):
         return hasattr(instance, self.cache_name)

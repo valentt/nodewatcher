@@ -144,7 +144,9 @@ def apply_registry_field(field_specifier, queryset):
     field_name = info.name
 
     queryset = queryset.registry_fields(**{field_name: info})
-    for field in queryset.model._meta.virtual_fields:
+    # Django 4.0+ replaced virtual_fields with private_fields
+    private_fields = getattr(queryset.model._meta, 'private_fields', [])
+    for field in private_fields:
         if field.name != field_name:
             continue
 

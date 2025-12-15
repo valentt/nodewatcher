@@ -24,9 +24,9 @@ def alter_creation_form(form):
         form.fields['username'].help_text = _("Letters, digits and @/./+/-/_ only. Will be public.")
 
     # E-mail domain validation (we check it in a model field).
-    emailfield = filter(lambda x: x.name == 'email', form.Meta.model._meta.fields)[0]
+    emailfield = [x for x in form.Meta.model._meta.fields if x.name == 'email'][0]
     # We replace core validator with our own extended version which also checks hostname existence.
-    emailfield.validators = filter(lambda x: not isinstance(x, core_validators.EmailValidator), emailfield.validators)
+    emailfield.validators = [x for x in emailfield.validators if not isinstance(x, core_validators.EmailValidator)]
     # We do not blindly append as field objects can be reused.
     if validators.validate_email_with_hostname not in emailfield.validators:
         emailfield.validators.append(validators.validate_email_with_hostname)

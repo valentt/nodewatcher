@@ -247,7 +247,8 @@ AUTHENTICATION_BACKENDS = (
     'guardian.backends.ObjectPermissionBackend',
 )
 
-DEFAULT_EXCEPTION_REPORTER_FILTER = 'missing.debug.SafeExceptionReporterFilter'
+# Django 4.0+ has built-in SafeExceptionReporterFilter
+# DEFAULT_EXCEPTION_REPORTER_FILTER = 'missing.debug.SafeExceptionReporterFilter'
 
 TEST_RUNNER = 'nodewatcher.test_runner.FilteredTestSuiteRunner'
 TEST_RUNNER_FILTER = (
