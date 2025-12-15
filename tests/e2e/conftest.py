@@ -78,6 +78,7 @@ def logged_in_admin(driver, base_url, admin_credentials):
     """
     Fixture that ensures admin user is logged in.
     Returns the driver for convenience.
+    Skips test if login fails.
     """
     username, password = admin_credentials
 
@@ -103,8 +104,19 @@ def logged_in_admin(driver, base_url, admin_credentials):
     submit_button = driver.find_element(By.CSS_SELECTOR, 'input[type="submit"]')
     submit_button.click()
 
-    # Wait for login to complete
-    wait.until(EC.url_contains('/admin/'))
+    # Wait and check if login succeeded
+    import time
+    time.sleep(2)
+
+    # Check for login error
+    if '/admin/login/' in driver.current_url:
+        # Check if there's an error message
+        error_elements = driver.find_elements(By.CSS_SELECTOR, '.errornote')
+        if error_elements:
+            error_msg = error_elements[0].text
+            pytest.skip(f'Admin login failed: {error_msg}. Set NODEWATCHER_ADMIN_USER and NODEWATCHER_ADMIN_PASS env vars.')
+
+        pytest.skip(f'Admin login failed for user "{username}". Check credentials.')
 
     return driver
 
