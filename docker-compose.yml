@@ -1,24 +1,20 @@
-version: '2'
 services:
     db:
-        image: tozd/postgresql:9.5
+        image: postgis/postgis:13-3.1
         environment:
-            PGSQL_ROLE_1_USERNAME: nodewatcher
-            PGSQL_ROLE_1_PASSWORD: nodewatcher
-            PGSQL_ROLE_1_FLAGS: LOGIN SUPERUSER
-            PGSQL_DB_1_NAME: nodewatcher
-            PGSQL_DB_1_OWNER: nodewatcher
-            PGSQL_DB_1_ENCODING: UNICODE
-            PGSQL_DB_1_POSTGIS: "true"
+            POSTGRES_USER: nodewatcher
+            POSTGRES_PASSWORD: nodewatcher
+            POSTGRES_DB: nodewatcher
         volumes:
-            # Use a volume to enable database persistence across restarts
-            - /tmp/nodewatcher-db:/var/lib/postgresql/9.5/main
+            - nodewatcher-db:/var/lib/postgresql/data
     influxdb:
-        image: tozd/influxdb
+        image: influxdb:1.8
+        environment:
+            INFLUXDB_DB: nodewatcher
         volumes:
-            - /tmp/nodewatcher-influxdb:/data
+            - nodewatcher-influxdb:/var/lib/influxdb
     redis:
-        image: tozd/redis
+        image: redis:7-alpine
     builderar71xx:
         image: wlanslovenija/openwrt-builder:v15acdee_cc_ar71xx
         environment:
@@ -63,7 +59,7 @@ services:
             BUILDER_PUBLIC_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCho6FII0iKbpU+DpJqS9ARtn4jaXZAuc86QkaCc0FCKaaQh2QofgzTsibPICksyXfxRJM5rlEwwAf6RweGrtqM49pZGvmhS0fhoComGNC2qANDkAPlvAhs2JPp/jFeH7wDVUQr+D1Noc4daObddC7rrRtNa0ch9nAfYCTJcxSFp69VcUij9IX7O660w4CL2fL8ya/P43f2IZVqcFefPeY5/TydeE8GMZQo5L+7RKMR9rhZ4JY9CQbQgCkhl9IQ2Oc46dTDoUtxe556EWp3gqBRvd4CXcMlDS3jd1OvW5HHJLIgQ66uuS8C9I5VbzcpxpV+qfOxEeWXGRhd0V9H6/2n builder@wlan-si.net
     generator:
         build: .
-        command: "scripts/docker-cleanup; scripts/docker-wait-pgsql; celery worker -A nodewatcher -l info -Q generator --autoreload"
+        command: "scripts/docker-cleanup; scripts/docker-wait-pgsql; celery -A nodewatcher worker -l info -Q generator"
         entrypoint: scripts/docker-run
         environment:
             # Allow celery to run under the root user in order for it to have access
@@ -79,7 +75,7 @@ services:
             - builderar71xx_lede
     monitorq:
         build: .
-        command: "scripts/docker-cleanup; scripts/docker-wait-pgsql; celery worker -A nodewatcher -l info -Q monitor -B --autoreload"
+        command: "scripts/docker-cleanup; scripts/docker-wait-pgsql; celery -A nodewatcher worker -l info -Q monitor -B"
         entrypoint: scripts/docker-run
         environment:
             # Allow celery to run under the root user in order for it to have access
@@ -107,3 +103,7 @@ services:
             - builderar71xx
             - builderlantiq
             - builderar71xx_lede
+
+volumes:
+    nodewatcher-db:
+    nodewatcher-influxdb:
