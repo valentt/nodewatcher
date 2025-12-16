@@ -1,31 +1,29 @@
 {% extends "base.html" %}
 {% load i18n sekizai_tags nw_context_tags html_tags url_tags partial_tags leaflet_tags %}
 
-{% contextblock %}
-
+{% block extrahead %}
+    {{ block.super }}
     {% addtoblock "css" %}{% leaflet_css %}{% endaddtoblock %}
     {% addtoblock "js" %}{% leaflet_js %}{% endaddtoblock %}
 
     {% add_data "js_data_end" "leaflet/js/leaflet.markercluster.js" %}
     {% add_data "css_data" "leaflet/css/leaflet.markercluster.css" %}
 
-	{% add_data "js_data_end" "leaflet/js/leaflet.fullscreen.js" %}
-	{% add_data "css_data" "leaflet/css/leaflet.fullscreen.css" %}
+    {% add_data "js_data_end" "leaflet/js/leaflet.fullscreen.js" %}
+    {% add_data "css_data" "leaflet/css/leaflet.fullscreen.css" %}
 
-	{% add_data "js_data_end" "leaflet/js/leaflet-sidebar.js" %}
-	{% addtoblock "css" %}<link href="/static/leaflet/css/leaflet-sidebar.css" media="all" rel="stylesheet" type="text/css" />{% endaddtoblock %}
+    {% add_data "js_data_end" "leaflet/js/leaflet-sidebar.js" %}
+    {% addtoblock "css" %}<link href="/static/leaflet/css/leaflet-sidebar.css" media="all" rel="stylesheet" type="text/css" />{% endaddtoblock %}
 
-	{% addtoblock "css" %}<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">{% endaddtoblock %}
+    {% addtoblock "css" %}<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">{% endaddtoblock %}
 
     {% add_data "js_data" "datastream/moment/moment.js" %}
     {% add_data "js_data" "map/js/api.js" %}
     {% add_data "js_data" "map/js/code.js" %}
     {% add_data "css_data" "map/css/style.css" %}
 
-	{% add_data "js_data" "map/js/sidebar.js" %}
-
-    {% trans "Map" as title %}
-{% endcontextblock %}
+    {% add_data "js_data" "map/js/sidebar.js" %}
+{% endblock %}
 
 {% block content %}
     {% leaflet_map "map" %}

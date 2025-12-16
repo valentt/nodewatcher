@@ -1,16 +1,14 @@
 {% extends "base.html" %}
+{% load i18n sekizai_tags html_tags url_tags partial_tags %}
 
-{% contextblock %}
-    {% load i18n sekizai_tags html_tags url_tags partial_tags %}
-
+{% block extrahead %}
+    {{ block.super }}
     {% add_data "js_data" "datastream/moment/moment.js" %}
     {% add_data "js_data" "topology/js/d3.v3.min.js" %}
     {% add_data "js_data" "topology/js/api.js" %}
     {% add_data "js_data" "topology/js/code.js" %}
     {% add_data "css_data" "topology/css/style.css" %}
-
-    {% trans "Network Topology" as title %}
-{% endcontextblock %}
+{% endblock %}
 
 {% block content %}
     <div id="topology"></div>
