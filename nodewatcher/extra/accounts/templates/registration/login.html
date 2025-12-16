@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% load i18n sekizai_tags %}
 
-{% contextblock %}
-    {% load i18n sekizai_tags %}
-
+{% block extrahead %}
+    {{ block.super }}
     {% add_data "js_data" "accounts/js/code.js" %}
-    {% trans "Login" as title %}
-{% endcontextblock %}
+{% endblock %}
+
+{% block title %}{% trans "Login" %}{% endblock %}
 
 {% block content %}
     {% url "AccountsComponent:registration_register" as registration_register_url %}

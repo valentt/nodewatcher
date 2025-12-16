@@ -19,13 +19,13 @@
         time_start.setHours(time_start.getHours() - 25);
         time_stop.setHours(time_stop.getHours() - 1);
         
-        //APIv2 request for the recently offline nodes
+        //APIv3 request for the recently offline nodes
         $.ajax({
-            'url': '/api/v2/node/?format=json&limit=1&&filters=monitoring:core.general__last_seen__gt="' + time_start.toISOString() + '",monitoring:core.general__last_seen__lt="' + time_stop.toISOString() + '"',
+            'url': '/api/v3/node/?format=json&limit=1&&filters=monitoring:core.general__last_seen__gt="' + time_start.toISOString() + '",monitoring:core.general__last_seen__lt="' + time_stop.toISOString() + '"',
         }).done(function(data) {
             for(var i = 1; i < data.count; i++) {
                 $.ajax({
-                    'url': '/api/v2/node/?format=json&limit=1&fields=monitoring:core.general__last_seen&fields=config:core.location&fields=config:core.general&fields=config:core.type&filters=monitoring:core.general__last_seen__gt="' + time_start.toISOString() + '",monitoring:core.general__last_seen__lt="' + time_stop.toISOString() + '"&offset=' + (i - 1),
+                    'url': '/api/v3/node/?format=json&limit=1&fields=monitoring:core.general__last_seen&fields=config:core.location&fields=config:core.general&fields=config:core.type&filters=monitoring:core.general__last_seen__gt="' + time_start.toISOString() + '",monitoring:core.general__last_seen__lt="' + time_stop.toISOString() + '"&offset=' + (i - 1),
                 }).done(function(data) {
                     var node = {
                         'data': {
@@ -33,7 +33,7 @@
                             'i': data.results[0]["@id"],                                                    //node id
                             't': data.results[0]["config"]["core.type"]["type"],                            //node type
                             'l': (data.results[0]["config"]["core.location"]["geolocation"] ? data.results[0]["config"]["core.location"]["geolocation"]["coordinates"] : null),  //node coordinates
-                            'api': "v2",                                                                    //api version which was used to get the data
+                            'api': "v3",                                                                    //api version which was used to get the data
                         },
                     }
                     sidebarTableAddNode(node,"recently-offline-table");
@@ -41,16 +41,16 @@
             }
         });
         
-        // Function to load nodes from API v2 (fallback when no topology data)
-        function loadNodesFromAPIv2(map) {
-            console.log('loadNodesFromAPIv2: Starting API v2 fallback');
+        // Function to load nodes from API v3 (fallback when no topology data)
+        function loadNodesFromAPIv3(map) {
+            console.log('loadNodesFromAPIv3: Starting API v3 fallback');
             // Single API call with all required fields
             $.ajax({
-                'url': '/api/v2/node/?format=json&limit=500&fields=config:core.location&fields=config:core.general&fields=config:core.type',
+                'url': '/api/v3/node/?format=json&limit=500&fields=config:core.location&fields=config:core.general&fields=config:core.type',
             }).done(function(data) {
-                console.log('loadNodesFromAPIv2: Got', data.count, 'nodes from API');
+                console.log('loadNodesFromAPIv3: Got', data.count, 'nodes from API');
                 if (data.count === 0) {
-                    console.log('loadNodesFromAPIv2: No nodes found');
+                    console.log('loadNodesFromAPIv3: No nodes found');
                     return;
                 }
 
@@ -62,7 +62,7 @@
                     var general = nodeData['config'] && nodeData['config']['core.general'];
                     var nodeType = nodeData['config'] && nodeData['config']['core.type'];
 
-                    console.log('loadNodesFromAPIv2: Processing node', index, 'loc:', loc);
+                    console.log('loadNodesFromAPIv3: Processing node', index, 'loc:', loc);
 
                     if (loc && loc.coordinates) {
                         nodes.push({
@@ -72,18 +72,18 @@
                                 'i': nodeData['@id'],
                                 't': nodeType ? nodeType.type : 'unknown',
                                 'l': loc.coordinates,
-                                'api': 'v2'
+                                'api': 'v3'
                             }
                         });
                     }
                 });
 
-                console.log('loadNodesFromAPIv2: Created', nodes.length, 'node objects');
+                console.log('loadNodesFromAPIv3: Created', nodes.length, 'node objects');
                 // Extend the map with all nodes
                 $.nodewatcher.map.extend(map, nodes, []);
-                console.log('loadNodesFromAPIv2: Called map.extend');
+                console.log('loadNodesFromAPIv3: Called map.extend');
             }).fail(function(xhr, status, error) {
-                console.error('Failed to load nodes from API v2:', error);
+                console.error('Failed to load nodes from API v3:', error);
             });
         }
 
@@ -93,8 +93,8 @@
         }).done(function(data) {
             // Check if we have topology data
             if (!data.objects || data.objects.length === 0) {
-                // No topology data, fall back to API v2
-                loadNodesFromAPIv2(map);
+                // No topology data, fall back to API v3
+                loadNodesFromAPIv3(map);
                 return;
             }
 
@@ -104,8 +104,8 @@
                 'url': "/api/v1/stream/" + streamId + "/?format=json&reverse=true&limit=1&start=" + latestTimestamp,
             }).done(function(data) {
                 if (!data.datapoints || data.datapoints.length === 0) {
-                    // No datapoints, fall back to API v2
-                    loadNodesFromAPIv2(map);
+                    // No datapoints, fall back to API v3
+                    loadNodesFromAPIv3(map);
                     return;
                 }
 
@@ -134,12 +134,12 @@
 
                 $.nodewatcher.map.extend(map, nodes, edges);
             }).fail(function() {
-                // API call failed, fall back to API v2
-                loadNodesFromAPIv2(map);
+                // API call failed, fall back to API v3
+                loadNodesFromAPIv3(map);
             });
         }).fail(function() {
-            // API call failed, fall back to API v2
-            loadNodesFromAPIv2(map);
+            // API call failed, fall back to API v3
+            loadNodesFromAPIv3(map);
         });
     });
 })(jQuery);

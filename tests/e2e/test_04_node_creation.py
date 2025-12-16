@@ -185,7 +185,7 @@ class TestNodeEditing:
         driver = logged_in_user
 
         # First check if there are any nodes in the API
-        driver.get(f'{base_url}/api/v2/node/')
+        driver.get(f'{base_url}/api/v3/node/')
         time.sleep(2)
 
         page_source = driver.page_source
@@ -214,7 +214,7 @@ class TestNodeViaAPI:
 
     def test_node_api_list(self, driver, base_url):
         """Test that node API returns valid response."""
-        driver.get(f'{base_url}/api/v2/node/')
+        driver.get(f'{base_url}/api/v3/node/')
 
         wait = WebDriverWait(driver, 10)
         time.sleep(2)
@@ -230,7 +230,7 @@ class TestNodeViaAPI:
 
     def test_node_api_with_projection(self, driver, base_url):
         """Test node API with field projection."""
-        driver.get(f'{base_url}/api/v2/node/?fields=config:core.general__name')
+        driver.get(f'{base_url}/api/v3/node/?fields=config:core.general__name')
 
         wait = WebDriverWait(driver, 10)
         time.sleep(2)

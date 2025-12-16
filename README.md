@@ -132,9 +132,9 @@ open http://localhost:8000
 
 ## API Reference
 
-### API v2 Endpoints
+### API v3 Endpoints
 
-Base URL: `/api/v2/`
+Base URL: `/api/v3/`
 
 | Endpoint | Description |
 |----------|-------------|
@@ -149,10 +149,10 @@ Base URL: `/api/v2/`
 
 ```bash
 # Get all nodes
-curl "http://localhost:8000/api/v2/node/?format=json"
+curl "http://localhost:8000/api/v3/node/?format=json"
 
 # Get node with specific fields
-curl "http://localhost:8000/api/v2/node/?fields=config:core.general&fields=monitoring:system.status"
+curl "http://localhost:8000/api/v3/node/?fields=config:core.general&fields=monitoring:system.status"
 ```
 
 ---

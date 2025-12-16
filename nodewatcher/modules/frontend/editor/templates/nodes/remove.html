@@ -1,13 +1,9 @@
 {% extends "base.html" %}
+{% load i18n partial_tags %}
 
-{% contextblock %}
-    {% load i18n partial_tags %}
+{% block title %}{% blocktrans %}Remove Node {{ node_name }}{% endblocktrans %}{% endblock %}
 
-    {% setcontext as title %}{% blocktrans %}Remove Node {{ node_name }}{% endblocktrans %}{% endsetcontext %}
-    {% setcontext as heading %}{% spaceless %}
-        {% blocktrans %}Remove Node{% endblocktrans %}
-    {% endspaceless %}{% endsetcontext %}
-{% endcontextblock %}
+{% block heading %}{% blocktrans %}Remove Node{% endblocktrans %}{% endblock %}
 
 {% block content %}
     {% block node_remove_warning_wrapper %}

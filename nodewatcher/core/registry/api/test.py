@@ -61,7 +61,7 @@ class RegistryAPITestCase(test.APITestCase):
             self.assertIn(item['@id'], self.nodes)
 
     def get_node_list(self, *args, **kwargs):
-        response = self.client.get(urlresolvers.reverse('apiv2:node-list'), *args, **kwargs)
+        response = self.client.get(urlresolvers.reverse('apiv3:node-list'), *args, **kwargs)
         # Manually deserialize content instead of using response.data as the latter is sometimes not raw JSON.
         response.data = json.loads(response.content)
         return response

@@ -1,14 +1,12 @@
 {% extends "base.html" %}
+{% load i18n partial_tags %}
 
-{% contextblock %}
-    {% load i18n partial_tags %}
+{% block title %}{% blocktrans %}Generate Firmware for Node {{ node_name }}{% endblocktrans %}{% endblock %}
 
-    {% setcontext as title %}{% blocktrans %}Generate Firmware for Node {{ node_name }}{% endblocktrans %}{% endsetcontext %}
-    {% setcontext as heading %}{% spaceless %}
-        {% url "DisplayComponent:node" node.pk as node_url %}
-        {% blocktrans %}Generate Firmware for Node <a href="{{ node_url }}">{{ node_name }}</a>{% endblocktrans %}
-    {% endspaceless %}{% endsetcontext %}
-{% endcontextblock %}
+{% block heading %}
+    {% url "DisplayComponent:node" node.pk as node_url %}
+    {% blocktrans %}Generate Firmware for Node <a href="{{ node_url }}">{{ node_name }}</a>{% endblocktrans %}
+{% endblock %}
 
 {% block content %}
     <section class="node">

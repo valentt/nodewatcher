@@ -163,7 +163,7 @@ liblzma-dev
 8. **Access the application**
    - Web UI: http://localhost:8000/
    - Admin: http://localhost:8000/admin/
-   - API: http://localhost:8000/api/v2/
+   - API: http://localhost:8000/api/v3/
 
 ### Docker Services
 
@@ -250,9 +250,9 @@ MONITOR_RUNS = {
 
 ## API Reference
 
-### API v2 Endpoints
+### API v3 Endpoints
 
-Base URL: `/api/v2/`
+Base URL: `/api/v3/`
 
 | Endpoint | Description |
 |----------|-------------|
@@ -302,16 +302,16 @@ Base URL: `/api/v2/`
 
 ```bash
 # Get all nodes in JSON format
-curl "http://localhost:8000/api/v2/node/?format=json"
+curl "http://localhost:8000/api/v3/node/?format=json"
 
 # Get node with specific fields
-curl "http://localhost:8000/api/v2/node/?fields=config:core.general&fields=monitoring:system.status"
+curl "http://localhost:8000/api/v3/node/?fields=config:core.general&fields=monitoring:system.status"
 
 # Filter nodes by name
-curl "http://localhost:8000/api/v2/node/?filters=config:core.general__name__contains=\"test\""
+curl "http://localhost:8000/api/v3/node/?filters=config:core.general__name__contains=\"test\""
 
 # Get nodes seen after a specific time
-curl "http://localhost:8000/api/v2/node/?filters=monitoring:core.general__last_seen__gt=\"2024-01-01T00:00:00Z\""
+curl "http://localhost:8000/api/v3/node/?filters=monitoring:core.general__last_seen__gt=\"2024-01-01T00:00:00Z\""
 ```
 
 ## Module System

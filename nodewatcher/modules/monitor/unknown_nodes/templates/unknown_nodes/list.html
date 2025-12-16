@@ -1,8 +1,8 @@
 {% extends "base.html" %}
+{% load i18n sekizai_tags html_tags url_tags %}
 
-{% contextblock %}
-    {% load i18n sekizai_tags html_tags url_tags %}
-
+{% block extrahead %}
+    {{ block.super }}
     {% add_data "css_data" "datatables/css/style.css" %}
     {% add_data "js_data" "datatables/js/jquery.dataTables.js" %}
     {% add_data "js_data" "datatables/js/jquery.dataTables.bootstrap.js" %}
@@ -10,19 +10,19 @@
     {% add_data "js_data" "datastream/moment/moment.js" %}
     {% add_data "js_data" "api/js/base.js" %}
     {% add_data "js_data" "unknown_nodes/js/list.js" %}
+{% endblock %}
 
-    {% trans "List of Unknown Nodes" as title %}
-{% endcontextblock %}
+{% block title %}{% trans "List of Unknown Nodes" %}{% endblock %}
 
 {% block altlinks %}
-    {% url "apiv2:unknownnode-list" as api_url %}
+    {% url "apiv3:unknownnode-list" as api_url %}
     {% with api_url as url %}
     {% include "formats.html" %}
     {% endwith %}
 {% endblock altlinks %}
 
 {% block content %}
-    <table class="table table-striped unknown-node-list {% block unknown_node_list_classes %}{% endblock unknown_node_list_classes %}" data-source="{% block unknown_node_list_data_source %}{% url "apiv2:unknownnode-list" %}{% endblock unknown_node_list_data_source %}" data-register-url-template="{% urltemplate "UnknownNodesComponent:register" %}" width="100%">
+    <table class="table table-striped unknown-node-list {% block unknown_node_list_classes %}{% endblock unknown_node_list_classes %}" data-source="{% block unknown_node_list_data_source %}{% url "apiv3:unknownnode-list" %}{% endblock unknown_node_list_data_source %}" data-register-url-template="{% urltemplate "UnknownNodesComponent:register" %}" width="100%">
         <thead>
             <tr>
                 <th>{% trans "UUID" %}</th>

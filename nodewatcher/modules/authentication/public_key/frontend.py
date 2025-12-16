@@ -19,7 +19,7 @@ class PublicKeyComponent(components.FrontendComponent):
 components.pool.register(PublicKeyComponent)
 
 
-api_urls.v2_api.register('user_authentication_key', views.UserAuthenticationKeyViewSet)
+api_urls.v3_api.register('user_authentication_key', views.UserAuthenticationKeyViewSet)
 
 
 components.menus.register(components.Menu('public_key_menu'))

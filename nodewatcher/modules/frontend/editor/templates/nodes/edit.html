@@ -1,18 +1,19 @@
 {% extends "base.html" %}
+{% load i18n sekizai_tags html_tags %}
 
-{% contextblock %}
-    {% load i18n sekizai_tags %}
-
+{% block extrahead %}
+    {{ block.super }}
     {% add_data "js_data" "frontend/js/jquery.cookie.js" %}
     {% add_data "js_data" "frontend/js/csrf.js" %}
     {% add_data "js_data" "frontend/js/registry.js" %}
+{% endblock %}
 
-    {% setcontext as title %}{% blocktrans %}Edit Node {{ node_name }}{% endblocktrans %}{% endsetcontext %}
-    {% setcontext as heading %}{% spaceless %}
-        {% url "DisplayComponent:node" node.pk as node_url %}
-        {% blocktrans %}Edit Node <a href="{{ node_url }}">{{ node_name }}</a>{% endblocktrans %}
-    {% endspaceless %}{% endsetcontext %}
-{% endcontextblock %}
+{% block title %}{% blocktrans %}Edit Node {{ node_name }}{% endblocktrans %}{% endblock %}
+
+{% block heading %}
+    {% url "DisplayComponent:node" node.pk as node_url %}
+    {% blocktrans %}Edit Node <a href="{{ node_url }}">{{ node_name }}</a>{% endblocktrans %}
+{% endblock %}
 
 {% block content_before %}
     {% block node_menu_wrapper %}

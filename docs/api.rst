@@ -1,24 +1,24 @@
-API v2
+API v3
 ======
 
-The latest nodewatcher version uses API v2. Unlike v1 there is more control over which data is shown. In all of the examples below the wlan-si nodewatcher page is used for easier presentation. If you intend to use this on your own server replace the https://nodes.wlan-si.net with the address of your server. When you go to the API page in nodewatcher:
+The latest nodewatcher version uses API v3. Unlike v1 there is more control over which data is shown. In all of the examples below the wlan-si nodewatcher page is used for easier presentation. If you intend to use this on your own server replace the https://nodes.wlan-si.net with the address of your server. When you go to the API page in nodewatcher:
 
-https://nodes.wlan-si.net/api/v2/
+https://nodes.wlan-si.net/api/v3/
 
 You are presented with certain groups of data:
 
-* ``pool/ip`` https://nodes.wlan-si.net/api/v2/pool/ip/
-* ``statistics/device`` https://nodes.wlan-si.net/api/v2/statistics/device/
-* ``link`` https://nodes.wlan-si.net/api/v2/link/
-* ``node`` https://nodes.wlan-si.net/api/v2/node/
-* ``project`` https://nodes.wlan-si.net/api/v2/project/
-* ``statistics/project`` https://nodes.wlan-si.net/api/v2/statistics/project/
-* ``statistics/status`` https://nodes.wlan-si.net/api/v2/statistics/status/
-* ``unknown_node`` https://nodes.wlan-si.net/api/v2/unknown_node/
-* ``user_authentication_key`` https://nodes.wlan-si.net/api/v2/user_authentication_key/
-* ``event`` https://nodes.wlan-si.net/api/v2/event/
-* ``warning`` https://nodes.wlan-si.net/api/v2/warning/
-* ``build_result`` https://nodes.wlan-si.net/api/v2/build_result/
+* ``pool/ip`` https://nodes.wlan-si.net/api/v3/pool/ip/
+* ``statistics/device`` https://nodes.wlan-si.net/api/v3/statistics/device/
+* ``link`` https://nodes.wlan-si.net/api/v3/link/
+* ``node`` https://nodes.wlan-si.net/api/v3/node/
+* ``project`` https://nodes.wlan-si.net/api/v3/project/
+* ``statistics/project`` https://nodes.wlan-si.net/api/v3/statistics/project/
+* ``statistics/status`` https://nodes.wlan-si.net/api/v3/statistics/status/
+* ``unknown_node`` https://nodes.wlan-si.net/api/v3/unknown_node/
+* ``user_authentication_key`` https://nodes.wlan-si.net/api/v3/user_authentication_key/
+* ``event`` https://nodes.wlan-si.net/api/v3/event/
+* ``warning`` https://nodes.wlan-si.net/api/v3/warning/
+* ``build_result`` https://nodes.wlan-si.net/api/v3/build_result/
 
 Querying data
 -------------
@@ -38,14 +38,14 @@ Format
 
 ``format`` allows you to represent the gathered data in JSON format:
 
-https://nodes.wlan-si.net/api/v2/node/?format=JSON
+https://nodes.wlan-si.net/api/v3/node/?format=JSON
 
 Limit
 -----
 
 ``limit`` helps you to set an exact number of nodes that you want to show per page.
 
-https://nodes.wlan-si.net/api/v2/node/?limit=1
+https://nodes.wlan-si.net/api/v3/node/?limit=1
 
 This will give you a list of all registered nodes with each node on a single page.
 
@@ -54,12 +54,12 @@ Offset
 
 ``offset`` allows you to go to a specific page of the API request. This alongside limit can allow you to show data for a certain node or set of nodes.
 
-https://nodes.wlan-si.net/api/v2/node/?offset=17
+https://nodes.wlan-si.net/api/v3/node/?offset=17
 
 Fields
 ------
 
-When you make a simple API request like this https://nodes.wlan-si.net/API/v2/node/ you can see that there isn't much information for each of the nodes. That is because node data is divided in ``fields`` and you need to specify each ``field`` that you want to access. There are 2 groups ``config`` and ``monitoring``:
+When you make a simple API request like this https://nodes.wlan-si.net/api/v3/node/ you can see that there isn't much information for each of the nodes. That is because node data is divided in ``fields`` and you need to specify each ``field`` that you want to access. There are 2 groups ``config`` and ``monitoring``:
 
 * **config:**
     * core.general
@@ -95,12 +95,12 @@ http://docs.nodewatcher.net/en/development/node_monitoring.html
 
 These are 2 simple examples of how to select certain ``fields``:
 
-https://nodes.wlan-si.net/api/v2/node/?fields=config:core.general
-https://nodes.wlan-si.net/api/v2/node/?fields=monitoring:core.interfaces
+https://nodes.wlan-si.net/api/v3/node/?fields=config:core.general
+https://nodes.wlan-si.net/api/v3/node/?fields=monitoring:core.interfaces
 
 You can also have multiple ``fields`` in a single request:
 
-https://nodes.wlan-si.net/api/v2/node/?fields=config:core.general&fields=monitoring:core.interfaces
+https://nodes.wlan-si.net/api/v3/node/?fields=config:core.general&fields=monitoring:core.interfaces
 
 Filters
 -------
@@ -109,11 +109,11 @@ Filters
 
 This example will give you all nodes whose name is mp and if you try it out you will see that there aren't any nodes with that name:
 
-https://nodes.wlan-si.net/api/v2/node/?filters=config:core.general__name="mp"
+https://nodes.wlan-si.net/api/v3/node/?filters=config:core.general__name="mp"
 
 But if you add the ``__contains`` parameter you will see that now you will get all the nodes that contain "mp" in their name: 
 
-https://nodes.wlan-si.net/api/v2/node/?filters=config:core.general__name__contains="mp"
+https://nodes.wlan-si.net/api/v3/node/?filters=config:core.general__name__contains="mp"
 
 
 .. note:: All of these query parameters can be used together by adding '&' between each of them.
@@ -126,7 +126,7 @@ Node name
 
 Getting a node name with given node id:
 
-https://nodes.wlan-si.net/api/v2/node/node_id/?fields=config:core.general__name
+https://nodes.wlan-si.net/api/v3/node/node_id/?fields=config:core.general__name
 
 As you can see accessing individual parts of the ``config:core.general`` or any other field can be done by adding the name of the wanted part after ``__``, like ``__name``.
 
@@ -135,7 +135,7 @@ Multiple filters
 
 Applying multiple filters at the same time:
 
-https://nodes.wlan-si.net/api/v2/node/node_id/?filters=monitoring:core.general__name__contains="test",monitoring:core.general__name__contains="mp"
+https://nodes.wlan-si.net/api/v3/node/node_id/?filters=monitoring:core.general__name__contains="test",monitoring:core.general__name__contains="mp"
 
 Multiple filters can be applied by separating each one of them with ','.
 
@@ -144,6 +144,6 @@ Time filtering
 
 There are some filtering options available for certain fields. Filtering by ``last_seen`` can be done by giving a ``__gt`` (greater than) or ``__lt`` (lower than) value:
 
-https://nodes.wlan-si.net/api/v2/node/node_id/?filters=monitoring:core.general__last_seen__gt="2016-05-21T13:17:27.226815Z"
+https://nodes.wlan-si.net/api/v3/node/node_id/?filters=monitoring:core.general__last_seen__gt="2016-05-21T13:17:27.226815Z"
 
 This will show all nodes that have the ``last_seen`` value greater than ``2016-05-21T13:17:27.226815Z``.

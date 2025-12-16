@@ -750,8 +750,8 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = True
-# Currently only v2 API needs this. Tastypie API provides headers by itself.
-CORS_URLS_REGEX = r'^/api/v2/'
+# Currently only v3 API needs this. Tastypie API provides headers by itself.
+CORS_URLS_REGEX = r'^/api/v3/'
 # API is read-only for now.
 CORS_ALLOW_METHODS = (
     'GET',

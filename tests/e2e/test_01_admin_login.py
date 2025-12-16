@@ -120,13 +120,13 @@ class TestMainSiteAccess:
         assert 'server error' not in page_source
         assert '500' not in driver.title.lower()
 
-    def test_api_v2_endpoints(self, driver, base_url):
-        """Test that API v2 endpoints are accessible."""
+    def test_api_v3_endpoints(self, driver, base_url):
+        """Test that API v3 endpoints are accessible."""
         endpoints = [
-            '/api/v2/',
-            '/api/v2/node/',
-            '/api/v2/project/',
-            '/api/v2/ippool/',
+            '/api/v3/',
+            '/api/v3/node/',
+            '/api/v3/project/',
+            '/api/v3/ippool/',
         ]
 
         for endpoint in endpoints:

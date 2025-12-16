@@ -1,10 +1,7 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% contextblock %}
-    {% load i18n %}
-
-    {% trans "Add Public Key" as title %}
-{% endcontextblock %}
+{% block title %}{% trans "Add Public Key" %}{% endblock %}
 
 {% block content %}
     {% block public_key_create_form_wrapper %}

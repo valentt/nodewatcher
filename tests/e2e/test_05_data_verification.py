@@ -15,9 +15,9 @@ from selenium.webdriver.support import expected_conditions as EC
 class TestAPIDataVerification:
     """Test suite that verifies API returns actual data."""
 
-    def test_api_v2_returns_nodes(self, base_url):
-        """Test that API v2 node endpoint returns at least one node."""
-        response = requests.get(f'{base_url}/api/v2/node/?format=json')
+    def test_api_v3_returns_nodes(self, base_url):
+        """Test that API v3 node endpoint returns at least one node."""
+        response = requests.get(f'{base_url}/api/v3/node/?format=json')
         assert response.status_code == 200, f"API returned status {response.status_code}"
 
         data = response.json()
@@ -30,11 +30,11 @@ class TestAPIDataVerification:
         first_node = data['results'][0]
         assert '@id' in first_node, "Node missing @id field"
 
-    def test_api_v2_node_detail_returns_config(self, base_url):
+    def test_api_v3_node_detail_returns_config(self, base_url):
         """Test that node list with fields parameter returns config data."""
         # API requires 'fields' parameter to return registry data
         response = requests.get(
-            f'{base_url}/api/v2/node/?format=json&limit=1'
+            f'{base_url}/api/v3/node/?format=json&limit=1'
             f'&fields=config:core.general&fields=config:core.location'
         )
         assert response.status_code == 200, f"API returned {response.status_code}"
@@ -57,11 +57,11 @@ class TestAPIDataVerification:
             f"Config keys: {list(config.keys())}"
         )
 
-    def test_api_v2_node_has_location(self, base_url):
+    def test_api_v3_node_has_location(self, base_url):
         """Test that at least one node has location data."""
         # Use fields parameter to get location data
         response = requests.get(
-            f'{base_url}/api/v2/node/?format=json&fields=config:core.location'
+            f'{base_url}/api/v3/node/?format=json&fields=config:core.location'
         )
         assert response.status_code == 200
         data = response.json()
@@ -286,13 +286,13 @@ class TestMapVerification:
                     api_errors.append(log['message'])
 
         # Also directly test the API endpoints the map uses
-        # Based on code.js, it calls /api/v2/node/ and /api/v1/stream/
-        v2_response = requests.get(f'{base_url}/api/v2/node/?format=json&limit=1')
+        # Based on code.js, it calls /api/v3/node/ and /api/v1/stream/
+        v2_response = requests.get(f'{base_url}/api/v3/node/?format=json&limit=1')
         v1_response = requests.get(f'{base_url}/api/v1/stream/?format=json&tags__module=topology&limit=1')
 
         issues = []
         if v2_response.status_code != 200:
-            issues.append(f"API v2 node endpoint returned {v2_response.status_code}")
+            issues.append(f"API v3 node endpoint returned {v2_response.status_code}")
         if v1_response.status_code != 200:
             issues.append(f"API v1 stream endpoint returned {v1_response.status_code}")
 
@@ -310,7 +310,7 @@ class TestProjectDataVerification:
 
     def test_project_api_returns_data(self, base_url):
         """Test that project API returns at least one project."""
-        response = requests.get(f'{base_url}/api/v2/project/?format=json')
+        response = requests.get(f'{base_url}/api/v3/project/?format=json')
         assert response.status_code == 200, f"Project API returned {response.status_code}"
 
         data = response.json()
@@ -322,7 +322,7 @@ class TestProjectDataVerification:
 
     def test_ippool_api_returns_data(self, base_url):
         """Test that IP pool API returns at least one pool."""
-        response = requests.get(f'{base_url}/api/v2/ippool/?format=json')
+        response = requests.get(f'{base_url}/api/v3/ippool/?format=json')
         assert response.status_code == 200, f"IP Pool API returned {response.status_code}"
 
         data = response.json()

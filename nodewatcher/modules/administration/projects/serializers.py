@@ -13,7 +13,7 @@ class ProjectSerializer(api_serializers.JSONLDSerializerMixin, serializers.Model
     class Meta:
         model = models.Project
         fields = ('id', 'name', 'description', 'is_default', 'location')
-        base_view = 'apiv2:project-list'
+        base_view = 'apiv3:project-list'
 
 
 class ProjectStatisticsSerializer(serializers.Serializer):

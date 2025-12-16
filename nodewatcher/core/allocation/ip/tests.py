@@ -172,7 +172,7 @@ class IpPoolAPITest(api_test.RegistryAPITestCase):
         ).save()
 
     def get_ip_allocation_list(self, *args, **kwargs):
-        return self.client.get(urlresolvers.reverse('apiv2:ippool-list'), *args, **kwargs)
+        return self.client.get(urlresolvers.reverse('apiv3:ippool-list'), *args, **kwargs)
 
     def test_list(self):
         response = self.get_ip_allocation_list()

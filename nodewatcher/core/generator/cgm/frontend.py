@@ -19,7 +19,7 @@ def device_context(context):
         'device': device.get_display_name()
     }
 
-api_urls.v2_api.register('statistics/device', views.DeviceStatisticsViewSet, basename='statistics-device')
+api_urls.v3_api.register('statistics/device', views.DeviceStatisticsViewSet, basename='statistics-device')
 
 components.partials.get_partial('node_general_partial').add(components.PartialEntry(
     name='device',

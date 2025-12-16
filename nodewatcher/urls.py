@@ -18,7 +18,7 @@ urlpatterns = [
     re_path(r'^registry/', include(('nodewatcher.core.registry.urls', 'registry'), namespace='registry')),
 
     # API.
-    re_path(r'^api/v2/', include((api_urls.v2_api.urls, 'apiv2'), namespace='apiv2')),
+    re_path(r'^api/v3/', include((api_urls.v3_api.urls, 'apiv3'), namespace='apiv3')),
     re_path(r'^api/', include((api_urls.v1_api.urls, 'api'), namespace='api')),
 
     # Django admin interface.

@@ -1,10 +1,7 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% contextblock %}
-    {% load i18n %}
-
-    {% trans "Network Statistics" as title %}
-{% endcontextblock %}
+{% block title %}{% trans "Network Statistics" %}{% endblock %}
 
 {% block content %}
     {% block network_statistics_wrapper %}

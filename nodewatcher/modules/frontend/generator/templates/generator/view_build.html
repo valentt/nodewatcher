@@ -1,13 +1,9 @@
 {% extends "base.html" %}
+{% load i18n registry path_tags %}
 
-{% contextblock %}
-    {% load i18n registry path_tags %}
+{% block title %}{% blocktrans with build_id=build.pk %}Build {{ build_id }}{% endblocktrans %}{% endblock %}
 
-    {% setcontext as title %}{% blocktrans with build_id=build.pk%}Build {{ build_id }}{% endblocktrans %}{% endsetcontext %}
-    {% setcontext as heading %}{% spaceless %}
-        {% blocktrans with build_id=build.pk %}Build {{ build_id }}{% endblocktrans %}
-    {% endspaceless %}{% endsetcontext %}
-{% endcontextblock %}
+{% block heading %}{% blocktrans with build_id=build.pk %}Build {{ build_id }}{% endblocktrans %}{% endblock %}
 
 {% block content %}
     {% block view_build_partial_wrapper %}

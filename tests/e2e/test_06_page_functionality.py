@@ -79,7 +79,7 @@ class TestMapPage:
     def test_map_shows_markers_for_nodes(self, driver, base_url):
         """Test that map shows markers when nodes exist with locations."""
         # First verify nodes exist via API
-        response = requests.get(f'{base_url}/api/v2/node/?format=json&fields=config:core.location')
+        response = requests.get(f'{base_url}/api/v3/node/?format=json&fields=config:core.location')
         if response.status_code != 200:
             pytest.skip("API not available")
 
@@ -181,7 +181,7 @@ class TestListPage:
     def test_list_page_shows_nodes_when_exist(self, driver, base_url):
         """Test that list page shows nodes when they exist in database."""
         # First check if nodes exist via API
-        response = requests.get(f'{base_url}/api/v2/node/?format=json')
+        response = requests.get(f'{base_url}/api/v3/node/?format=json')
         if response.status_code != 200:
             pytest.skip("API not available")
 
@@ -230,7 +230,7 @@ class TestListPage:
     def test_list_page_node_count_matches_api(self, driver, base_url):
         """Test that list page shows same number of nodes as API."""
         # Get count from API
-        response = requests.get(f'{base_url}/api/v2/node/?format=json')
+        response = requests.get(f'{base_url}/api/v3/node/?format=json')
         if response.status_code != 200:
             pytest.skip("API not available")
 
@@ -259,6 +259,90 @@ class TestListPage:
             f"List page should show {api_count} nodes but shows no data rows or info"
         )
 
+    def test_click_nodes_in_list(self, driver, base_url):
+        """Test that clicking on nodes in list navigates to detail page correctly."""
+        # First check if nodes exist via API
+        response = requests.get(f'{base_url}/api/v3/node/?format=json')
+        if response.status_code != 200:
+            pytest.skip("API not available")
+
+        data = response.json()
+        if data.get('count', 0) == 0:
+            pytest.skip("No nodes in database")
+
+        driver.get(f'{base_url}/list/')
+
+        wait = WebDriverWait(driver, 15)
+        wait.until(lambda d: d.execute_script('return document.readyState') == 'complete')
+
+        import time
+        time.sleep(4)  # Wait for DataTables to load
+
+        # Find node links in the table
+        node_links = driver.find_elements(By.CSS_SELECTOR, 'table.node-list tbody tr td a')
+
+        if not node_links:
+            # Try alternative selector
+            node_links = driver.find_elements(By.CSS_SELECTOR, 'table tbody tr td:nth-child(2) a')
+
+        if not node_links:
+            pytest.skip("No clickable node links found in list")
+
+        # Test clicking on up to 3 nodes
+        errors = []
+        nodes_tested = 0
+        max_nodes_to_test = min(3, len(node_links))
+
+        for i in range(max_nodes_to_test):
+            # Go back to list page for each iteration
+            driver.get(f'{base_url}/list/')
+            time.sleep(3)
+
+            # Re-find links (DOM refreshed)
+            node_links = driver.find_elements(By.CSS_SELECTOR, 'table.node-list tbody tr td a')
+            if not node_links:
+                node_links = driver.find_elements(By.CSS_SELECTOR, 'table tbody tr td:nth-child(2) a')
+
+            if i >= len(node_links):
+                break
+
+            link = node_links[i]
+            node_name = link.text
+            href = link.get_attribute('href')
+
+            try:
+                # Click the node link
+                link.click()
+
+                wait.until(lambda d: d.execute_script('return document.readyState') == 'complete')
+                time.sleep(2)
+
+                # Check for errors on detail page
+                page_source = driver.page_source.lower()
+                current_url = driver.current_url
+
+                if 'templatesyntaxerror' in page_source:
+                    errors.append(f"Node '{node_name}': TemplateSyntaxError on detail page")
+                elif 'server error' in page_source or '500' in driver.title.lower():
+                    errors.append(f"Node '{node_name}': Server error (500)")
+                elif 'page not found' in page_source or '404' in driver.title.lower():
+                    errors.append(f"Node '{node_name}': Page not found (404)")
+                elif 'nameerror' in page_source or 'typeerror' in page_source:
+                    errors.append(f"Node '{node_name}': Python error on page")
+                else:
+                    nodes_tested += 1
+
+            except Exception as e:
+                errors.append(f"Node '{node_name}': Click failed - {str(e)[:100]}")
+
+        if errors:
+            pytest.fail(
+                f"Errors clicking nodes in list ({len(errors)}/{max_nodes_to_test}):\n" +
+                '\n'.join(errors)
+            )
+
+        assert nodes_tested > 0, "No nodes were successfully tested"
+
 
 class TestNodeEditPage:
     """Test suite for node edit functionality."""
@@ -268,7 +352,7 @@ class TestNodeEditPage:
         driver = logged_in_admin
 
         # Get a node ID from API
-        response = requests.get(f'{base_url}/api/v2/node/?format=json&limit=1')
+        response = requests.get(f'{base_url}/api/v3/node/?format=json&limit=1')
         if response.status_code != 200:
             pytest.skip("API not available")
 
@@ -296,7 +380,7 @@ class TestNodeEditPage:
         driver = logged_in_admin
 
         # Get nodes from API
-        response = requests.get(f'{base_url}/api/v2/node/?format=json&limit=10')
+        response = requests.get(f'{base_url}/api/v3/node/?format=json&limit=10')
         if response.status_code != 200:
             pytest.skip("API not available")
 
@@ -338,7 +422,7 @@ class TestNodeEditPage:
     def test_node_detail_page_accessible(self, driver, base_url):
         """Test that node detail page is accessible."""
         # Get a node ID from API
-        response = requests.get(f'{base_url}/api/v2/node/?format=json&limit=1')
+        response = requests.get(f'{base_url}/api/v3/node/?format=json&limit=1')
         if response.status_code != 200:
             pytest.skip("API not available")
 
@@ -363,24 +447,24 @@ class TestNodeEditPage:
 class TestAPIEndpoints:
     """Test suite for API endpoints."""
 
-    def test_api_v2_root_accessible(self, base_url):
-        """Test that API v2 root endpoint is accessible."""
-        response = requests.get(f'{base_url}/api/v2/')
-        assert response.status_code == 200, f"API v2 root returned {response.status_code}"
+    def test_api_v3_root_accessible(self, base_url):
+        """Test that API v3 root endpoint is accessible."""
+        response = requests.get(f'{base_url}/api/v3/')
+        assert response.status_code == 200, f"API v3 root returned {response.status_code}"
 
-    def test_api_v2_node_endpoint(self, base_url):
-        """Test that API v2 node endpoint works."""
-        response = requests.get(f'{base_url}/api/v2/node/?format=json')
-        assert response.status_code == 200, f"API v2 node returned {response.status_code}"
+    def test_api_v3_node_endpoint(self, base_url):
+        """Test that API v3 node endpoint works."""
+        response = requests.get(f'{base_url}/api/v3/node/?format=json')
+        assert response.status_code == 200, f"API v3 node returned {response.status_code}"
 
         data = response.json()
         assert 'count' in data, "API response missing 'count' field"
         assert 'results' in data, "API response missing 'results' field"
 
-    def test_api_v2_with_fields_parameter(self, base_url):
-        """Test that API v2 fields parameter works correctly."""
+    def test_api_v3_with_fields_parameter(self, base_url):
+        """Test that API v3 fields parameter works correctly."""
         response = requests.get(
-            f'{base_url}/api/v2/node/?format=json'
+            f'{base_url}/api/v3/node/?format=json'
             f'&fields=config:core.location&fields=config:core.general'
         )
         assert response.status_code == 200, f"API with fields returned {response.status_code}"

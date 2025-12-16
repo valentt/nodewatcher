@@ -114,7 +114,7 @@ class TestProjectCreation:
     def test_project_appears_in_api(self, logged_in_admin, base_url):
         """Verify the project appears in the API."""
         driver = logged_in_admin
-        driver.get(f'{base_url}/api/v2/project/')
+        driver.get(f'{base_url}/api/v3/project/')
 
         wait = WebDriverWait(driver, 10)
 

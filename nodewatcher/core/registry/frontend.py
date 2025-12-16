@@ -15,7 +15,7 @@ for registration_point in registration.all_points():
 for model in top_level_models:
     class meta_cls:
         model = model
-        base_view = 'apiv2:%s-list' % model._meta.object_name.lower()
+        base_view = 'apiv3:%s-list' % model._meta.object_name.lower()
         fields = '__all__'
 
     serializer = type(
@@ -43,4 +43,4 @@ for model in top_level_models:
     )
 
     # Register the viewset with the API router.
-    api_urls.v2_api.register(model._meta.object_name.lower(), viewset)
+    api_urls.v3_api.register(model._meta.object_name.lower(), viewset)

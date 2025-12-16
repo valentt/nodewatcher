@@ -19,7 +19,7 @@ class GeneratorComponent(components.FrontendComponent):
 
 components.pool.register(GeneratorComponent)
 
-api_urls.v2_api.register('build_result', views.BuildResultViewSet)
+api_urls.v3_api.register('build_result', views.BuildResultViewSet)
 
 components.menus.get_menu('node_menu').add(components.MenuEntry(
     label=components.ugettext_lazy("Generate Firmware"),

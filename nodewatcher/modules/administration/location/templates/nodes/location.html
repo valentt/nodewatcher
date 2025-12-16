@@ -1,11 +1,9 @@
 {% load sekizai_tags html_tags leaflet_tags theme_tags i18n %}
 
-{% contextblock %}
-    {% addtoblock "css" %}{% leaflet_css %}{% endaddtoblock %}
-    {% addtoblock "js" %}{% leaflet_js %}{% endaddtoblock %}
-    {% add_data "js_data" "map/js/api.js" %}
-    {% add_data "js_data" "location/js/map.js" %}
-{% endcontextblock %}
+{% addtoblock "css" %}{% leaflet_css %}{% endaddtoblock %}
+{% addtoblock "js" %}{% leaflet_js %}{% endaddtoblock %}
+{% add_data "js_data" "map/js/api.js" %}
+{% add_data "js_data" "location/js/map.js" %}
 {% theme_legend _("Location") %}
 <div class="location">
 {% if node_location.geolocation %}

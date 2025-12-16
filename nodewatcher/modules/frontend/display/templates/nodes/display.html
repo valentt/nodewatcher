@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% load i18n html_tags %}
 
-{% contextblock %}
-    {% load i18n html_tags %}
+{% block title %}{% blocktrans %}Node {{ node_name }}{% endblocktrans %}{% endblock %}
 
-    {% setcontext as title %}{% blocktrans %}Node {{ node_name }}{% endblocktrans %}{% endsetcontext %}
+{% block extrahead %}
+    {{ block.super }}
     {% url "DisplayComponent:node" node.pk as permalink %}
-{% endcontextblock %}
+{% endblock %}
 
 {% block altlinks %}
     {% url "api:api_dispatch_detail" "v1" "node" node.pk as api_url %}
