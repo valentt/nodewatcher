@@ -41,20 +41,81 @@
             }
         });
         
+        // Function to load nodes from API v2 (fallback when no topology data)
+        function loadNodesFromAPIv2(map) {
+            $.ajax({
+                'url': '/api/v2/node/?format=json&limit=100',
+            }).done(function(data) {
+                if (data.count === 0) return;
+
+                var nodes = [];
+                var nodeIndex = {};
+                var loadedCount = 0;
+
+                // Load each node's details
+                $.each(data.results, function(index, result) {
+                    $.ajax({
+                        'url': '/api/v2/node/' + result['@id'] + '/?format=json&fields=config:core.location,config:core.general,config:core.type',
+                    }).done(function(nodeData) {
+                        var loc = nodeData['config'] && nodeData['config']['core.location'] && nodeData['config']['core.location']['geolocation'];
+                        var general = nodeData['config'] && nodeData['config']['core.general'];
+                        var nodeType = nodeData['config'] && nodeData['config']['core.type'];
+
+                        if (loc && loc.coordinates) {
+                            nodes.push({
+                                'index': nodes.length,
+                                'data': {
+                                    'n': general ? general.name : 'Unknown',
+                                    'i': result['@id'],
+                                    't': nodeType ? nodeType.type : 'unknown',
+                                    'l': loc.coordinates,
+                                    'api': 'v2'
+                                }
+                            });
+                        }
+
+                        loadedCount++;
+                        if (loadedCount >= data.results.length) {
+                            // All nodes loaded, extend the map
+                            $.nodewatcher.map.extend(map, nodes, []);
+                        }
+                    }).fail(function() {
+                        loadedCount++;
+                        if (loadedCount >= data.results.length) {
+                            $.nodewatcher.map.extend(map, nodes, []);
+                        }
+                    });
+                });
+            });
+        }
+
         //APIv1 request for all the currently active nodes with the location parameter set
         $.ajax({
             'url': "/api/v1/stream/?format=json&tags__module=topology&limit=1",
         }).done(function(data) {
+            // Check if we have topology data
+            if (!data.objects || data.objects.length === 0) {
+                // No topology data, fall back to API v2
+                loadNodesFromAPIv2(map);
+                return;
+            }
+
             var streamId = data.objects[0].id;
             var latestTimestamp = moment(data.objects[0].latest_datapoint).unix();
             $.ajax({
                 'url': "/api/v1/stream/" + streamId + "/?format=json&reverse=true&limit=1&start=" + latestTimestamp,
             }).done(function(data) {
+                if (!data.datapoints || data.datapoints.length === 0) {
+                    // No datapoints, fall back to API v2
+                    loadNodesFromAPIv2(map);
+                    return;
+                }
+
                 var graph = data.datapoints[0].v;
                 var nodes = [];
                 var edges = [];
                 var nodeIndex = {};
-                
+
                 //storing each node data
                 $.each(graph.v, function(index, vertex) {
                     nodes.push({
@@ -63,7 +124,7 @@
                     });
                     nodeIndex[vertex.i] = index;
                 });
-                
+
                 //storing the links between the nodes
                 $.each(graph.e, function(index, edge) {
                     edges.push({
@@ -74,7 +135,13 @@
                 });
 
                 $.nodewatcher.map.extend(map, nodes, edges);
+            }).fail(function() {
+                // API call failed, fall back to API v2
+                loadNodesFromAPIv2(map);
             });
+        }).fail(function() {
+            // API call failed, fall back to API v2
+            loadNodesFromAPIv2(map);
         });
     });
 })(jQuery);
