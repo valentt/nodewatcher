@@ -322,7 +322,7 @@ class TestProjectDataVerification:
 
     def test_ippool_api_returns_data(self, base_url):
         """Test that IP pool API returns at least one pool."""
-        response = requests.get(f'{base_url}/api/v3/ippool/?format=json')
+        response = requests.get(f'{base_url}/api/v3/pool/ip/?format=json')
         assert response.status_code == 200, f"IP Pool API returned {response.status_code}"
 
         data = response.json()

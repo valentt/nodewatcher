@@ -126,7 +126,7 @@ class TestMainSiteAccess:
             '/api/v3/',
             '/api/v3/node/',
             '/api/v3/project/',
-            '/api/v3/ippool/',
+            '/api/v3/pool/ip/',
         ]
 
         for endpoint in endpoints:

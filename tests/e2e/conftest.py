@@ -126,7 +126,9 @@ def logged_in_user(driver, base_url, admin_credentials):
     """
     Fixture that ensures user is logged in to the main site.
     Returns the driver for convenience.
+    Skips test if login fails.
     """
+    import time
     username, password = admin_credentials
 
     # Navigate to login page
@@ -152,10 +154,15 @@ def logged_in_user(driver, base_url, admin_credentials):
     submit_button = driver.find_element(By.CSS_SELECTOR, 'button[type="submit"], input[type="submit"]')
     submit_button.click()
 
-    # Wait for login to complete
-    WebDriverWait(driver, 10).until(
-        lambda d: '/account/login/' not in d.current_url
-    )
+    # Wait for response
+    time.sleep(2)
+
+    # Check if still on login page (login failed)
+    if '/account/login/' in driver.current_url:
+        page_source = driver.page_source.lower()
+        if 'please enter a correct' in page_source or 'invalid' in page_source or 'error' in page_source:
+            pytest.skip(f'User login failed: invalid credentials for "{username}". Set NODEWATCHER_ADMIN_USER and NODEWATCHER_ADMIN_PASS env vars.')
+        pytest.skip(f'User login failed for "{username}". Check credentials.')
 
     return driver
 

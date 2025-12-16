@@ -386,7 +386,7 @@ class IPAddressField(models.Field):
         except ValueError:
             raise exceptions.ValidationError(error_messages['invalid'])
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection):
         """
         Converts a database value into a Python one.
         """

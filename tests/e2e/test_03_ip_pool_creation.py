@@ -130,7 +130,7 @@ class TestIPPoolCreation:
 
     def test_ippool_appears_in_api(self, driver, base_url):
         """Verify IP pools appear in the API."""
-        driver.get(f'{base_url}/api/v3/ippool/')
+        driver.get(f'{base_url}/api/v3/pool/ip/')
 
         wait = WebDriverWait(driver, 10)
 
