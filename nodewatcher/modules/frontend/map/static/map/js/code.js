@@ -43,49 +43,47 @@
         
         // Function to load nodes from API v2 (fallback when no topology data)
         function loadNodesFromAPIv2(map) {
+            console.log('loadNodesFromAPIv2: Starting API v2 fallback');
+            // Single API call with all required fields
             $.ajax({
-                'url': '/api/v2/node/?format=json&limit=100',
+                'url': '/api/v2/node/?format=json&limit=500&fields=config:core.location&fields=config:core.general&fields=config:core.type',
             }).done(function(data) {
-                if (data.count === 0) return;
+                console.log('loadNodesFromAPIv2: Got', data.count, 'nodes from API');
+                if (data.count === 0) {
+                    console.log('loadNodesFromAPIv2: No nodes found');
+                    return;
+                }
 
                 var nodes = [];
-                var nodeIndex = {};
-                var loadedCount = 0;
 
-                // Load each node's details
-                $.each(data.results, function(index, result) {
-                    $.ajax({
-                        'url': '/api/v2/node/' + result['@id'] + '/?format=json&fields=config:core.location,config:core.general,config:core.type',
-                    }).done(function(nodeData) {
-                        var loc = nodeData['config'] && nodeData['config']['core.location'] && nodeData['config']['core.location']['geolocation'];
-                        var general = nodeData['config'] && nodeData['config']['core.general'];
-                        var nodeType = nodeData['config'] && nodeData['config']['core.type'];
+                // Process all nodes from the response
+                $.each(data.results, function(index, nodeData) {
+                    var loc = nodeData['config'] && nodeData['config']['core.location'] && nodeData['config']['core.location']['geolocation'];
+                    var general = nodeData['config'] && nodeData['config']['core.general'];
+                    var nodeType = nodeData['config'] && nodeData['config']['core.type'];
 
-                        if (loc && loc.coordinates) {
-                            nodes.push({
-                                'index': nodes.length,
-                                'data': {
-                                    'n': general ? general.name : 'Unknown',
-                                    'i': result['@id'],
-                                    't': nodeType ? nodeType.type : 'unknown',
-                                    'l': loc.coordinates,
-                                    'api': 'v2'
-                                }
-                            });
-                        }
+                    console.log('loadNodesFromAPIv2: Processing node', index, 'loc:', loc);
 
-                        loadedCount++;
-                        if (loadedCount >= data.results.length) {
-                            // All nodes loaded, extend the map
-                            $.nodewatcher.map.extend(map, nodes, []);
-                        }
-                    }).fail(function() {
-                        loadedCount++;
-                        if (loadedCount >= data.results.length) {
-                            $.nodewatcher.map.extend(map, nodes, []);
-                        }
-                    });
+                    if (loc && loc.coordinates) {
+                        nodes.push({
+                            'index': nodes.length,
+                            'data': {
+                                'n': general ? general.name : 'Unknown',
+                                'i': nodeData['@id'],
+                                't': nodeType ? nodeType.type : 'unknown',
+                                'l': loc.coordinates,
+                                'api': 'v2'
+                            }
+                        });
+                    }
                 });
+
+                console.log('loadNodesFromAPIv2: Created', nodes.length, 'node objects');
+                // Extend the map with all nodes
+                $.nodewatcher.map.extend(map, nodes, []);
+                console.log('loadNodesFromAPIv2: Called map.extend');
+            }).fail(function(xhr, status, error) {
+                console.error('Failed to load nodes from API v2:', error);
             });
         }
 
