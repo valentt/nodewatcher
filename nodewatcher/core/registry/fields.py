@@ -382,7 +382,11 @@ class IPAddressField(models.Field):
             return value
 
         try:
-            return ipaddr.IPNetwork(value.encode('latin-1'))
+            # Python 3: strings are already Unicode, no need to encode
+            # Pass string directly to IPNetwork
+            if isinstance(value, bytes):
+                value = value.decode('latin-1')
+            return ipaddr.IPNetwork(value)
         except ValueError:
             raise exceptions.ValidationError(error_messages['invalid'])
 
