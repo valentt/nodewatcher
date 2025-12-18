@@ -9,10 +9,24 @@
 
 # This port adds no further stipulations.  I forfeit any copyright interest.
 
+# Updated for Python 3 compatibility - hashlib requires bytes, not strings
+
 from hashlib import md5
 
 
+def _to_bytes(s):
+    """Convert string to bytes if necessary."""
+    if isinstance(s, bytes):
+        return s
+    return s.encode('utf-8')
+
+
 def md5crypt(password, salt, magic='$1$'):
+    # Convert all inputs to bytes for hashlib compatibility
+    password = _to_bytes(password)
+    salt = _to_bytes(salt)
+    magic = _to_bytes(magic)
+
     # /* The password first, since that is what is most unknown */ /* Then our magic string */ /* Then the raw salt */
     m = md5()
     m.update(password + magic + salt)
@@ -20,16 +34,16 @@ def md5crypt(password, salt, magic='$1$'):
     # /* Then just as many characters of the MD5(pw,salt,pw) */
     mixin = md5(password + salt + password).digest()
     for i in range(0, len(password)):
-        m.update(mixin[i % 16])
+        m.update(bytes([mixin[i % 16]]))
 
     # /* Then something really weird... */
     # Also really broken, as far as I can tell.  -m
     i = len(password)
     while i:
         if i & 1:
-            m.update('\x00')
+            m.update(b'\x00')
         else:
-            m.update(password[0])
+            m.update(bytes([password[0]]))
         i >>= 1
 
     final = m.digest()
@@ -61,14 +75,16 @@ def md5crypt(password, salt, magic='$1$'):
 
     rearranged = ''
     for a, b, c in ((0, 6, 12), (1, 7, 13), (2, 8, 14), (3, 9, 15), (4, 10, 5)):
-        v = ord(final[a]) << 16 | ord(final[b]) << 8 | ord(final[c])
+        # In Python 3, indexing bytes returns int directly, no need for ord()
+        v = final[a] << 16 | final[b] << 8 | final[c]
         for i in range(4):
             rearranged += itoa64[v & 0x3f]
             v >>= 6
 
-    v = ord(final[11])
+    v = final[11]
     for i in range(2):
         rearranged += itoa64[v & 0x3f]
         v >>= 6
 
-    return magic + salt + '$' + rearranged
+    # Return as string (decode magic and salt back to str)
+    return magic.decode('utf-8') + salt.decode('utf-8') + '$' + rearranged

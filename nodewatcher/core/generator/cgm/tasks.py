@@ -122,18 +122,20 @@ def background_build(self, result_uuid):
 
     # Store the manifest.
     manifest = json.dumps(manifest)
+    # Python 3: BytesIO and hashlib require bytes, not str
+    manifest_bytes = manifest.encode('utf-8')
     generator_models.BuildResultFile(
         result=result,
         file=uploadedfile.InMemoryUploadedFile(
-            io.BytesIO(manifest),
+            io.BytesIO(manifest_bytes),
             None,
             'manifest.json',
             'text/json',
-            len(manifest),
+            len(manifest_bytes),
             None
         ),
-        checksum_md5=hashlib.md5(manifest).hexdigest(),
-        checksum_sha256=hashlib.sha256(manifest).hexdigest(),
+        checksum_md5=hashlib.md5(manifest_bytes).hexdigest(),
+        checksum_sha256=hashlib.sha256(manifest_bytes).hexdigest(),
         hidden=True,
     ).save()
 

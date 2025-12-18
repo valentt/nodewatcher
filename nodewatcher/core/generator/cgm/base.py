@@ -39,9 +39,10 @@ class PlatformAccountManager(object):
         self._users[uid] = {
             'uid': int(uid),
             'gid': int(gid),
-            'home': str(home).encode('ascii'),
-            'shell': str(shell).encode('ascii'),
-            'username': str(username).encode('ascii'),
+            # Python 3: Don't encode to bytes - JSON can't serialize bytes objects
+            'home': str(home),
+            'shell': str(shell),
+            'username': str(username),
             'password': str(password),
         }
 
@@ -417,7 +418,8 @@ class PlatformBase(object):
                 cfg.packages.add(name)
 
         # Execute the module chain in order.
-        for weight, module, device in sorted(modules):
+        # Use key function to sort only by weight (first element) - Python 3 can't compare functions
+        for weight, module, device in sorted(modules, key=lambda x: x[0]):
             if device is None or device == node.config.core.general().router:
                 module(node, cfg)
 

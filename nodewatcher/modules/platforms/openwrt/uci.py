@@ -233,14 +233,16 @@ class UCIPackage(object):
         Returns an iterator over the named sections.
         """
 
-        return self._named_sections.items()
+        # Python 3: .items() returns a view, not an iterator. Wrap in iter() for compatibility.
+        return iter(self._named_sections.items())
 
     def ordered_sections(self):
         """
         Returns an iterator over the ordered sections.
         """
 
-        return self._ordered_sections.items()
+        # Python 3: .items() returns a view, not an iterator. Wrap in iter() for compatibility.
+        return iter(self._ordered_sections.items())
 
     def find_named_section(self, section_type, **query):
         """

@@ -49,7 +49,8 @@ def user_accounts(node, cfg):
     except cgm_models.AuthenticationConfig.DoesNotExist:
         # If there is no password authentication, we still need to create a default root account
         # as otherwise authentication will not be possible. In this case, we use a random password.
-        cfg.accounts.add_user('root', crypto.get_random_string(), 0, 0, '/tmp', '/bin/ash')
+        # Django 4.0+ requires explicit length argument for get_random_string()
+        cfg.accounts.add_user('root', crypto.get_random_string(length=12), 0, 0, '/tmp', '/bin/ash')
 
 
 @cgm_base.register_platform_module('openwrt', 15)

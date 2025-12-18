@@ -41,7 +41,7 @@ def general(node, cfg):
         pass
 
     telemetry_source = node.config.core.telemetry.http()
-    if telemetry_source.source == 'push':
+    if telemetry_source is not None and telemetry_source.source == 'push':
         if not getattr(settings, 'MONITOR_HTTP_PUSH_HOST', None):
             raise cgm_base.ValidationError(
                 _("HTTP push host must be configured in order to configure push.")

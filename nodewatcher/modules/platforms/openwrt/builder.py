@@ -66,9 +66,10 @@ class Builder(object):
         passwd = io.StringIO()
         for account in cfg['_accounts'].get('users', {}).values():
             if account['password'] != '*':
+                # Python 3: Use base64.b64encode() instead of .encode('base_64')
                 account['password'] = crypt.md5crypt(
                     account['password'],
-                    os.urandom(6).encode('base_64').strip()
+                    base64.b64encode(os.urandom(6)).decode('ascii').strip()
                 )
 
             passwd.write('%(username)s:%(password)s:%(uid)d:%(gid)d:%(username)s:%(home)s:%(shell)s\n' % account)

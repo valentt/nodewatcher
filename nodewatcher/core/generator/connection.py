@@ -48,6 +48,9 @@ class BuilderConnection(object):
                 hostname=self.builder.host,
                 username='builder',
                 pkey=pkey,
+                # Disable newer RSA signature algorithms for compatibility with
+                # older OpenSSH servers (< 7.2) that don't support rsa-sha2-*
+                disabled_algorithms={'pubkeys': ['rsa-sha2-512', 'rsa-sha2-256']},
             )
             transport = self.client.get_transport()
             transport.set_keepalive(60)
