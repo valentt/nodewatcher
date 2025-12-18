@@ -1,4 +1,4 @@
-from django.utils.translation import gettext as _
+from django.utils.translation import gettext_lazy as _
 
 
 class Channel(object):
@@ -436,4 +436,55 @@ class IEEE80211AC(IEEE80211A):
     bitrates = tuple([
         Bitrate('ht-mcs-%d' % index, _("HT MCS %d") % index, index, rate_set='802.11n')
         for index in range(0, 32)
+    ])
+
+
+class IEEE80211AX(IEEE80211AC):
+    """
+    IEEE 802.11ax (WiFi 6) protocol.
+    """
+
+    identifier = "ieee-80211ax"
+    description = _("IEEE 802.11AX (WiFi 6)")
+    capabilities = (
+        Capability("LDPC"),
+        Capability("SHORT-GI-20"),
+        Capability("SHORT-GI-40"),
+        Capability("SHORT-GI-80"),
+        Capability("SHORT-GI-160"),
+        Capability("TX-STBC"),
+        Capability("TX-STBC1"),
+        Capability("RX-STBC1"),
+        Capability("RX-STBC12"),
+        Capability("RX-STBC123"),
+        Capability("SU-BEAMFORMER"),
+        Capability("SU-BEAMFORMEE"),
+        Capability("MU-BEAMFORMER"),
+        Capability("MU-BEAMFORMEE"),
+    )
+    widths = (
+        ChannelWidth(
+            "he20",
+            _("20 MHz"),
+            20,
+        ),
+        ChannelWidth(
+            "he40",
+            _("40 MHz"),
+            40,
+        ),
+        ChannelWidth(
+            "he80",
+            _("80 MHz"),
+            80,
+        ),
+        ChannelWidth(
+            "he160",
+            _("160 MHz"),
+            160,
+        )
+    )
+    bitrates = tuple([
+        Bitrate('he-mcs-%d' % index, _("HE MCS %d") % index, index, rate_set='802.11ax')
+        for index in range(0, 12)
     ])

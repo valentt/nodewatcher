@@ -3,119 +3,24 @@ from django.utils.translation import gettext_lazy as _
 from nodewatcher.core.generator.cgm import base as cgm_base, protocols as cgm_protocols, devices as cgm_devices
 
 
-class GLiNet6408Av1(cgm_devices.DeviceBase):
+class UniFi6Lite(cgm_devices.DeviceBase):
     """
-    GL.iNet 6408A v1 device descriptor.
-    """
-
-    identifier = 'gl-inet6408av1'
-    name = "GL.iNet 6408A (v1)"
-    manufacturer = "GL Technologies"
-    url = 'http://www.gl-inet.com/'
-    architecture = 'ar71xx'
-    usb = True
-    radios = [
-        cgm_devices.IntegratedRadio('wifi0', _("Integrated wireless radio"), [
-            cgm_protocols.IEEE80211BGN(
-                cgm_protocols.IEEE80211BGN.SHORT_GI_20,
-                cgm_protocols.IEEE80211BGN.SHORT_GI_40,
-                cgm_protocols.IEEE80211BGN.RX_STBC1,
-                cgm_protocols.IEEE80211BGN.DSSS_CCK_40,
-            )
-        ], [
-            cgm_devices.AntennaConnector('a1', "Antenna0")
-        ], [
-            cgm_devices.DeviceRadio.MultipleSSID,
-        ])
-    ]
-    switches = [
-    ]
-    ports = [
-        cgm_devices.EthernetPort('wan0', "Wan0"),
-        cgm_devices.EthernetPort('lan0', "Lan0"),
-    ]
-    antennas = [
-        # TODO: This information is probably not correct
-        cgm_devices.InternalAntenna(
-            identifier='a1',
-            polarization='horizontal',
-            angle_horizontal=360,
-            angle_vertical=75,
-            gain=2,
-        )
-    ]
-    port_map = {
-        'openwrt': {
-            'wifi0': 'radio0',
-            'wan0': 'eth0',
-            'lan0': 'eth1',
-        }
-    }
-    drivers = {
-        'openwrt': {
-            'wifi0': 'mac80211'
-        }
-    }
-    profiles = {
-        'openwrt': {
-            'name': 'GLINET',
-            'files': [
-                '*-ar71xx-generic-gl-inet-6408A-v1-squashfs-factory.bin',
-                '*-ar71xx-generic-gl-inet-6408A-v1-squashfs-sysupgrade.bin'
-            ]
-        },
-        'lede': {
-            'name': 'gl-inet-6408A-v1',
-            'files': [
-                '*-ar71xx-generic-gl-inet-6408A-v1-squashfs-factory.bin',
-                '*-ar71xx-generic-gl-inet-6408A-v1-squashfs-sysupgrade.bin'
-            ]
-        }
-    }
-
-
-class GLiNet6416Av1(GLiNet6408Av1):
-    """
-    GL.iNet 6416A v1 device descriptor.
+    Ubiquiti UniFi 6 Lite device descriptor.
+    WiFi 6 access point, popular for Freifunk networks.
     """
 
-    identifier = 'gl-inet6416av1'
-    name = "GL.iNet 6416A (v1)"
-    profiles = {
-        'openwrt': {
-            'name': 'GLINET',
-            'files': [
-                '*-ar71xx-generic-gl-inet-6416A-v1-squashfs-factory.bin',
-                '*-ar71xx-generic-gl-inet-6416A-v1-squashfs-sysupgrade.bin'
-            ]
-        },
-        'lede': {
-            'name': 'gl-inet-6416A-v1',
-            'files': [
-                '*-ar71xx-generic-gl-inet-6416A-v1-squashfs-factory.bin',
-                '*-ar71xx-generic-gl-inet-6416A-v1-squashfs-sysupgrade.bin'
-            ]
-        }
-    }
-
-class GLiNetMT1300(cgm_devices.DeviceBase):
-    """
-    GL.iNet GL-MT1300 (Beryl) device descriptor.
-    Popular travel router for Freifunk networks.
-    """
-
-    identifier = 'gl-mt1300'
-    name = "GL-MT1300 (Beryl)"
-    manufacturer = "GL.iNet"
-    url = 'https://www.gl-inet.com/'
+    identifier = 'ubnt-unifi-6-lite'
+    name = "UniFi 6 Lite"
+    manufacturer = "Ubiquiti"
+    url = 'https://www.ui.com/'
     architecture = 'ramips_mt7621'
-    usb = True
     radios = [
         cgm_devices.IntegratedRadio('wifi0', _("Integrated wireless radio (5 GHz)"), [
-            cgm_protocols.IEEE80211AC(
-                cgm_protocols.IEEE80211AC.SHORT_GI_20,
-                cgm_protocols.IEEE80211AC.SHORT_GI_40,
-                cgm_protocols.IEEE80211AC.RX_STBC1,
+            cgm_protocols.IEEE80211AX(
+                cgm_protocols.IEEE80211AX.SHORT_GI_20,
+                cgm_protocols.IEEE80211AX.SHORT_GI_40,
+                cgm_protocols.IEEE80211AX.SHORT_GI_80,
+                cgm_protocols.IEEE80211AX.RX_STBC1,
             )
         ], [
             cgm_devices.AntennaConnector('a1', "Antenna1")
@@ -123,11 +28,10 @@ class GLiNetMT1300(cgm_devices.DeviceBase):
             cgm_devices.DeviceRadio.MultipleSSID,
         ]),
         cgm_devices.IntegratedRadio('wifi1', _("Integrated wireless radio (2.4 GHz)"), [
-            cgm_protocols.IEEE80211BGN(
-                cgm_protocols.IEEE80211BGN.SHORT_GI_20,
-                cgm_protocols.IEEE80211BGN.SHORT_GI_40,
-                cgm_protocols.IEEE80211BGN.RX_STBC1,
-                cgm_protocols.IEEE80211BGN.DSSS_CCK_40,
+            cgm_protocols.IEEE80211AX(
+                cgm_protocols.IEEE80211AX.SHORT_GI_20,
+                cgm_protocols.IEEE80211AX.SHORT_GI_40,
+                cgm_protocols.IEEE80211AX.RX_STBC1,
             )
         ], [
             cgm_devices.AntennaConnector('a2', "Antenna2")
@@ -137,8 +41,7 @@ class GLiNetMT1300(cgm_devices.DeviceBase):
     ]
     switches = []
     ports = [
-        cgm_devices.EthernetPort('wan0', "Wan0"),
-        cgm_devices.EthernetPort('lan0', "Lan0"),
+        cgm_devices.EthernetPort('lan0', "Lan0")
     ]
     antennas = [
         cgm_devices.InternalAntenna(
@@ -146,22 +49,21 @@ class GLiNetMT1300(cgm_devices.DeviceBase):
             polarization='dual',
             angle_horizontal=360,
             angle_vertical=90,
-            gain=3,
+            gain=4,
         ),
         cgm_devices.InternalAntenna(
             identifier='a2',
             polarization='dual',
             angle_horizontal=360,
             angle_vertical=90,
-            gain=3,
+            gain=4,
         )
     ]
     port_map = {
         'openwrt': {
             'wifi0': 'radio0',
             'wifi1': 'radio1',
-            'wan0': 'eth0',
-            'lan0': 'eth1',
+            'lan0': 'eth0',
         }
     }
     drivers = {
@@ -172,26 +74,25 @@ class GLiNetMT1300(cgm_devices.DeviceBase):
     }
     profiles = {
         'openwrt': {
-            'name': 'glinet_gl-mt1300',
+            'name': 'ubnt_unifi-6-lite',
             'files': [
-                '*-ramips-mt7621-glinet_gl-mt1300-squashfs-sysupgrade.bin',
+                '*-ramips-mt7621-ubnt_unifi-6-lite-squashfs-sysupgrade.bin',
             ]
         }
     }
 
 
-class GLiNetAR750S(cgm_devices.DeviceBase):
+class UniFiACLite(cgm_devices.DeviceBase):
     """
-    GL.iNet GL-AR750S (Slate) device descriptor.
-    Popular travel router with external antennas.
+    Ubiquiti UniFi AC Lite device descriptor.
+    WiFi AC access point, very popular for Freifunk networks.
     """
 
-    identifier = 'gl-ar750s'
-    name = "GL-AR750S (Slate)"
-    manufacturer = "GL.iNet"
-    url = 'https://www.gl-inet.com/'
+    identifier = 'ubnt-unifi-ac-lite'
+    name = "UniFi AC Lite"
+    manufacturer = "Ubiquiti"
+    url = 'https://www.ui.com/'
     architecture = 'ath79'
-    usb = True
     radios = [
         cgm_devices.IntegratedRadio('wifi0', _("Integrated wireless radio (5 GHz)"), [
             cgm_protocols.IEEE80211AC(
@@ -219,8 +120,7 @@ class GLiNetAR750S(cgm_devices.DeviceBase):
     ]
     switches = []
     ports = [
-        cgm_devices.EthernetPort('wan0', "Wan0"),
-        cgm_devices.EthernetPort('lan0', "Lan0"),
+        cgm_devices.EthernetPort('lan0', "Lan0")
     ]
     antennas = [
         cgm_devices.InternalAntenna(
@@ -242,8 +142,7 @@ class GLiNetAR750S(cgm_devices.DeviceBase):
         'openwrt': {
             'wifi0': 'radio0',
             'wifi1': 'radio1',
-            'wan0': 'eth0',
-            'lan0': 'eth1',
+            'lan0': 'eth0',
         }
     }
     drivers = {
@@ -254,16 +153,115 @@ class GLiNetAR750S(cgm_devices.DeviceBase):
     }
     profiles = {
         'openwrt': {
-            'name': 'glinet_gl-ar750s',
+            'name': 'ubnt_unifiac-lite',
             'files': [
-                '*-ath79-generic-glinet_gl-ar750s-squashfs-sysupgrade.bin',
+                '*-ath79-generic-ubnt_unifiac-lite-squashfs-sysupgrade.bin',
             ]
         }
     }
 
 
-# Register the GL.iNet devices.
-cgm_base.register_device('openwrt', GLiNet6408Av1)
-cgm_base.register_device('openwrt', GLiNet6416Av1)
-cgm_base.register_device('openwrt', GLiNetMT1300)
-cgm_base.register_device('openwrt', GLiNetAR750S)
+class UniFiACMesh(UniFiACLite):
+    """
+    Ubiquiti UniFi AC Mesh device descriptor.
+    Outdoor WiFi AC mesh access point.
+    """
+
+    identifier = 'ubnt-unifi-ac-mesh'
+    name = "UniFi AC Mesh"
+    profiles = {
+        'openwrt': {
+            'name': 'ubnt_unifiac-mesh',
+            'files': [
+                '*-ath79-generic-ubnt_unifiac-mesh-squashfs-sysupgrade.bin',
+            ]
+        }
+    }
+
+
+class UniFiACMeshPro(cgm_devices.DeviceBase):
+    """
+    Ubiquiti UniFi AC Mesh Pro device descriptor.
+    Outdoor WiFi AC mesh access point with 3x3 MIMO.
+    """
+
+    identifier = 'ubnt-unifi-ac-mesh-pro'
+    name = "UniFi AC Mesh Pro"
+    manufacturer = "Ubiquiti"
+    url = 'https://www.ui.com/'
+    architecture = 'ath79'
+    radios = [
+        cgm_devices.IntegratedRadio('wifi0', _("Integrated wireless radio (5 GHz)"), [
+            cgm_protocols.IEEE80211AC(
+                cgm_protocols.IEEE80211AC.SHORT_GI_20,
+                cgm_protocols.IEEE80211AC.SHORT_GI_40,
+                cgm_protocols.IEEE80211AC.RX_STBC1,
+            )
+        ], [
+            cgm_devices.AntennaConnector('a1', "Antenna1")
+        ], [
+            cgm_devices.DeviceRadio.MultipleSSID,
+        ]),
+        cgm_devices.IntegratedRadio('wifi1', _("Integrated wireless radio (2.4 GHz)"), [
+            cgm_protocols.IEEE80211BGN(
+                cgm_protocols.IEEE80211BGN.SHORT_GI_20,
+                cgm_protocols.IEEE80211BGN.SHORT_GI_40,
+                cgm_protocols.IEEE80211BGN.RX_STBC1,
+                cgm_protocols.IEEE80211BGN.DSSS_CCK_40,
+            )
+        ], [
+            cgm_devices.AntennaConnector('a2', "Antenna2")
+        ], [
+            cgm_devices.DeviceRadio.MultipleSSID,
+        ])
+    ]
+    switches = []
+    ports = [
+        cgm_devices.EthernetPort('lan0', "Lan0"),
+        cgm_devices.EthernetPort('lan1', "Lan1"),
+    ]
+    antennas = [
+        cgm_devices.InternalAntenna(
+            identifier='a1',
+            polarization='dual',
+            angle_horizontal=360,
+            angle_vertical=90,
+            gain=8,
+        ),
+        cgm_devices.InternalAntenna(
+            identifier='a2',
+            polarization='dual',
+            angle_horizontal=360,
+            angle_vertical=90,
+            gain=3,
+        )
+    ]
+    port_map = {
+        'openwrt': {
+            'wifi0': 'radio0',
+            'wifi1': 'radio1',
+            'lan0': 'eth0',
+            'lan1': 'eth1',
+        }
+    }
+    drivers = {
+        'openwrt': {
+            'wifi0': 'mac80211',
+            'wifi1': 'mac80211',
+        }
+    }
+    profiles = {
+        'openwrt': {
+            'name': 'ubnt_unifiac-mesh-pro',
+            'files': [
+                '*-ath79-generic-ubnt_unifiac-mesh-pro-squashfs-sysupgrade.bin',
+            ]
+        }
+    }
+
+
+# Register Ubiquiti devices
+cgm_base.register_device('openwrt', UniFi6Lite)
+cgm_base.register_device('openwrt', UniFiACLite)
+cgm_base.register_device('openwrt', UniFiACMesh)
+cgm_base.register_device('openwrt', UniFiACMeshPro)
