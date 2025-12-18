@@ -140,7 +140,7 @@ Step 4: "Here's your custom firmware! [Download]"
 - **Real-time**: WebSocket connection to Django Channels
 
 ### Backend (Existing)
-- Django REST Framework API (already exists at /api/v2/)
+- Django REST Framework API (already exists at /api/v3/)
 - Add Django Channels for WebSocket support
 - Keep all existing logic, just improve API responses
 

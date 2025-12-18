@@ -41,21 +41,21 @@ def run_tests():
             print(f"[FAIL] Admin page: {e}")
             failed += 1
 
-        # Test 3: API v2 root (JSON format)
+        # Test 3: API v3 root (JSON format)
         try:
-            response = page.goto(f"{BASE_URL}/api/v2/?format=json")
+            response = page.goto(f"{BASE_URL}/api/v3/?format=json")
             assert response.status == 200, f"Status: {response.status}"
             content = page.content()
             assert "node" in content.lower(), "Missing node endpoint"
-            print("[PASS] API v2 root endpoint")
+            print("[PASS] API v3 root endpoint")
             passed += 1
         except Exception as e:
-            print(f"[FAIL] API v2 root: {e}")
+            print(f"[FAIL] API v3 root: {e}")
             failed += 1
 
         # Test 4: Node API
         try:
-            response = page.goto(f"{BASE_URL}/api/v2/node/?format=json")
+            response = page.goto(f"{BASE_URL}/api/v3/node/?format=json")
             assert response.status == 200, f"Status: {response.status}"
             content = page.content()
             assert "[" in content or "{" in content, "Not JSON"
@@ -67,7 +67,7 @@ def run_tests():
 
         # Test 5: Project API
         try:
-            response = page.goto(f"{BASE_URL}/api/v2/project/?format=json")
+            response = page.goto(f"{BASE_URL}/api/v3/project/?format=json")
             assert response.status == 200, f"Status: {response.status}"
             print("[PASS] Project API endpoint")
             passed += 1
@@ -77,7 +77,7 @@ def run_tests():
 
         # Test 6: IP Pool API
         try:
-            response = page.goto(f"{BASE_URL}/api/v2/pool/ip/?format=json")
+            response = page.goto(f"{BASE_URL}/api/v3/pool/ip/?format=json")
             assert response.status == 200, f"Status: {response.status}"
             print("[PASS] IP Pool API endpoint")
             passed += 1
@@ -151,7 +151,7 @@ def run_tests():
 
         # Test 12: API browsable interface
         try:
-            page.goto(f"{BASE_URL}/api/v2/node/")
+            page.goto(f"{BASE_URL}/api/v3/node/")
             content = page.content()
             # Check for DRF browsable API elements
             if "api-wrapper" in content or "browsable" in content.lower() or "GET" in content:

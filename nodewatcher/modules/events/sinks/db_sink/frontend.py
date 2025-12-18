@@ -17,8 +17,8 @@ class EventsComponent(components.FrontendComponent):
 
 components.pool.register(EventsComponent)
 
-api_urls.v2_api.register('event', views.EventViewSet)
-api_urls.v2_api.register('warning', views.WarningViewSet)
+api_urls.v3_api.register('event', views.EventViewSet)
+api_urls.v3_api.register('warning', views.WarningViewSet)
 
 components.menus.get_menu('main_menu').add(components.MenuEntry(
     label=components.ugettext_lazy("Events"),

@@ -1,7 +1,8 @@
+from urllib.parse import quote as urlquote
+
 from django import urls as urlresolvers
 from django.urls import re_path, include
 from django.contrib import auth
-from django.utils import http
 
 from nodewatcher.core.frontend import components
 
@@ -32,7 +33,7 @@ def logout_url(menu_entry, context):
     redirect_field_name = context.get('REDIRECT_FIELD_NAME', auth.REDIRECT_FIELD_NAME)
     next_url = context.get('next', None) or context.get('request_get_next', None) or context['request'].GET.get(redirect_field_name, None) or context['request'].get_full_path()
     if next_url and not accounts_tags.authenticated_required(next_url):
-        url = "%s?%s=%s" % (url, redirect_field_name, http.urlquote(next_url))
+        url = "%s?%s=%s" % (url, redirect_field_name, urlquote(next_url))
     return url
 
 components.menus.get_menu('accounts_menu').add(components.MenuEntry(
@@ -58,7 +59,7 @@ def login_url(menu_entry, context):
     redirect_field_name = context.get('REDIRECT_FIELD_NAME', auth.REDIRECT_FIELD_NAME)
     next_url = context.get('next', None) or context.get('request_get_next', None) or context['request'].GET.get(redirect_field_name, None) or context['request'].get_full_path()
     if next_url and not accounts_tags.anonymous_required(next_url):
-        url = "%s?%s=%s" % (url, redirect_field_name, http.urlquote(next_url))
+        url = "%s?%s=%s" % (url, redirect_field_name, urlquote(next_url))
     return url
 
 components.menus.get_menu('accounts_menu').add(components.MenuEntry(

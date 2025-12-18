@@ -4,10 +4,11 @@ from django.contrib.auth.forms import ReadOnlyPasswordHashWidget
 
 from django.forms import (
     TextInput, DateInput, FileInput, CheckboxInput,
-    ClearableFileInput, Select, RadioSelect, CheckboxSelectMultiple
+    ClearableFileInput, Select, RadioSelect, CheckboxSelectMultiple,
+    SelectDateWidget
 )
-from django.forms.extras import SelectDateWidget
-from django.forms.forms import BaseForm, BoundField
+from django.forms.forms import BaseForm
+from django.forms.boundfield import BoundField
 from django.forms.formsets import BaseFormSet
 from django.utils.html import conditional_escape, strip_tags
 from django.template.loader import get_template

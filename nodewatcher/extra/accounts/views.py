@@ -12,6 +12,8 @@ from . import decorators, forms, utils
 
 
 class RegistrationView(registration_views.RegistrationView):
+    template_name = 'registration/registration_form.html'
+
     def get_form_class(self):
         """
         Returns the default form class used for user registration.

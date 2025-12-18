@@ -12,7 +12,7 @@ class TopologyLinkSerializer(api_serializers.PolymorphicSerializerMixin,
     class Meta:
         model = models.TopologyLink
         fields = ('id', 'last_seen')
-        base_view = 'apiv2:topologylink-list'
+        base_view = 'apiv3:topologylink-list'
 
     def get_fields(self):
         """

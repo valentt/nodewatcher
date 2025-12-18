@@ -1,7 +1,7 @@
 from django import forms
 from django.db.models import fields
 from django.forms import fields as widgets
-from django.utils import encoding
+from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
 
 from nodewatcher.core import models as core_models
@@ -33,7 +33,7 @@ class AccessPointSelectionField(forms.ModelChoiceField):
         super(AccessPointSelectionField, self).__init__(**kwargs)
 
     def label_from_instance(self, obj):
-        return encoding.smart_text(obj.name)
+        return force_str(obj.name)
 
 
 class WifiInterfaceConfigForm(uplink.UplinkableFormMixin, forms.ModelForm):

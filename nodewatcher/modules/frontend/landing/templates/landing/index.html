@@ -268,7 +268,7 @@
             <a class="nav-btn active" href="{% url 'main_page' %}">{% trans "Map" %}</a>
             <a class="nav-btn" href="{% url 'MapComponent:map' %}">{% trans "Detailed Map" %}</a>
             <a class="nav-btn" href="{% url 'ListComponent:list' %}">{% trans "Nodes" %}</a>
-            <a class="nav-btn" href="/api/v2/">API</a>
+            <a class="nav-btn" href="/api/v3/">API</a>
             <div class="lang-dropdown" id="langDropdown">
                 <button type="button" class="lang-toggle" onclick="toggleLangMenu(event)">
                     <span>{% if LANGUAGE_CODE == 'hr' %}HR{% elif LANGUAGE_CODE == 'de' %}DE{% elif LANGUAGE_CODE == 'sl' %}SI{% else %}EN{% endif %}</span>
@@ -443,7 +443,7 @@
                     processTopologyData(data.datapoints[0].v);
                 }
             })
-            .catch(function(e) { console.warn('Topology:', e); loadNodesFromAPIv2(); })
+            .catch(function(e) { console.warn('Topology:', e); loadNodesFromAPIv3(); })
             .finally(function() { document.getElementById('loading').style.display = 'none'; });
 
         loadStatistics();
@@ -489,8 +489,8 @@
         }
     }
 
-    function loadNodesFromAPIv2() {
-        fetch('/api/v2/node/?format=json&limit=100&fields=config:core.general&fields=config:core.location&fields=config:core.type&fields=monitoring:core.general')
+    function loadNodesFromAPIv3() {
+        fetch('/api/v3/node/?format=json&limit=100&fields=config:core.general&fields=config:core.location&fields=config:core.type&fields=monitoring:core.general')
             .then(function(r) { return r.json(); })
             .then(function(data) {
                 var bounds = new maplibregl.LngLatBounds(), hasValidBounds = false, onlineCount = 0;
@@ -526,7 +526,7 @@
     }
 
     function loadStatistics() {
-        fetch('/api/v2/statistics/status/?format=json')
+        fetch('/api/v3/statistics/status/?format=json')
             .then(function(r) { return r.json(); })
             .then(function(data) {
                 if (data.results && data.results.length > 0) {
@@ -542,7 +542,7 @@
     }
 
     function loadRecentActivity() {
-        fetch('/api/v2/event/?format=json&limit=5')
+        fetch('/api/v3/event/?format=json&limit=5')
             .then(function(r) { return r.json(); })
             .then(function(data) {
                 var list = document.getElementById('activity-list');
@@ -580,7 +580,7 @@
         if (node.status === 'up') { statusEl.className = 'node-status'; statusText.textContent = i18n.online; }
         else { statusEl.className = 'node-status offline'; statusText.textContent = i18n.offline; }
 
-        fetch('/api/v2/node/' + nodeId + '/?format=json&fields=config:core.project&fields=monitoring:system.status&fields=monitoring:network.clients')
+        fetch('/api/v3/node/' + nodeId + '/?format=json&fields=config:core.project&fields=monitoring:system.status&fields=monitoring:network.clients')
             .then(function(r) { return r.json(); })
             .then(function(data) {
                 var cfg = data.config || {}, mon = data.monitoring || {};

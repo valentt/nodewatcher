@@ -1,17 +1,15 @@
-{% contextblock %}
-    {% load sekizai_tags html_tags theme_tags url_tags i18n %}
+{% load sekizai_tags html_tags theme_tags url_tags i18n %}
 
-    {% add_data "css_data" "datatables/css/style.css" %}
-    {% add_data "js_data" "datatables/js/jquery.dataTables.js" %}
-    {% add_data "js_data" "datatables/js/jquery.dataTables.bootstrap.js" %}
-    {% add_data "js_data" "datatables/js/jquery.dataTables.fixedHeader.js" %}
-    {% add_data "js_data" "api/js/base.js" %}
-    {% add_data "js_data" "ip_allocations/js/list.js" %}
-{% endcontextblock %}
+{% add_data "css_data" "datatables/css/style.css" %}
+{% add_data "js_data" "datatables/js/jquery.dataTables.js" %}
+{% add_data "js_data" "datatables/js/jquery.dataTables.bootstrap.js" %}
+{% add_data "js_data" "datatables/js/jquery.dataTables.fixedHeader.js" %}
+{% add_data "js_data" "api/js/base.js" %}
+{% add_data "js_data" "ip_allocations/js/list.js" %}
 
 {% theme_legend _("IP allocations") %}
 <div class="ip-allocations">
-    <table class="table table-striped ip-allocation-list {% block ip_allocation_list_classes %}{% endblock ip_allocation_list_classes %}" data-source="{% block ip_allocation_list_data_source %}{% url "apiv2:ippool-list" %}?allocated_to=node:{{ node.pk }}{% endblock ip_allocation_list_data_source %}" width="100%">
+    <table class="table table-striped ip-allocation-list {% block ip_allocation_list_classes %}{% endblock ip_allocation_list_classes %}" data-source="{% block ip_allocation_list_data_source %}{% url "apiv3:ippool-list" %}?allocated_to=node:{{ node.pk }}{% endblock ip_allocation_list_data_source %}" width="100%">
         <thead>
             <tr>
                 <th>{% trans "Pool" %}</th>

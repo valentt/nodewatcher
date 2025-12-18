@@ -26,6 +26,13 @@ __version__ = 'trunk'
 
 import struct
 
+# Python 3 compatibility: 'long' was removed in Python 3, use 'int' instead
+try:
+    long
+except NameError:
+    # Python 3
+    long = int
+
 IPV4LENGTH = 32
 IPV6LENGTH = 128
 

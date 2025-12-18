@@ -1,3 +1,5 @@
+from functools import reduce
+
 from django.db import models
 from django.db.models import constants
 
@@ -69,7 +71,9 @@ class RegistryRootSerializerMixin(object):
     def to_representation(self, instance):
         data = super(RegistryRootSerializerMixin, self).to_representation(instance)
 
-        for field in instance._meta.virtual_fields:
+        # Django 4.0+ replaced virtual_fields with private_fields
+        virtual_fields = getattr(instance._meta, 'virtual_fields', None) or instance._meta.private_fields
+        for field in virtual_fields:
             if not hasattr(field, 'src_model'):
                 continue
 

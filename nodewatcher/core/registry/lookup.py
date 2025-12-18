@@ -122,7 +122,9 @@ class RegistryQuerySet(django_models.QuerySet):
         try:
             field = self.model._meta.get_field(base_alias)
         except django_exceptions.FieldDoesNotExist:
-            for f in self.model._meta.virtual_fields:
+            # Django 4.0+ replaced virtual_fields with private_fields
+            virtual_fields = getattr(self.model._meta, 'virtual_fields', None) or self.model._meta.private_fields
+            for f in virtual_fields:
                 field = f
                 if field.name == base_alias:
                     break

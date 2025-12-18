@@ -1,8 +1,8 @@
 {% extends "base.html" %}
+{% load i18n sekizai_tags html_tags url_tags %}
 
-{% contextblock %}
-    {% load i18n sekizai_tags html_tags url_tags %}
-
+{% block extrahead %}
+    {{ block.super }}
     {% add_data "css_data" "datatables/css/style.css" %}
     {% add_data "js_data" "datastream/underscore/underscore.js" %}
     {% add_data "js_data" "datastream/moment/moment.js" %}
@@ -12,19 +12,19 @@
     {% add_data "js_data" "api/js/base.js" %}
     {% add_data "js_data" "api/js/registry.js" %}
     {% add_data "js_data" "events/list/js/code.js" %}
+{% endblock %}
 
-    {% trans "Events" as title %}
-{% endcontextblock %}
+{% block title %}{% trans "Events" %}{% endblock %}
 
 {% block altlinks %}
-    {% url "apiv2:serializednodeevent-list" as api_url %}
+    {% url "apiv3:serializednodeevent-list" as api_url %}
     {% with api_url as url %}
     {% include "formats.html" %}
     {% endwith %}
 {% endblock altlinks %}
 
 {% block content %}
-    <table class="table table-striped events-list" data-source="{% url "apiv2:serializednodeevent-list" %}" data-node-url-template="{% urltemplate "DisplayComponent:node" %}" width="100%">
+    <table class="table table-striped events-list" data-source="{% url "apiv3:serializednodeevent-list" %}" data-node-url-template="{% urltemplate "DisplayComponent:node" %}" width="100%">
         <thead>
             <tr>
                 <th>{% trans "Timestamp" %}</th>

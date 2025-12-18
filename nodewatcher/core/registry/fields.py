@@ -382,11 +382,15 @@ class IPAddressField(models.Field):
             return value
 
         try:
-            return ipaddr.IPNetwork(value.encode('latin-1'))
+            # Python 3: strings are already Unicode, no need to encode
+            # Pass string directly to IPNetwork
+            if isinstance(value, bytes):
+                value = value.decode('latin-1')
+            return ipaddr.IPNetwork(value)
         except ValueError:
             raise exceptions.ValidationError(error_messages['invalid'])
 
-    def from_db_value(self, value, expression, connection, context):
+    def from_db_value(self, value, expression, connection):
         """
         Converts a database value into a Python one.
         """
@@ -512,8 +516,9 @@ class ReferenceChoiceField(models.ForeignKey):
 class RegistryProxySingleDescriptor(object):
     def __init__(self, field_with_rel):
         self.related = field_with_rel.remote_field.model
-        # Django 4.0+ removed get_cache_name(), use field name directly
-        self.cache_name = field_with_rel.name
+        # Use a prefixed cache name to avoid recursion when accessing the descriptor
+        # The descriptor is registered with field.name, so cache must use different name
+        self.cache_name = '_%s_cache' % field_with_rel.name
 
     def is_cached(self, instance):
         return hasattr(instance, self.cache_name)
@@ -546,7 +551,8 @@ class RegistryProxySingleDescriptor(object):
         for rel_obj in queryset:
             instance = instances_dict[rel_obj_attr(rel_obj)]
             setattr(rel_obj, rel_obj_cache_name, instance)
-        return queryset, rel_obj_attr, instance_attr, True, self.cache_name
+        # Django 4.2+ expects 6 values: the 6th is True when cache_name is a cache vs field name
+        return queryset, rel_obj_attr, instance_attr, True, self.cache_name, True
 
     def __get__(self, instance, instance_type):
         if instance is None:
@@ -589,7 +595,8 @@ class RegistryProxyMultipleDescriptor(object):
     def __init__(self, field_with_rel):
         self.related_model = field_with_rel.remote_field.model
         self.related_field = field_with_rel.related_field
-        self.cache_name = field_with_rel.get_cache_name()
+        # Use a prefixed cache name since get_cache_name() was removed in Django 4.0+
+        self.cache_name = '_%s_cache' % field_with_rel.name
         self.queryset = field_with_rel.queryset
 
         # Generate a chain that can be used to generate the filter query.
@@ -694,7 +701,8 @@ class RegistryProxyMultipleDescriptor(object):
                     instance = instances_dict[rel_obj_attr(rel_obj)]
                     setattr(rel_obj, rel_field.name, instance)
 
-                return queryset, rel_obj_attr, instance_attr, False, cache_name
+                # Django 4.2+ expects 6 values: the 6th is True when cache_name is a cache vs field name
+                return queryset, rel_obj_attr, instance_attr, False, cache_name, True
 
         return RelatedManager
 

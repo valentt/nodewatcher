@@ -1,8 +1,8 @@
 {% extends "base.html" %}
+{% load i18n sekizai_tags html_tags url_tags theme_tags %}
 
-{% contextblock %}
-    {% load i18n sekizai_tags html_tags url_tags theme_tags %}
-
+{% block extrahead %}
+    {{ block.super }}
     {% add_data "css_data" "datatables/css/style.css" %}
     {% add_data "js_data" "datastream/underscore/underscore.js" %}
     {% add_data "js_data" "datastream/moment/moment.js" %}
@@ -15,13 +15,12 @@
     {% add_data "js_data" "list/js/types.js" %}
     {% add_data "js_data" "list/js/status.js" %}
     {% add_data "js_data" "nodes/list/js/code.js" %}
+{% endblock %}
 
-    {% trans "Node List" as title %}
-
-{% endcontextblock %}
+{% block title %}{% trans "Node List" %}{% endblock %}
 
 {% block altlinks %}
-    {% url "apiv2:node-list" as api_url %}
+    {% url "apiv3:node-list" as api_url %}
     {% with api_url as url %}
     {% include "formats.html" %}
     {% endwith %}
@@ -30,7 +29,7 @@
 {% block content %}
     {% include "status/definitions.html" %}
     {% include "types/definitions.html" %}
-    <table class="table table-striped node-list {% block node_list_classes %}{% endblock node_list_classes %}" data-source="{% block node_list_data_source %}{% url "apiv2:node-list" %}{% endblock node_list_data_source %}" data-node-url-template="{% urltemplate "DisplayComponent:node" %}" width="100%">
+    <table class="table table-striped node-list {% block node_list_classes %}{% endblock node_list_classes %}" data-source="{% block node_list_data_source %}{% url "apiv3:node-list" %}{% endblock node_list_data_source %}" data-node-url-template="{% urltemplate "DisplayComponent:node" %}" width="100%">
         <thead>
             <tr>
                 <th title="{% trans "The type of the node." %}"></th>

@@ -18,7 +18,7 @@ class AprBackend(object):
     supports_anonymous_user = False
     supports_inactive_user = False
 
-    def authenticate(self, username=None, password=None, **kwargs):
+    def authenticate(self, request, username=None, password=None, **kwargs):
         """
         Authenticates against the database using Apache Portable Runtime MD5 hash function.
         """
@@ -63,7 +63,7 @@ class CryptBackend(object):
     supports_anonymous_user = False
     supports_inactive_user = False
 
-    def authenticate(self, username=None, password=None, **kwargs):
+    def authenticate(self, request, username=None, password=None, **kwargs):
         """
         Authenticates against the database using crypt hash function.
         """
@@ -101,7 +101,7 @@ class CryptBackend(object):
 
 
 class ModelBackend(auth_backends.ModelBackend):
-    def authenticate(self, username=None, password=None, **kwargs):
+    def authenticate(self, request, username=None, password=None, **kwargs):
         """
         Authenticates against the database using official implementation but
         catches exceptions and does it in case-insensitive manner.

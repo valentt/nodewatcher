@@ -1,7 +1,13 @@
 # Sekizai template library with added "prepend_data" and "prependtoblock" tags
 # See: https://github.com/ojii/django-sekizai/issues/33
 
-from sekizai.templatetags.sekizai_tags import *
+from django import template
+from sekizai.templatetags.sekizai_tags import (
+    SekizaiTag, Options, Argument, Flag, AddtoblockParser, get_varname
+)
+
+# Create our own register for this module
+register = template.Library()
 
 
 class PrependData(SekizaiTag):
@@ -17,7 +23,7 @@ class PrependData(SekizaiTag):
         context[varname][key].insert(0, value)
         return u''
 
-register.tag(PrependData)
+register.tag('prepend_data', PrependData)
 
 
 class Prependtoblock(SekizaiTag):
@@ -37,4 +43,4 @@ class Prependtoblock(SekizaiTag):
         context[varname][name].insert(0, rendered_contents)
         return u''
 
-register.tag(Prependtoblock)
+register.tag('prependtoblock', Prependtoblock)

@@ -85,10 +85,10 @@ class BuildResultAPITest(test.RegistryAPITestCase):
     def test_api_uris(self):
         # URIs have to be stable.
 
-        self.assertEqual(urlresolvers.reverse('apiv2:buildresult-list'), '/api/v2/build_result/')
+        self.assertEqual(urlresolvers.reverse('apiv3:buildresult-list'), '/api/v3/build_result/')
 
     def test_read_only(self):
-        build_result_uri = urlresolvers.reverse('apiv2:buildresult-list')
+        build_result_uri = urlresolvers.reverse('apiv3:buildresult-list')
 
         response = self.client.post(build_result_uri, {}, format='json')
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -106,13 +106,13 @@ class BuildResultAPITest(test.RegistryAPITestCase):
         self.client.logout()
 
         # Unauthenticated users should get no results.
-        response = self.client.get(urlresolvers.reverse('apiv2:buildresult-list'), format='json')
+        response = self.client.get(urlresolvers.reverse('apiv3:buildresult-list'), format='json')
         self.assertEqual(len(response.data['results']), 0)
 
     def test_unauthorized(self):
         # Ensure that we cannot access some other user's results.
         response = self.client.get(
-            urlresolvers.reverse('apiv2:buildresult-detail', kwargs={'pk': self.different_build_results[0].uuid}),
+            urlresolvers.reverse('apiv3:buildresult-detail', kwargs={'pk': self.different_build_results[0].uuid}),
             format='json'
         )
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
@@ -123,14 +123,14 @@ class BuildResultAPITest(test.RegistryAPITestCase):
 
     def test_detail(self):
         response = self.client.get(
-            urlresolvers.reverse('apiv2:buildresult-detail', kwargs={'pk': self.build_results[0].uuid}),
+            urlresolvers.reverse('apiv3:buildresult-detail', kwargs={'pk': self.build_results[0].uuid}),
             format='json'
         )
         self.assertBuildResultEqual(response.data, self.build_results[0])
 
     def test_list(self):
         response = self.client.get(
-            urlresolvers.reverse('apiv2:buildresult-list'),
+            urlresolvers.reverse('apiv3:buildresult-list'),
             {'ordering': 'uuid'},
             format='json'
         )

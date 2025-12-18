@@ -32,7 +32,7 @@ class EventViewSet(registry_api.RegistryRootViewSetMixin,
 
         qs = super(EventViewSet, self).get_queryset()
         user = self.request.user
-        if user.is_authenticated():
+        if user.is_authenticated:
             qs = qs.filter(
                 django_models.Q(related_users=None) |
                 django_models.Q(related_users=user)

@@ -18,7 +18,7 @@ class UnknownNodesComponent(components.FrontendComponent):
 components.pool.register(UnknownNodesComponent)
 
 
-api_urls.v2_api.register('unknown_node', views.UnknownNodeViewSet)
+api_urls.v3_api.register('unknown_node', views.UnknownNodeViewSet)
 
 
 components.menus.get_menu('accounts_menu').add(components.MenuEntry(

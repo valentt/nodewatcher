@@ -29,7 +29,14 @@ def extra_context(context):
         timezone_offset = node_zone.utcoffset(datetime.datetime.now(), is_dst=False)
     except TypeError:
         # Timezone does not have a is_dst keyword argument.
-        timezone_offset = node_zone.dst(datetime.datetime.now())
+        try:
+            timezone_offset = node_zone.utcoffset(datetime.datetime.now())
+        except TypeError:
+            timezone_offset = node_zone.dst(datetime.datetime.now())
+
+    # Handle case when timezone_offset is None (no DST, or no offset info)
+    if timezone_offset is None:
+        timezone_offset = datetime.timedelta(0)
 
     return {
         # Python and JavaScript timezone offsets are inverted.

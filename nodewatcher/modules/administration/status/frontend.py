@@ -3,7 +3,7 @@ from nodewatcher.core.api import urls as api_urls
 
 from . import models, views
 
-api_urls.v2_api.register('statistics/status', views.StatusStatisticsViewSet, basename='statistics-status')
+api_urls.v3_api.register('statistics/status', views.StatusStatisticsViewSet, basename='statistics-status')
 
 components.partials.get_partial('node_general_partial').add(components.PartialEntry(
     name='status',

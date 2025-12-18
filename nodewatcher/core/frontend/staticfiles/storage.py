@@ -10,7 +10,14 @@ from django.utils import encoding
 from django.conf import settings
 
 import scss
-from nodewatcher.extra import fonticons
+
+# fonticons is optional - requires fontforge system library
+try:
+    from nodewatcher.extra import fonticons
+    FONTICONS_AVAILABLE = True
+except ImportError:
+    FONTICONS_AVAILABLE = False
+    fonticons = None
 
 
 def relative_path(root, path):
@@ -198,8 +205,10 @@ class FilesProcessorMixin(object):
 
         self._processors = {
             SCSSFilesProcessor(),
-            FontFilesProcessor()
         }
+        # Only add FontFilesProcessor if fonticons is available
+        if FONTICONS_AVAILABLE:
+            self._processors.add(FontFilesProcessor())
 
     def _filter(self, filename):
         for processor in self._processors:

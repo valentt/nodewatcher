@@ -1,18 +1,16 @@
-{% contextblock %}
-    {% load sekizai_tags html_tags theme_tags url_tags i18n %}
+{% load sekizai_tags html_tags theme_tags url_tags i18n %}
 
-    {% add_data "css_data" "datatables/css/style.css" %}
-    {% add_data "js_data" "datatables/js/jquery.dataTables.js" %}
-    {% add_data "js_data" "datatables/js/jquery.dataTables.bootstrap.js" %}
-    {% add_data "js_data" "datatables/js/jquery.dataTables.fixedHeader.js" %}
-    {% add_data "js_data" "api/js/base.js" %}
-    {% add_data "js_data" "api/js/registry.js" %}
-    {% add_data "js_data" "olsr/js/peer_list.js" %}
-{% endcontextblock %}
+{% add_data "css_data" "datatables/css/style.css" %}
+{% add_data "js_data" "datatables/js/jquery.dataTables.js" %}
+{% add_data "js_data" "datatables/js/jquery.dataTables.bootstrap.js" %}
+{% add_data "js_data" "datatables/js/jquery.dataTables.fixedHeader.js" %}
+{% add_data "js_data" "api/js/base.js" %}
+{% add_data "js_data" "api/js/registry.js" %}
+{% add_data "js_data" "olsr/js/peer_list.js" %}
 
 {% theme_legend _("OLSR peers") %}
 <div class="olsr-peers">
-    <table class="table table-striped olsr-peer-list {% block olsr_peer_list_classes %}{% endblock olsr_peer_list_classes %}" data-source="{% block olsr_peer_list_data_source %}{% url "apiv2:topologylink-list" %}?protocol=olsr&node={{ node.pk }}{% endblock olsr_peer_list_data_source %}" data-node-url-template="{% urltemplate "DisplayComponent:node" %}" width="100%">
+    <table class="table table-striped olsr-peer-list {% block olsr_peer_list_classes %}{% endblock olsr_peer_list_classes %}" data-source="{% block olsr_peer_list_data_source %}{% url "apiv3:topologylink-list" %}?protocol=olsr&node={{ node.pk }}{% endblock olsr_peer_list_data_source %}" data-node-url-template="{% urltemplate "DisplayComponent:node" %}" width="100%">
         <thead>
             <tr>
                 <th>{% trans "Peer node" %}</th>

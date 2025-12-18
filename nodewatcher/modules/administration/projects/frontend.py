@@ -4,8 +4,8 @@ from nodewatcher.core.api import serializers as api_serializers, urls as api_url
 from . import serializers, views
 
 api_serializers.pool.register(serializers.ProjectSerializer)
-api_urls.v2_api.register('project', views.ProjectViewSet)
-api_urls.v2_api.register('statistics/project', views.ProjectStatisticsViewSet, basename='statistics-project')
+api_urls.v3_api.register('project', views.ProjectViewSet)
+api_urls.v3_api.register('statistics/project', views.ProjectStatisticsViewSet, basename='statistics-project')
 
 components.partials.get_partial('node_general_partial').add(components.PartialEntry(
     name='project',

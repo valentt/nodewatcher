@@ -105,12 +105,16 @@ class RegistryTestCase(django_test.TransactionTestCase):
             self.assertEquals(thing.f1.name, 'test')
 
         for thing in models.Thing.objects.regpoint('first').registry_fields(f1='foo.simple'):
-            self.assertEquals(thing._meta.virtual_fields[0].rel.to, models.SimpleRegistryItem)
+            # Django 4.0+ replaced virtual_fields with private_fields
+            vf = getattr(thing._meta, 'virtual_fields', None) or thing._meta.private_fields
+            self.assertEquals(vf[0].rel.to, models.SimpleRegistryItem)
             self.assertEquals(thing.f1.interesting, 'bla')
             self.assertEquals(thing.f1.additional, 42)
 
         for thing in models.Thing.objects.regpoint('first').registry_fields(f1=models.DoubleChildRegistryItem):
-            self.assertEquals(thing._meta.virtual_fields[0].rel.to, models.DoubleChildRegistryItem)
+            # Django 4.0+ replaced virtual_fields with private_fields
+            vf = getattr(thing._meta, 'virtual_fields', None) or thing._meta.private_fields
+            self.assertEquals(vf[0].rel.to, models.DoubleChildRegistryItem)
             self.assertEquals(thing.f1.interesting, 'bla')
             self.assertEquals(thing.f1.additional, 42)
 

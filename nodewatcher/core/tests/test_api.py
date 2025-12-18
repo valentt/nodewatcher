@@ -54,22 +54,22 @@ class CoreAPITest(test.RegistryAPITestCase):
         )
 
     def test_api_urls(self):
-        self.assertEquals(urlresolvers.reverse('apiv2:node-list'), '/api/v2/node/')
+        self.assertEquals(urlresolvers.reverse('apiv3:node-list'), '/api/v3/node/')
 
     def test_cors_headers(self):
-        response = self.client.options(urlresolvers.reverse('apiv2:node-list'), HTTP_ORIGIN='127.0.0.1')
+        response = self.client.options(urlresolvers.reverse('apiv3:node-list'), HTTP_ORIGIN='127.0.0.1')
         self.assertEquals(response['Access-Control-Allow-Origin'], '*')
         self.assertItemsEqual(response['Access-Control-Allow-Methods'].split(', '), ['GET', 'HEAD', 'OPTIONS'])
         self.assertEquals(response['Access-Control-Max-Age'], '86400')
 
     def test_read_only(self):
-        response = self.client.post(urlresolvers.reverse('apiv2:node-list'))
+        response = self.client.post(urlresolvers.reverse('apiv3:node-list'))
         self.assertEquals(response.status_code, 405)
-        response = self.client.put(urlresolvers.reverse('apiv2:node-list'))
+        response = self.client.put(urlresolvers.reverse('apiv3:node-list'))
         self.assertEquals(response.status_code, 405)
-        response = self.client.patch(urlresolvers.reverse('apiv2:node-list'))
+        response = self.client.patch(urlresolvers.reverse('apiv3:node-list'))
         self.assertEquals(response.status_code, 405)
-        response = self.client.delete(urlresolvers.reverse('apiv2:node-list'))
+        response = self.client.delete(urlresolvers.reverse('apiv3:node-list'))
         self.assertEquals(response.status_code, 405)
 
     def test_limit(self):
@@ -82,14 +82,14 @@ class CoreAPITest(test.RegistryAPITestCase):
         response = self.get_node_list({'offset': 0, 'limit': 10})
         self.assertEquals(len(response.data['results']), 10)
         self.assertEquals(response.data['count'], len(self.nodes))
-        self.assertEquals(response.data['next'], 'http://testserver/api/v2/node/?limit=10&offset=10')
+        self.assertEquals(response.data['next'], 'http://testserver/api/v3/node/?limit=10&offset=10')
         self.assertEquals(response.data['previous'], None)
 
         response = self.get_node_list({'offset': 10, 'limit': 10})
         self.assertEquals(len(response.data['results']), 10)
         self.assertEquals(response.data['count'], len(self.nodes))
-        self.assertEquals(response.data['next'], 'http://testserver/api/v2/node/?limit=10&offset=20')
-        self.assertEquals(response.data['previous'], 'http://testserver/api/v2/node/?limit=10')
+        self.assertEquals(response.data['next'], 'http://testserver/api/v3/node/?limit=10&offset=20')
+        self.assertEquals(response.data['previous'], 'http://testserver/api/v3/node/?limit=10')
 
     def test_projection(self):
         # Request without any projections should just return node uuids.
