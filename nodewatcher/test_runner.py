@@ -35,4 +35,6 @@ class FilteredTestSuiteRunner(runner.DiscoverRunner):
     def build_suite(self, test_labels, extra_tests=None, **kwargs):
         suite = super(FilteredTestSuiteRunner, self).build_suite(test_labels, extra_tests=None, **kwargs)
         suite = self._filter_suite(suite)
-        return runner.reorder_suite(suite, (testcases.TestCase,))
+        # Django 4.2+: reorder_suite was removed, parent class handles ordering
+        # Just return the filtered suite - the parent DiscoverRunner handles test ordering
+        return suite
