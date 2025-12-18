@@ -3,7 +3,7 @@
 **Open-source network planning, deployment, monitoring, and maintenance platform for community wireless networks.**
 
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
-[![Django 5.2](https://img.shields.io/badge/django-5.2-green.svg)](https://www.djangoproject.com/)
+[![Django 4.2](https://img.shields.io/badge/django-4.2-green.svg)](https://www.djangoproject.com/)
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 
 ---
@@ -45,7 +45,7 @@ nodewatcher is a comprehensive platform for managing community mesh networks. It
 
 | Component | Technology |
 |-----------|------------|
-| **Backend** | Python 3.10+, Django 5.2 LTS |
+| **Backend** | Python 3.10+, Django 4.2 LTS |
 | **Database** | PostgreSQL 13+ with PostGIS |
 | **Time-series** | InfluxDB 1.8 |
 | **Cache/Broker** | Redis 7 |
@@ -161,7 +161,7 @@ curl "http://localhost:8000/api/v3/node/?fields=config:core.general&fields=monit
 
 | Document | Description |
 |----------|-------------|
-| [PYTHON3_MIGRATION.md](PYTHON3_MIGRATION.md) | Python 3 / Django 5.2 migration guide |
+| [PYTHON3_MIGRATION.md](PYTHON3_MIGRATION.md) | Python 3 / Django 4.2 migration guide |
 | [docs/](docs/) | Technical documentation and feature specs |
 
 ---
@@ -214,7 +214,7 @@ In December 2025, the project was revived by **[Valent Turković](https://github
 
 **v3.1.0 updates:**
 - Migration from Python 2.7 to Python 3.10+
-- Upgrade from Django 1.x to Django 5.2 LTS
+- Upgrade from Django 1.x to Django 4.2 LTS
 - 70+ dependencies updated
 - 200+ compatibility fixes
 
@@ -222,7 +222,7 @@ In December 2025, the project was revived by **[Valent Turković](https://github
 
 | Version | Date | Maintainer | Notes |
 |---------|------|------------|-------|
-| **v3.1.0** | Dec 2025 | Otvorena mreža | Python 3 / Django 5.2 migration |
+| **v3.1.0** | Dec 2025 | Otvorena mreža | Python 3 / Django 4.2 migration |
 | v3.0.x | 2017-2018 | wlan slovenija | Last original releases |
 | v2.0 | 2015-2017 | wlan slovenija | Stable production version |
 | v1.0 | 2009-2014 | wlan slovenija | Initial releases |
