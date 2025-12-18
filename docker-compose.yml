@@ -57,6 +57,17 @@ services:
         image: wlanslovenija/lede-builder:v3ee8a65_17_01_1_ar71xx
         environment:
             BUILDER_PUBLIC_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCho6FII0iKbpU+DpJqS9ARtn4jaXZAuc86QkaCc0FCKaaQh2QofgzTsibPICksyXfxRJM5rlEwwAf6RweGrtqM49pZGvmhS0fhoComGNC2qANDkAPlvAhs2JPp/jFeH7wDVUQr+D1Noc4daObddC7rrRtNa0ch9nAfYCTJcxSFp69VcUij9IX7O660w4CL2fL8ya/P43f2IZVqcFefPeY5/TydeE8GMZQo5L+7RKMR9rhZ4JY9CQbQgCkhl9IQ2Oc46dTDoUtxe556EWp3gqBRvd4CXcMlDS3jd1OvW5HHJLIgQ66uuS8C9I5VbzcpxpV+qfOxEeWXGRhd0V9H6/2n builder@wlan-si.net
+    # OpenWrt 24.10 builder (ath79 target - successor to ar71xx)
+    # Build with: docker-compose build builderath79_2410
+    builderath79_2410:
+        build:
+            context: ./docker/builder-openwrt-2410
+            args:
+                OPENWRT_VERSION: "24.10.0-rc3"
+                TARGET: "ath79"
+                SUBTARGET: "generic"
+        environment:
+            BUILDER_PUBLIC_KEY: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCho6FII0iKbpU+DpJqS9ARtn4jaXZAuc86QkaCc0FCKaaQh2QofgzTsibPICksyXfxRJM5rlEwwAf6RweGrtqM49pZGvmhS0fhoComGNC2qANDkAPlvAhs2JPp/jFeH7wDVUQr+D1Noc4daObddC7rrRtNa0ch9nAfYCTJcxSFp69VcUij9IX7O660w4CL2fL8ya/P43f2IZVqcFefPeY5/TydeE8GMZQo5L+7RKMR9rhZ4JY9CQbQgCkhl9IQ2Oc46dTDoUtxe556EWp3gqBRvd4CXcMlDS3jd1OvW5HHJLIgQ66uuS8C9I5VbzcpxpV+qfOxEeWXGRhd0V9H6/2n builder@wlan-si.net
     generator:
         build: .
         command: "scripts/docker-cleanup; scripts/docker-wait-pgsql; celery -A nodewatcher worker -l info -Q generator"
@@ -73,6 +84,7 @@ services:
             - builderar71xx
             - builderlantiq
             - builderar71xx_lede
+            - builderath79_2410
     monitorq:
         build: .
         command: "scripts/docker-cleanup; scripts/docker-wait-pgsql; celery -A nodewatcher worker -l info -Q monitor -B"
@@ -103,6 +115,7 @@ services:
             - builderar71xx
             - builderlantiq
             - builderar71xx_lede
+            - builderath79_2410
 
 volumes:
     nodewatcher-db:
