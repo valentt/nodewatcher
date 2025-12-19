@@ -796,7 +796,9 @@ SESSION_COOKIE_AGE = 86400  # 24 hours
 
 # CSRF settings
 CSRF_COOKIE_SECURE = not DEBUG  # HTTPS only in production
-CSRF_COOKIE_HTTPONLY = True  # Prevent JavaScript access
+# CSRF_COOKIE_HTTPONLY must be False so JavaScript can read the token for AJAX requests
+# The application uses $.cookie('csrftoken') to include the token in AJAX calls
+CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SAMESITE = 'Lax'  # CSRF protection
 
 # Security headers (when not in DEBUG mode)

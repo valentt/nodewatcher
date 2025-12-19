@@ -32,7 +32,8 @@ class EthernetModule(NetworkModuleMixin, registry_forms.FormDefaultsModule):
                 vlan_ports[switch_descriptor.get_port_identifier(vlan.vlan)] = vlan
 
         # Compute the list of available ports.
-        available_ports = [port.identifier for port in device.ports] + vlan_ports.keys()
+        # Python 3: dict.keys() returns dict_keys, not a list, so wrap in list()
+        available_ports = [port.identifier for port in device.ports] + list(vlan_ports.keys())
 
         # Check if we can reuse the LAN port, so when there are multiple choices, the user
         # can force a specific port to be used as LAN.

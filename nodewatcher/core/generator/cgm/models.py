@@ -258,7 +258,8 @@ class BridgeInterfaceConfig(InterfaceConfig, RoutableInterface, UplinkableInterf
         super(BridgeInterfaceConfig, self).__init__(*args, **kwargs)
         # Automatically generate a random bridge name when one does not exist
         if not self.name:
-            self.name = "Bridge%(id)s" % {'id': random.choice(string.uppercase)}
+            # Python 3: string.uppercase -> string.ascii_uppercase
+            self.name = "Bridge%(id)s" % {'id': random.choice(string.ascii_uppercase)}
 
     def __str__(self):
         if not self.name:
