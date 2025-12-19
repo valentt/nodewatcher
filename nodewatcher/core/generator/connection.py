@@ -1,12 +1,16 @@
 import hashlib
 import io
 import os
+import re
 import paramiko
-import pipes
+import shlex
 import socket
 
 from . import exceptions
 from .cgm import exceptions as cgm_exceptions
+
+# Pattern for validating safe temp directory names (hex characters only)
+SAFE_TMPDIR_PATTERN = re.compile(r'^/tmp/[a-f0-9]{16}$')
 
 BUILDER_PATH = '/builder/imagebuilder'
 
@@ -67,7 +71,12 @@ class BuilderConnection(object):
 
         # Cleanup temporary directories
         for tmpdir in self.tempdirs:
-            self.client.exec_command('rm -rf %s' % tmpdir)
+            # SECURITY: Validate tmpdir format to prevent command injection
+            if not SAFE_TMPDIR_PATTERN.match(tmpdir):
+                # Skip potentially malicious paths
+                continue
+            # Use shlex.quote for additional safety
+            self.client.exec_command('rm -rf %s' % shlex.quote(tmpdir))
 
         self.client.close()
 
@@ -133,7 +142,7 @@ class BuilderConnection(object):
         """
 
         if kwargs.get('quote', True):
-            args = [pipes.quote(arg) for arg in args]
+            args = [shlex.quote(arg) for arg in args]
 
         try:
             cmd = [

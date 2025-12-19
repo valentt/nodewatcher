@@ -33,7 +33,8 @@ settings_dir = os.path.abspath(os.path.dirname(__file__))
 # Dummy function, so that "makemessages" can find strings which should be translated.
 _ = lambda s: s
 
-DEBUG = True
+# SECURITY: Load DEBUG from environment variable, default to False in production
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('true', '1', 'yes')
 URL_RESOLVERS_DEBUG = True # Active only when DEBUG is True.
 
 # Default primary key field type for models that don't specify one
@@ -170,7 +171,10 @@ GEOIP_PATH = os.path.abspath(os.path.join(settings_dir, '..', 'libs', 'geoip'))
 DEFAULT_COUNTRY = 'SI'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '1p)^zvjul0^c)v5*l!8^48g=ili!cn54^l)wl1avvu-x$==k7p'
+# SECURITY: Load SECRET_KEY from environment variable in production
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '1p)^zvjul0^c)v5*l!8^48g=ili!cn54^l)wl1avvu-x$==k7p')
+if not os.environ.get('DJANGO_SECRET_KEY') and not DEBUG:
+    raise ValueError("DJANGO_SECRET_KEY environment variable must be set in production")
 
 EMAIL_HOST = 'localhost'
 EMAIL_SUBJECT_PREFIX = '[nodewatcher] '
@@ -749,7 +753,9 @@ REST_FRAMEWORK = {
     )
 }
 
-CORS_ALLOW_ALL_ORIGINS = True
+# SECURITY: In production, set CORS_ALLOWED_ORIGINS to specific domains
+CORS_ALLOW_ALL_ORIGINS = os.environ.get('CORS_ALLOW_ALL_ORIGINS', 'True' if DEBUG else 'False').lower() in ('true', '1', 'yes')
+CORS_ALLOWED_ORIGINS = [o.strip() for o in os.environ.get('CORS_ALLOWED_ORIGINS', '').split(',') if o.strip()]
 # Currently only v3 API needs this. Tastypie API provides headers by itself.
 CORS_URLS_REGEX = r'^/api/v3/'
 # API is read-only for now.
@@ -761,4 +767,80 @@ CORS_ALLOW_METHODS = (
 
 # Allowed hosts (required for production use, when DEBUG is false). Set it
 # to the (virtual HTTP) hostname under which you have nodewatcher installation.
-ALLOWED_HOSTS = []
+# SECURITY: Load ALLOWED_HOSTS from environment variable in production
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',') if h.strip()]
+if not ALLOWED_HOSTS and not DEBUG:
+    raise ValueError("DJANGO_ALLOWED_HOSTS environment variable must be set in production")
+
+# ============================================================================
+# SECURITY SETTINGS
+# ============================================================================
+
+# Session security settings
+SESSION_COOKIE_SECURE = not DEBUG  # HTTPS only in production
+SESSION_COOKIE_HTTPONLY = True  # Prevent JavaScript access
+SESSION_COOKIE_SAMESITE = 'Lax'  # CSRF protection
+SESSION_COOKIE_AGE = 86400  # 24 hours
+
+# CSRF settings
+CSRF_COOKIE_SECURE = not DEBUG  # HTTPS only in production
+CSRF_COOKIE_HTTPONLY = True  # Prevent JavaScript access
+CSRF_COOKIE_SAMESITE = 'Lax'  # CSRF protection
+
+# Security headers (when not in DEBUG mode)
+if not DEBUG:
+    # HTTPS settings
+    SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'True').lower() in ('true', '1', 'yes')
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+    # HSTS (HTTP Strict Transport Security)
+    SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '31536000'))  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+    # Content security
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True  # Legacy, but still useful for older browsers
+    X_FRAME_OPTIONS = 'DENY'
+
+# Password validation (Django 4.0+)
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 10,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+# Rate limiting settings (for use with django-ratelimit or similar)
+RATELIMIT_ENABLE = not DEBUG
+RATELIMIT_USE_CACHE = 'default'
+
+# Push endpoint rate limiting settings
+PUSH_RATE_LIMIT_REQUESTS = 60  # Maximum requests per window
+PUSH_RATE_LIMIT_WINDOW = 60  # Window size in seconds
+
+# Trusted proxy IPs - only trust X-Forwarded-For from these addresses
+# Set via environment variable as comma-separated list, e.g., '10.0.0.1,10.0.0.2'
+TRUSTED_PROXY_IPS = [ip.strip() for ip in os.environ.get('TRUSTED_PROXY_IPS', '').split(',') if ip.strip()]
+
+# Cache configuration for rate limiting
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+        'LOCATION': 'redis://%(host)s:%(port)s/1' % {
+            'host': os.environ.get('REDIS_1_PORT_6379_TCP_ADDR', 'redis'),
+            'port': os.environ.get('REDIS_1_PORT_6379_TCP_PORT', '6379'),
+        },
+    }
+}
