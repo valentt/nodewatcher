@@ -14,3 +14,27 @@
 dump.sql
 celerybeat-schedule
 data/
+
+# Agent credentials - NIKAD COMMITATI!
+.tajne
+run-*.cmd
+run-*.bat
+start-*.bat
+
+# Claude Code agent config (may contain credentials)
+CLAUDE.md
+claude.md
+
+# PID files
+*.pid
+
+# Binary firmware images
+*.bin
+*.img
+
+# Local test/debug scripts
+cookies.txt
+nul
+
+# Generated firmware output
+/media/generator/

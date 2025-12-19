@@ -164,29 +164,57 @@ class Builder(object):
 
         return 'bin'
 
+    def _find_files_recursive(self, base_dir, max_depth=4):
+        """
+        Recursively find all files in directory up to max_depth.
+        Returns list of (relative_path, filename) tuples.
+        """
+        results = []
+
+        def _scan(current_path, depth):
+            if depth > max_depth:
+                return
+            try:
+                items = self._builder.list_dir(current_path)
+            except IOError:
+                return
+
+            for item in items:
+                item_path = os.path.join(current_path, item)
+                # Check if it looks like a file (has extension) or directory
+                if '.' in item and not item.startswith('.'):
+                    results.append((current_path, item))
+                else:
+                    # Assume directory, recurse
+                    _scan(item_path, depth + 1)
+
+        _scan(base_dir, 0)
+        return results
+
     def extract_files(self):
         """
         Extract built files.
         """
 
         base_dir = self.get_base_output_dir()
-        output_locations = self._builder.list_dir(base_dir)
+
+        # Find all files recursively (handles both old and new OpenWrt structures)
+        all_files = self._find_files_recursive(base_dir)
 
         # Collect the output files and return them.
         fw_files = []
         for fw_file in self.profile['files']:
             matched = False
-            for output_location in output_locations:
-                for output_filename in self._builder.list_dir(os.path.join(base_dir, output_location)):
-                    if fnmatch.fnmatch(output_filename, fw_file):
-                        try:
-                            fw_files.append((
-                                output_filename,
-                                self._builder.read_result_file(os.path.join(base_dir, output_location, output_filename))
-                            ))
-                            matched = True
-                        except IOError:
-                            continue
+            for file_dir, output_filename in all_files:
+                if fnmatch.fnmatch(output_filename, fw_file):
+                    try:
+                        fw_files.append((
+                            output_filename,
+                            self._builder.read_result_file(os.path.join(file_dir, output_filename))
+                        ))
+                        matched = True
+                    except IOError:
+                        continue
 
             if not matched:
                 raise cgm_exceptions.BuildError('Output file \'%s\' not found!' % fw_file)

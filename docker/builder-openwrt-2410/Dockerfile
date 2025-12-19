@@ -1,9 +1,9 @@
-# OpenWrt 24.10.3 ImageBuilder for Nodewatcher
+# OpenWrt 24.10 ImageBuilder for Nodewatcher
 # This Dockerfile creates a builder container compatible with nodewatcher's
 # SSH-based firmware generation protocol.
 #
 # Build:
-#   docker build -t nodewatcher-builder-openwrt:24.10.3-ath79 \
+#   docker build -t nodewatcher-builder-openwrt:24.10.5-ath79 \
 #     --build-arg TARGET=ath79 \
 #     --build-arg SUBTARGET=generic \
 #     .
@@ -11,15 +11,15 @@
 # Run:
 #   docker run -d -p 2222:22 -p 8080:80 \
 #     -e BUILDER_PUBLIC_KEY="ssh-rsa AAAA..." \
-#     nodewatcher-builder-openwrt:24.10.3-ath79
+#     nodewatcher-builder-openwrt:24.10.5-ath79
 
 FROM debian:bookworm-slim
 
 LABEL maintainer="nodewatcher@wlan-si.net"
-LABEL description="OpenWrt 24.10.3 ImageBuilder for Nodewatcher"
+LABEL description="OpenWrt 24.10 ImageBuilder for Nodewatcher"
 
 # Build arguments
-ARG OPENWRT_VERSION=24.10.0-rc3
+ARG OPENWRT_VERSION=24.10.0
 ARG TARGET=ath79
 ARG SUBTARGET=generic
 
@@ -67,11 +67,14 @@ USER ${BUILDER_USER}
 WORKDIR ${BUILDER_HOME}
 
 # Download ImageBuilder
-RUN IMAGEBUILDER_URL="https://downloads.openwrt.org/releases/${OPENWRT_VERSION}/targets/${TARGET}/${SUBTARGET}/openwrt-imagebuilder-${OPENWRT_VERSION}-${TARGET}-${SUBTARGET}.Linux-x86_64.tar.xz" && \
+# Note: OpenWrt 24.10+ uses .tar.zst format instead of .tar.xz
+RUN sudo apt-get update && sudo apt-get install -y --no-install-recommends zstd && sudo rm -rf /var/lib/apt/lists/*
+
+RUN IMAGEBUILDER_URL="https://downloads.openwrt.org/releases/${OPENWRT_VERSION}/targets/${TARGET}/${SUBTARGET}/openwrt-imagebuilder-${OPENWRT_VERSION}-${TARGET}-${SUBTARGET}.Linux-x86_64.tar.zst" && \
     echo "Downloading ImageBuilder from: ${IMAGEBUILDER_URL}" && \
-    wget -q "${IMAGEBUILDER_URL}" -O imagebuilder.tar.xz && \
-    tar -xf imagebuilder.tar.xz && \
-    rm imagebuilder.tar.xz && \
+    wget -q "${IMAGEBUILDER_URL}" -O imagebuilder.tar.zst && \
+    tar --zstd -xf imagebuilder.tar.zst && \
+    rm imagebuilder.tar.zst && \
     mv openwrt-imagebuilder-* imagebuilder && \
     ln -s ${BUILDER_HOME}/imagebuilder ${BUILDER_HOME}/openwrt
 
@@ -84,6 +87,9 @@ RUN mkdir -p ${BUILDER_HOME}/packages
 
 # Switch back to root for final setup
 USER root
+
+# Create symlink for nodewatcher compatibility (expects /builder/imagebuilder)
+RUN mkdir -p /builder && ln -s ${BUILDER_HOME}/imagebuilder /builder/imagebuilder
 
 # Create entrypoint script
 COPY entrypoint.sh /entrypoint.sh

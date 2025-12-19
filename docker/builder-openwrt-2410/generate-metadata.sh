@@ -12,8 +12,15 @@ mkdir -p "${PACKAGES_DIR}"
 
 # Extract version from ImageBuilder
 if [ -f "${IMAGEBUILDER_DIR}/.config" ]; then
-    VERSION=$(grep CONFIG_VERSION_NUMBER "${IMAGEBUILDER_DIR}/.config" | cut -d'"' -f2)
-else
+    # Try CONFIG_VERSION_NUMBER first
+    VERSION=$(grep 'CONFIG_VERSION_NUMBER=' "${IMAGEBUILDER_DIR}/.config" | cut -d'"' -f2)
+    # If empty, extract from CONFIG_VERSION_REPO URL
+    if [ -z "${VERSION}" ]; then
+        VERSION=$(grep 'CONFIG_VERSION_REPO=' "${IMAGEBUILDER_DIR}/.config" | grep -oP 'releases/\K[^/"]+' || echo "")
+    fi
+fi
+# Fallback to environment variable
+if [ -z "${VERSION}" ]; then
     VERSION="${OPENWRT_VERSION:-unknown}"
 fi
 
@@ -21,12 +28,10 @@ fi
 TARGET="${TARGET:-unknown}"
 SUBTARGET="${SUBTARGET:-generic}"
 
-# Get architecture from ImageBuilder
-if [ -f "${IMAGEBUILDER_DIR}/.config" ]; then
-    ARCH=$(grep CONFIG_TARGET_ARCH_PACKAGES "${IMAGEBUILDER_DIR}/.config" | cut -d'"' -f2)
-else
-    ARCH="${TARGET}"
-fi
+# Use TARGET as architecture (nodewatcher uses target name, not CPU arch)
+# OpenWrt's CONFIG_TARGET_ARCH_PACKAGES is the CPU arch (mips_24kc),
+# but nodewatcher expects the target name (ath79)
+ARCH="${TARGET}"
 
 echo "Generating metadata for OpenWrt ${VERSION} (${TARGET}/${SUBTARGET})..."
 
