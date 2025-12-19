@@ -31,7 +31,7 @@ class WifiAirtimeMonitor(registration.bases.NodeMonitoringRegistryItem):
     noise_floor = models.IntegerField(null=True, help_text="Noise floor in dBm")
 
     class RegistryMeta:
-        registry_id = 'sensors.wireless.airtime'
+        registry_id = 'sensors.airtime'
         multiple = True
 
 registration.point('node.monitoring').register_item(WifiAirtimeMonitor)
@@ -109,7 +109,7 @@ class MeshQualityMonitor(registration.bases.NodeMonitoringRegistryItem):
     protocol = models.CharField(max_length=50, null=True, help_text="Mesh protocol (batman, olsr, babel)")
 
     class RegistryMeta:
-        registry_id = 'sensors.wireless.mesh_quality'
+        registry_id = 'sensors.mesh'
         multiple = True
 
 registration.point('node.monitoring').register_item(MeshQualityMonitor)
@@ -187,7 +187,7 @@ class ChannelSurveyMonitor(registration.bases.NodeMonitoringRegistryItem):
     busy_percent = models.FloatField(null=True, help_text="Channel utilization percentage")
 
     class RegistryMeta:
-        registry_id = 'sensors.wireless.channel_survey'
+        registry_id = 'sensors.survey'
         multiple = True
 
 registration.point('node.monitoring').register_item(ChannelSurveyMonitor)

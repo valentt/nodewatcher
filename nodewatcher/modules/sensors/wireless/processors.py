@@ -19,10 +19,10 @@ class WifiAirtime(monitor_processors.NodeProcessor):
         :return: A (possibly) modified context
         """
 
-        version = context.http.get_module_version('sensors.wireless.airtime')
+        version = context.http.get_module_version('sensors.airtime')
 
         existing = {}
-        for item in node.monitoring.sensors.wireless.airtime():
+        for item in node.monitoring.sensors.airtime():
             item.busy_time = None
             item.receive_time = None
             item.transmit_time = None
@@ -34,11 +34,11 @@ class WifiAirtime(monitor_processors.NodeProcessor):
 
         if version >= 1:
             try:
-                for iface, data in context.http.sensors.wireless.airtime.items():
+                for iface, data in context.http.sensors.airtime.items():
                     if iface.startswith('_'):
                         continue
 
-                    node.monitoring.sensors.wireless.airtime(queryset=True).update_or_create(
+                    node.monitoring.sensors.airtime(queryset=True).update_or_create(
                         root=node,
                         interface=iface,
                         defaults={
@@ -81,10 +81,10 @@ class MeshQuality(monitor_processors.NodeProcessor):
         :return: A (possibly) modified context
         """
 
-        version = context.http.get_module_version('sensors.wireless.mesh_quality')
+        version = context.http.get_module_version('sensors.mesh')
 
         existing = {}
-        for item in node.monitoring.sensors.wireless.mesh_quality():
+        for item in node.monitoring.sensors.mesh():
             item.link_quality = None
             item.neighbor_link_quality = None
             item.expected_throughput = None
@@ -93,11 +93,11 @@ class MeshQuality(monitor_processors.NodeProcessor):
 
         if version >= 1:
             try:
-                for peer_id, data in context.http.sensors.wireless.mesh_quality.items():
+                for peer_id, data in context.http.sensors.mesh.items():
                     if peer_id.startswith('_'):
                         continue
 
-                    node.monitoring.sensors.wireless.mesh_quality(queryset=True).update_or_create(
+                    node.monitoring.sensors.mesh(queryset=True).update_or_create(
                         root=node,
                         peer_id=peer_id,
                         defaults={
@@ -145,16 +145,16 @@ class ChannelSurvey(monitor_processors.NodeProcessor):
         :return: A (possibly) modified context
         """
 
-        version = context.http.get_module_version('sensors.wireless.channel_survey')
+        version = context.http.get_module_version('sensors.survey')
 
         existing = {}
-        for item in node.monitoring.sensors.wireless.channel_survey():
+        for item in node.monitoring.sensors.survey():
             item.busy_percent = None
             existing[(item.interface, item.channel)] = item
 
         if version >= 1:
             try:
-                for key, data in context.http.sensors.wireless.channel_survey.items():
+                for key, data in context.http.sensors.survey.items():
                     if key.startswith('_'):
                         continue
 
@@ -164,7 +164,7 @@ class ChannelSurvey(monitor_processors.NodeProcessor):
                         continue
                     iface, channel = parts[0], int(parts[1])
 
-                    node.monitoring.sensors.wireless.channel_survey(queryset=True).update_or_create(
+                    node.monitoring.sensors.survey(queryset=True).update_or_create(
                         root=node,
                         interface=iface,
                         channel=channel,

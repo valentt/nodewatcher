@@ -17,7 +17,7 @@ class CpuTemperatureMonitor(registration.bases.NodeMonitoringRegistryItem):
     thermal_throttling = models.BooleanField(default=False, help_text="CPU is thermal throttling")
 
     class RegistryMeta:
-        registry_id = 'sensors.hardware.cpu_temperature'
+        registry_id = 'sensors.temperature'
 
 registration.point('node.monitoring').register_item(CpuTemperatureMonitor)
 
@@ -55,7 +55,7 @@ class FlashHealthMonitor(registration.bases.NodeMonitoringRegistryItem):
     health_percent = models.FloatField(null=True, help_text="Overall health percentage")
 
     class RegistryMeta:
-        registry_id = 'sensors.hardware.flash_health'
+        registry_id = 'sensors.flash'
 
 registration.point('node.monitoring').register_item(FlashHealthMonitor)
 
@@ -108,7 +108,7 @@ class MemoryDetailedMonitor(registration.bases.NodeMonitoringRegistryItem):
     usage_percent = models.FloatField(null=True, help_text="RAM usage percentage")
 
     class RegistryMeta:
-        registry_id = 'sensors.hardware.memory_detailed'
+        registry_id = 'sensors.memory'
 
 registration.point('node.monitoring').register_item(MemoryDetailedMonitor)
 
@@ -158,7 +158,7 @@ class PowerMonitor(registration.bases.NodeMonitoringRegistryItem):
     uptime_seconds = models.BigIntegerField(null=True, help_text="Uptime in seconds")
 
     class RegistryMeta:
-        registry_id = 'sensors.hardware.power'
+        registry_id = 'sensors.power'
 
 registration.point('node.monitoring').register_item(PowerMonitor)
 

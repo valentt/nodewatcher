@@ -357,6 +357,7 @@ INSTALLED_APPS += [
     'nodewatcher.modules.authentication.public_key',
     'nodewatcher.modules.vpn.tunneldigger',
     'nodewatcher.modules.events.sinks.db_sink',
+    'nodewatcher.modules.events.sinks.telegram_sink',
     'nodewatcher.modules.frontend.api',
     'nodewatcher.modules.frontend.display',
     'nodewatcher.modules.frontend.editor',
@@ -855,3 +856,9 @@ CACHES = {
         },
     }
 }
+
+# =============================================================================
+# TELEGRAM NOTIFICATIONS
+# =============================================================================
+TELEGRAM_BOT_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN', '8176523916:AAFBP4gYtYrZR27zfll9wAhHwKsu4iFnoaM')
+TELEGRAM_CHAT_ID = os.environ.get('TELEGRAM_CHAT_ID', '89074230')  # Set your chat ID

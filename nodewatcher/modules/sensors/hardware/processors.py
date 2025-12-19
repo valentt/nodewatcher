@@ -19,9 +19,9 @@ class CpuTemperature(monitor_processors.NodeProcessor):
         :return: A (possibly) modified context
         """
 
-        version = context.http.get_module_version('sensors.hardware.cpu_temperature')
+        version = context.http.get_module_version('sensors.temperature')
 
-        monitor = node.monitoring.sensors.hardware.cpu_temperature()
+        monitor = node.monitoring.sensors.temperature()
         if monitor is not None:
             monitor.temperature = None
             monitor.temperature_max = None
@@ -29,10 +29,10 @@ class CpuTemperature(monitor_processors.NodeProcessor):
 
         if version >= 1:
             try:
-                data = context.http.sensors.hardware.cpu_temperature
+                data = context.http.sensors.temperature
 
                 if monitor is None:
-                    monitor = node.monitoring.sensors.hardware.cpu_temperature(
+                    monitor = node.monitoring.sensors.temperature(
                         create=models.CpuTemperatureMonitor
                     )
 
@@ -64,9 +64,9 @@ class FlashHealth(monitor_processors.NodeProcessor):
         :return: A (possibly) modified context
         """
 
-        version = context.http.get_module_version('sensors.hardware.flash_health')
+        version = context.http.get_module_version('sensors.flash')
 
-        monitor = node.monitoring.sensors.hardware.flash_health()
+        monitor = node.monitoring.sensors.flash()
         if monitor is not None:
             monitor.total_bytes = None
             monitor.used_bytes = None
@@ -78,10 +78,10 @@ class FlashHealth(monitor_processors.NodeProcessor):
 
         if version >= 1:
             try:
-                data = context.http.sensors.hardware.flash_health
+                data = context.http.sensors.flash
 
                 if monitor is None:
-                    monitor = node.monitoring.sensors.hardware.flash_health(
+                    monitor = node.monitoring.sensors.flash(
                         create=models.FlashHealthMonitor
                     )
 
@@ -117,9 +117,9 @@ class MemoryDetailed(monitor_processors.NodeProcessor):
         :return: A (possibly) modified context
         """
 
-        version = context.http.get_module_version('sensors.hardware.memory_detailed')
+        version = context.http.get_module_version('sensors.memory')
 
-        monitor = node.monitoring.sensors.hardware.memory_detailed()
+        monitor = node.monitoring.sensors.memory()
         if monitor is not None:
             monitor.total = None
             monitor.free = None
@@ -132,10 +132,10 @@ class MemoryDetailed(monitor_processors.NodeProcessor):
 
         if version >= 1:
             try:
-                data = context.http.sensors.hardware.memory_detailed
+                data = context.http.sensors.memory
 
                 if monitor is None:
-                    monitor = node.monitoring.sensors.hardware.memory_detailed(
+                    monitor = node.monitoring.sensors.memory(
                         create=models.MemoryDetailedMonitor
                     )
 
@@ -172,9 +172,9 @@ class Power(monitor_processors.NodeProcessor):
         :return: A (possibly) modified context
         """
 
-        version = context.http.get_module_version('sensors.hardware.power')
+        version = context.http.get_module_version('sensors.power')
 
-        monitor = node.monitoring.sensors.hardware.power()
+        monitor = node.monitoring.sensors.power()
         if monitor is not None:
             monitor.voltage = None
             monitor.current = None
@@ -186,10 +186,10 @@ class Power(monitor_processors.NodeProcessor):
 
         if version >= 1:
             try:
-                data = context.http.sensors.hardware.power
+                data = context.http.sensors.power
 
                 if monitor is None:
-                    monitor = node.monitoring.sensors.hardware.power(
+                    monitor = node.monitoring.sensors.power(
                         create=models.PowerMonitor
                     )
 
