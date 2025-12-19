@@ -371,6 +371,8 @@ INSTALLED_APPS += [
     'nodewatcher.modules.frontend.ipwizard',
     'nodewatcher.modules.administration.banner',
     'nodewatcher.modules.sensors.generic',
+    'nodewatcher.modules.sensors.hardware',
+    'nodewatcher.modules.sensors.wireless',
     'nodewatcher.modules.defaults.network_profile',
 
     # OAuth2 authentication.
@@ -510,6 +512,15 @@ TELEMETRY_PROCESSOR_PIPELINE = (
     'nodewatcher.modules.routing.olsr.processors.NodeTopology',
     'nodewatcher.modules.routing.babel.processors.BabelTopology',
     'nodewatcher.modules.sensors.generic.processors.GenericSensors',
+    # Hardware sensors
+    'nodewatcher.modules.sensors.hardware.processors.CpuTemperature',
+    'nodewatcher.modules.sensors.hardware.processors.FlashHealth',
+    'nodewatcher.modules.sensors.hardware.processors.MemoryDetailed',
+    'nodewatcher.modules.sensors.hardware.processors.Power',
+    # Wireless sensors
+    'nodewatcher.modules.sensors.wireless.processors.WifiAirtime',
+    'nodewatcher.modules.sensors.wireless.processors.MeshQuality',
+    'nodewatcher.modules.sensors.wireless.processors.ChannelSurvey',
     'nodewatcher.extra.irnas.koruzav2.processors.Koruza',
     'nodewatcher.extra.irnas.sfp.processors.SFP',
     'nodewatcher.modules.vpn.tunneldigger.processors.DatastreamTunneldigger',
