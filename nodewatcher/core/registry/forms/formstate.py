@@ -25,7 +25,8 @@ class FormState(dict):
         # Initialize the session.
         self._session = context.request.session
         if not context.data or 'registry_form_id' not in context.data:
-            self.form_id = hashlib.sha1('registry-form-%s' % crypto.get_random_string()).hexdigest()
+            # Django 4.0+ requires explicit length argument for get_random_string()
+            self.form_id = hashlib.sha1(('registry-form-%s' % crypto.get_random_string(12)).encode()).hexdigest()
         else:
             self.form_id = context.data['registry_form_id']
 
@@ -302,7 +303,8 @@ class FormState(dict):
         items = self.registration_point.get_children(parent=parent_class, registry_id=registry_id)
 
         # Remove all items that should not be visible.
-        for key, item_class in items.items():
+        # Python 3: iterate over a copy to avoid "dictionary changed size during iteration"
+        for key, item_class in list(items.items()):
             if item_class._registry.is_hidden():
                 del items[key]
 
@@ -341,7 +343,8 @@ class FormState(dict):
             item._registry_virtual_child_index
         ]
 
-        return hashlib.sha1(".".join([str(atom) for atom in identifier])).hexdigest()
+        # Python 3: strings must be encoded to bytes before hashing
+        return hashlib.sha1(".".join([str(atom) for atom in identifier]).encode()).hexdigest()
 
     def create_item(self, cls, attributes, parent=None, index=None, annotations=None):
         """

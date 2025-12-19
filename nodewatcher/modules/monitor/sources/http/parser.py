@@ -1,6 +1,11 @@
 import errno
 import json
-import httplib
+# Python 3: httplib was renamed to http.client
+try:
+    import httplib
+except ImportError:
+    import http.client as httplib
+from functools import reduce
 
 from django.conf import settings
 

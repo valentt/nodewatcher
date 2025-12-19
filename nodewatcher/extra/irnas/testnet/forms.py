@@ -95,7 +95,8 @@ class DefaultPassword(registry_forms.FormDefaults):
         except IndexError:
             state.append_item(
                 cgm_models.PasswordAuthenticationConfig,
-                password=crypto.get_random_string(),
+                # Django 4.0+ requires explicit length argument
+                password=crypto.get_random_string(12),
             )
 
 registration.point('node.config').add_form_defaults(DefaultPassword())

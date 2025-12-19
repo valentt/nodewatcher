@@ -87,7 +87,8 @@ class RemoveFormAction(RegistryFormAction):
         reduce_by = 0
         for i in range(context.user_form_count):
             if i in self.indices:
-                for key in context.data.keys():
+                # Python 3: iterate over a copy to avoid "dictionary changed size during iteration"
+                for key in list(context.data.keys()):
                     if key.startswith(form_prefix + str(i) + '_') or key.startswith(form_prefix + str(i) + '-'):
                         del context.data[key]
 
@@ -96,7 +97,8 @@ class RemoveFormAction(RegistryFormAction):
             elif not reduce_by:
                 continue
 
-            for key in context.data.keys():
+            # Python 3: iterate over a copy to avoid "dictionary changed size during iteration"
+            for key in list(context.data.keys()):
                 postfix = None
                 if key.startswith(form_prefix + str(i) + '_'):
                     postfix = '_'

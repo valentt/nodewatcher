@@ -1,4 +1,5 @@
 import collections
+from functools import reduce
 
 from django.contrib.admin import utils as admin_utils
 from django.forms import forms, models as forms_models

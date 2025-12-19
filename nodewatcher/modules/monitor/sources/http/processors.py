@@ -1,3 +1,5 @@
+from functools import reduce
+
 from nodewatcher.core import models as core_models
 from nodewatcher.core.monitor import processors as monitor_processors, events as monitor_events
 

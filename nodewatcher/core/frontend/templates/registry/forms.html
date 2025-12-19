@@ -1,12 +1,11 @@
 {% load sekizai_tags i18n %}
 
-{% contextblock %}
-    {% addtoblock "css" %}{{ registry_forms.media.css }}{% endaddtoblock %}
-    {% addtoblock "js" %}{{ registry_forms.media.js }}{% endaddtoblock %}
+{# Django 4.x: removed contextblock wrapper - parent template handles sekizai context #}
+{% addtoblock "css" %}{{ registry_forms.media.css }}{% endaddtoblock %}
+{% addtoblock "js" %}{{ registry_forms.media.js }}{% endaddtoblock %}
 
-    {% add_data "css_data" "bootstrap-switch/css/bootstrap-switch.min.css" %}
-    {% add_data "js_data" "bootstrap-switch/js/bootstrap-switch.min.js" %}
-{% endcontextblock %}
+{% add_data "css_data" "bootstrap-switch/css/bootstrap-switch.min.css" %}
+{% add_data "js_data" "bootstrap-switch/js/bootstrap-switch.min.js" %}
 
 <div class="row">
     <div class="col-md-9" role="main">

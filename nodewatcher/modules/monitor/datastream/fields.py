@@ -1,5 +1,6 @@
 import collections.abc
 import copy
+from functools import reduce
 
 from django.core import exceptions
 

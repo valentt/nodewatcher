@@ -42,7 +42,8 @@ class DefaultRandomPassword(registry_forms.FormDefaults):
         except IndexError:
             state.append_item(
                 models.PasswordAuthenticationConfig,
-                password=crypto.get_random_string(),
+                # Django 4.0+ requires explicit length argument
+                password=crypto.get_random_string(12),
             )
 
 

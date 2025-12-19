@@ -591,7 +591,8 @@ def prepare_forms(context):
                 context.existing_items.add(mdl.__class__)
 
         # Remove all items that should not be visible
-        for key, value in context.items.items():
+        # Python 3: iterate over a copy to avoid "dictionary changed size during iteration"
+        for key, value in list(context.items.items()):
             if value._registry.hide_requests > 0:
                 del context.items[key]
                 continue
