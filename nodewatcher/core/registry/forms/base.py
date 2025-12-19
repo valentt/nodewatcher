@@ -379,7 +379,8 @@ def generate_form_for_class(context, prefix, data, index, instance=None,
                 pform._clean_fields()
 
                 for field in state_item._meta.fields:
-                    if not field.editable or field.rel is not None:
+                    # Django 4.x: field.rel was replaced with field.remote_field
+                    if not field.editable or field.remote_field is not None:
                         continue
 
                     try:

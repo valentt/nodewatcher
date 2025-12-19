@@ -164,12 +164,14 @@ class GroupAdmin(auth_admin.GroupAdmin):
     def get_form(self, request, obj=None, **kwargs):
         form = super(GroupAdmin, self).get_form(request, obj, **kwargs)
 
-        # Invert the user_set.rel ManyToManyRel.
+        # Invert the user_set ManyToManyRel.
+        # Django 4.x: user_set.rel was replaced with user_set.field.remote_field
+        user_set_rel = self.model.user_set.field.remote_field
         remote_field = reverse_related.ManyToManyRel(
-            self.model.user_set.rel.get_related_field(), self.model.user_set.rel.related_model,
-            symmetrical=self.model.user_set.rel.symmetrical,
-            through=self.model.user_set.rel.through,
-            db_constraint=self.model.user_set.rel.db_constraint,
+            user_set_rel.get_related_field(), user_set_rel.related_model,
+            symmetrical=user_set_rel.symmetrical,
+            through=user_set_rel.through,
+            db_constraint=user_set_rel.db_constraint,
         )
 
         # We have to wrap it only because otherwise the field help text is moved

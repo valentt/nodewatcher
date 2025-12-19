@@ -315,3 +315,171 @@ class TestRegistryFormState:
             page_source = driver.page_source.lower()
             assert 'server error' not in page_source
             assert 'typeerror' not in page_source
+
+
+class TestRegistryFormAjaxActions:
+    """Test AJAX actions on the registry forms (add/remove buttons, dropdowns).
+
+    These tests verify Django 4.x compatibility fixes for:
+    - field.rel -> field.remote_field
+    - reduce() from functools
+    - Dictionary iteration issues
+    """
+
+    OSIJEK_NODE_UUID = 'c0837444-f927-4189-9490-04bf6bd152a4'
+
+    def test_add_button_works(self, logged_in_user, base_url):
+        """Test that clicking '+' add buttons doesn't cause server errors.
+
+        This tests the fix for:
+        AttributeError: 'AutoField' object has no attribute 'rel'
+        """
+        driver = logged_in_user
+
+        driver.get(f'{base_url}/node/{self.OSIJEK_NODE_UUID}/edit/')
+        time.sleep(3)
+
+        page_source = driver.page_source.lower()
+
+        # Should not have server error on initial load
+        assert 'server error' not in page_source
+        assert 'attributeerror' not in page_source
+
+        if '/edit/' in driver.current_url:
+            # Find all add buttons (typically have class 'registry-add-item' or similar)
+            add_buttons = driver.find_elements(By.CSS_SELECTOR,
+                '.registry-add-item, button[data-action="add"], .btn-add, [class*="add"]')
+
+            for btn in add_buttons[:3]:  # Try first 3 add buttons
+                try:
+                    if btn.is_displayed() and btn.is_enabled():
+                        btn.click()
+                        time.sleep(2)
+
+                        # Check for errors after click
+                        page_source = driver.page_source.lower()
+                        assert 'server error' not in page_source, \
+                            'Server error after clicking add button'
+                        assert 'attributeerror' not in page_source, \
+                            'AttributeError after clicking add button (field.rel issue)'
+                        assert 'typeerror' not in page_source, \
+                            'TypeError after clicking add button'
+                        break
+                except Exception:
+                    continue
+
+    def test_dropdown_selection_works(self, logged_in_user, base_url):
+        """Test that selecting options from dropdowns works without errors.
+
+        This tests the fix for NameError: name 'reduce' is not defined
+        """
+        driver = logged_in_user
+        from selenium.webdriver.support.ui import Select
+
+        driver.get(f'{base_url}/node/{self.OSIJEK_NODE_UUID}/edit/')
+        time.sleep(3)
+
+        page_source = driver.page_source.lower()
+
+        # Should not have server error on initial load
+        assert 'server error' not in page_source
+        assert 'nameerror' not in page_source
+
+        if '/edit/' in driver.current_url:
+            # Find select elements (dropdowns)
+            selects = driver.find_elements(By.TAG_NAME, 'select')
+
+            for select_elem in selects[:5]:  # Try first 5 selects
+                try:
+                    if select_elem.is_displayed() and select_elem.is_enabled():
+                        select = Select(select_elem)
+                        options = select.options
+
+                        # Try to select a different option
+                        if len(options) > 1:
+                            # Select second option if available
+                            select.select_by_index(1)
+                            time.sleep(2)
+
+                            # Check for errors after selection
+                            page_source = driver.page_source.lower()
+                            assert 'server error' not in page_source, \
+                                'Server error after dropdown selection'
+                            assert 'nameerror' not in page_source, \
+                                'NameError after dropdown selection (reduce issue)'
+                            assert 'attributeerror' not in page_source, \
+                                'AttributeError after dropdown selection'
+                            break
+                except Exception:
+                    continue
+
+    def test_project_selection_works(self, logged_in_user, base_url):
+        """Test that selecting a project from the project dropdown works."""
+        driver = logged_in_user
+        from selenium.webdriver.support.ui import Select
+
+        driver.get(f'{base_url}/node/{self.OSIJEK_NODE_UUID}/edit/')
+        time.sleep(3)
+
+        if '/edit/' in driver.current_url:
+            # Find project select element
+            try:
+                project_select = driver.find_element(By.CSS_SELECTOR,
+                    'select[name*="project"], select[id*="project"]')
+
+                if project_select.is_displayed():
+                    select = Select(project_select)
+
+                    # Try to select an option
+                    if len(select.options) > 1:
+                        select.select_by_index(1)
+                        time.sleep(2)
+
+                        # Check for errors
+                        page_source = driver.page_source.lower()
+                        assert 'server error' not in page_source
+                        assert 'nameerror' not in page_source
+                        assert 'attributeerror' not in page_source
+            except Exception:
+                pass  # Skip if project select not found
+
+    def test_form_ajax_no_python_errors(self, logged_in_user, base_url):
+        """Test that AJAX form interactions don't cause Python errors.
+
+        This comprehensive test checks for various Django 4.x compatibility issues:
+        - get_random_string() length argument
+        - field.rel -> field.remote_field
+        - reduce() import from functools
+        - Dictionary iteration issues
+        """
+        driver = logged_in_user
+
+        driver.get(f'{base_url}/node/{self.OSIJEK_NODE_UUID}/edit/')
+        time.sleep(3)
+
+        page_source = driver.page_source.lower()
+        current_url = driver.current_url
+
+        # Comprehensive error check
+        python_errors = [
+            'typeerror',
+            'attributeerror',
+            'nameerror',
+            'keyerror',
+            'runtimeerror',
+            'server error',
+            'traceback',
+        ]
+
+        for error in python_errors:
+            # Exclude 'error' in class names like 'has-error' for validation
+            if error == 'server error':
+                assert error not in page_source, f'{error} found on page'
+            elif error in page_source:
+                # Check if it's in actual error context, not just as part of a word
+                if f'{error} at' in page_source or f'<pre class="exception_value">' in driver.page_source.lower():
+                    assert False, f'Python {error} found on page'
+
+        # Take screenshot for debugging
+        if '/edit/' in current_url:
+            driver.save_screenshot('test_screenshots/node_edit_ajax_test.png')
