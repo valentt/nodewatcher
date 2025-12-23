@@ -144,16 +144,71 @@ class Builder(object):
         # Ensure the prerequisite check is skipped.
         self._builder.call('touch', 'staging_dir/host/.prereq-build')
 
+    def get_available_packages(self):
+        """
+        Get a set of available packages in the ImageBuilder by parsing the .packageinfo file.
+        This file is part of the ImageBuilder and contains metadata for all available packages.
+        """
+        packages = set()
+
+        # Parse .packageinfo which lists all packages available in the ImageBuilder
+        # This file is always present and doesn't get deleted by make clean
+        cmd = 'grep "^Package:" .packageinfo | cut -d" " -f2'
+
+        try:
+            output = self._builder.call(cmd, quote=False)
+            for line in output.split('\n'):
+                line = line.strip()
+                if line:
+                    packages.add(line)
+        except Exception as e:
+            # Log error but don't fail - if we can't get packages, skip filtering
+            import logging
+            logging.getLogger(__name__).warning(f"Could not get package list: {e}")
+
+        return packages
+
+    def filter_available_packages(self, requested_packages):
+        """
+        Filter the requested packages to only include those available.
+        Returns tuple of (available, unavailable) packages.
+        """
+        available_pkgs = self.get_available_packages()
+        if not available_pkgs:
+            # If we couldn't get the list, don't filter
+            return requested_packages, []
+
+        available = []
+        unavailable = []
+        for pkg in requested_packages:
+            # Handle package removal syntax (packages starting with -)
+            if pkg.startswith('-'):
+                available.append(pkg)
+            elif pkg in available_pkgs:
+                available.append(pkg)
+            else:
+                unavailable.append(pkg)
+        return available, unavailable
+
     def run_build(self):
         """
         Run the build system and wait for its completion.
         """
+        requested_packages = self.result.config['_packages']
 
-        self.result.build_log = self._builder.call(
+        # Filter packages to only include those available in the ImageBuilder
+        available_packages, unavailable_packages = self.filter_available_packages(requested_packages)
+
+        # Log package filtering results
+        self.result.build_log = ""
+        if unavailable_packages:
+            self.result.build_log = f"Skipped {len(unavailable_packages)} unavailable packages: {', '.join(unavailable_packages)}\n\n"
+
+        self.result.build_log += self._builder.call(
             'make', 'image',
             'PROFILE=%s' % self.profile["name"],
             'FILES=%s' % self._path,
-            'PACKAGES=%s' % " ".join(self.result.config['_packages']),
+            'PACKAGES=%s' % " ".join(available_packages),
             'FORCE=1'
         )
 

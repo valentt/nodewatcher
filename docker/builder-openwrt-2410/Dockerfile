@@ -85,6 +85,16 @@ RUN mkdir -p ${BUILDER_HOME}/.ssh && \
 # Create packages metadata directory
 RUN mkdir -p ${BUILDER_HOME}/packages
 
+# Download nodewatcher-agent packages from GitHub releases
+# These packages are built by GitHub Actions in valentt/nodewatcher-agent
+ARG NODEWATCHER_AGENT_VERSION=latest
+RUN mkdir -p ${BUILDER_HOME}/imagebuilder/packages && \
+    cd ${BUILDER_HOME}/imagebuilder/packages && \
+    RELEASE_URL="https://api.github.com/repos/valentt/nodewatcher-agent/releases/${NODEWATCHER_AGENT_VERSION}" && \
+    echo "Fetching nodewatcher-agent packages from: ${RELEASE_URL}" && \
+    (curl -sL "${RELEASE_URL}" | grep -o '"browser_download_url": "[^"]*\.ipk"' | cut -d'"' -f4 | xargs -I {} wget -q {} 2>/dev/null || \
+     echo "Note: nodewatcher-agent packages not yet available, will use package filtering")
+
 # Switch back to root for final setup
 USER root
 
