@@ -5,7 +5,8 @@
     {% add_data "css_data" "bootstrap/css/bootstrap.css" %}
     {% add_data "js_data" "datastream/underscore/underscore.js" %}
     {% add_data "css_data" "frontend/css/style.css" %}
-    {% add_data "css_data" "frontend/css/icons.css" %}
+    {# icons.css removed: dead reference, no such file in frontend/static/frontend/css/
+       (source has only .scss). Was causing 404 on every page (Sara DQ-086 diag 14.09). #}
     {% add_data "js_data" "frontend/js/code.js" %}
 
     {% add_data "js_data" "bootstrap/js/bootstrap.js" %}
