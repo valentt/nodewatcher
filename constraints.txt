@@ -1,0 +1,5 @@
+# pip constraints file - hard version boundaries for transitive deps
+# Sara DQ-071 (13.09.2026): django-classy-tags/guardian/etc. povlaci Django 5.x
+# transitively even when requirements pin 4.2. constraints.txt (pip -c) blokira
+# taj upgrade globalno.
+Django>=4.2,<4.3

@@ -23,15 +23,16 @@ RUN apt-get update && \
 # Install Python package dependencies (do not use pip install -r here!)
 ADD ./requirements.txt /code/requirements.txt
 ADD ./requirements-readthedocs.txt /code/requirements-readthedocs.txt
+ADD ./constraints.txt /code/constraints.txt
 ADD ./vendor /code/vendor
 RUN pip install --upgrade pip wheel && \
     pip install "setuptools<58" && \
     sed -i 's/^-r.*$//g' /code/requirements.txt && \
     cat /code/requirements-readthedocs.txt /code/requirements.txt | grep -v '^#' | grep -v '^$' | while read pkg; do \
-        CPLUS_INCLUDE_PATH=/usr/include/gdal C_INCLUDE_PATH=/usr/include/gdal pip install "$pkg" || true; \
+        CPLUS_INCLUDE_PATH=/usr/include/gdal C_INCLUDE_PATH=/usr/include/gdal pip install -c /code/constraints.txt "$pkg" || true; \
     done && \
-    pip install /code/vendor/datastream && \
-    pip install --no-deps /code/vendor/django-datastream && \
+    pip install -c /code/constraints.txt /code/vendor/datastream && \
+    pip install -c /code/constraints.txt --no-deps /code/vendor/django-datastream && \
     # Fix grako for Python 3.10+ (collections.Mapping -> collections.abc.Mapping)
     sed -i 's/from collections import defaultdict, Mapping/from collections import defaultdict\nfrom collections.abc import Mapping/' /usr/local/lib/python*/dist-packages/grako/grammars.py && \
     sed -i 's/from collections import Mapping/from collections.abc import Mapping/' /usr/local/lib/python*/dist-packages/grako/contexts.py 2>/dev/null || true
