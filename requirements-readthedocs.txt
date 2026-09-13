@@ -1,5 +1,8 @@
 # Core dependencies
-Django>=4.2,<5.0
+# Django pinned to 4.2 LTS: django_datastream (vendored) uses django.utils.datetime_safe
+# which was removed in Django 5.0. Upgrading to 5.x requires forking django_datastream.
+# See Sara DQ-068 (13.09.2026) nodewatcher deploy blocker.
+Django>=4.2,<4.3
 Jinja2>=3.0,<4.0
 MarkupSafe>=2.0,<3.0
 Pygments>=2.15,<3.0
