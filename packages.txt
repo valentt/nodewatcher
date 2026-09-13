@@ -1,4 +1,5 @@
 libpq-dev
+postgresql-client
 libxml2-dev
 libxslt1-dev
 libpcre3-dev

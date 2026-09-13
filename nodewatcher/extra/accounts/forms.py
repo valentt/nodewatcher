@@ -10,7 +10,20 @@ from nodewatcher.modules.frontend.setup import forms as setup_forms
 from . import metaforms, models
 
 # Fieldsets of fields we use both in admin and registration for the user object creation.
-user_add_fieldsets = list(auth_admin.UserAdmin.add_fieldsets)
+# Django 5.1+ UserAdmin.add_fieldsets includes 'usable_password' field which requires
+# UserCreationForm to have that field defined. Our AdminUserCreationForm subclass doesn't
+# expose it (we don't need password-less user creation in nodewatcher), so strip the field
+# from the fieldsets to avoid FieldError at form class creation.
+# (Sara DQ-066 13.09.2026 nodewatcher deploy blocker.)
+def _strip_usable_password(fieldsets):
+    stripped = []
+    for name, opts in fieldsets:
+        new_opts = dict(opts)
+        new_opts['fields'] = tuple(f for f in opts.get('fields', ()) if f != 'usable_password')
+        stripped.append((name, new_opts))
+    return stripped
+
+user_add_fieldsets = _strip_usable_password(list(auth_admin.UserAdmin.add_fieldsets))
 # UserAdmin.fieldsets[1] contains first name, last name and e-mail address.
 user_add_fieldsets.append(auth_admin.UserAdmin.fieldsets[1])
 
